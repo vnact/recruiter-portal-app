@@ -1,23 +1,15 @@
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import { primaryColor } from '../constants/Colors';
-import React, { FC } from 'react';
-import { Feather } from '@expo/vector-icons';
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { primaryColor } from '../constants/Colors'
+import React, { FC } from 'react'
+import { Feather } from '@expo/vector-icons'
 
 interface IJob {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 interface ItemProps {
-  item: IJob;
+  item: IJob
 }
 
 const listFilter: IJob[] = [
@@ -37,17 +29,17 @@ const listFilter: IJob[] = [
     id: '4',
     name: 'Sales',
   },
-];
+]
 
 const Item: FC<ItemProps> = ({ item }) => {
-  const [listSelected, setListSelected] = React.useState<string[]>([]);
+  const [listSelected, setListSelected] = React.useState<string[]>([])
   const handleSelected = (id: string) => {
     if (listSelected.includes(id)) {
-      setListSelected(listSelected.filter((item) => item !== id));
+      setListSelected(listSelected.filter((item) => item !== id))
     } else {
-      setListSelected([...listSelected, id]);
+      setListSelected([...listSelected, id])
     }
-  };
+  }
 
   return (
     <TouchableOpacity onPress={() => handleSelected(item.id)}>
@@ -61,8 +53,8 @@ const Item: FC<ItemProps> = ({ item }) => {
         </View>
       )}
     </TouchableOpacity>
-  );
-};
+  )
+}
 
 export const Filter = () => {
   return (
@@ -79,8 +71,8 @@ export const Filter = () => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -125,4 +117,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-});
+})
