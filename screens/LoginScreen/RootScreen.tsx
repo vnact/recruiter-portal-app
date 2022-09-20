@@ -8,8 +8,10 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 const width = Dimensions.get('window').width;
 export default function RootScreen() {
@@ -17,8 +19,23 @@ export default function RootScreen() {
   const image = {
     uri: 'https://img.freepik.com/free-photo/vivid-blurred-colorful-wallpaper-background_58702-3798.jpg?w=740&t=st=1663143760~exp=1663144360~hmac=6d6fd4c0c514cbb8d4568174ace5fabf1b257144731692b1f51a5a99cb200db8',
   };
+
+  const [FontsLoaded] = useFonts({
+    'SpaceMono-Regular': require('../../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (FontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [FontsLoaded]);
+
+  if (!FontsLoaded) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       {/* <ImageBackground
         source={image}
         resizeMode='cover'
@@ -67,6 +84,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     paddingTop: 200,
+    fontFamily: 'SpaceMono-Regular',
   },
   image: {
     flex: 1,
