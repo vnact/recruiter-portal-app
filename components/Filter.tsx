@@ -1,15 +1,32 @@
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { primaryColor } from '../constants/Colors'
-import React, { FC } from 'react'
-import { Feather } from '@expo/vector-icons'
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { primaryColor } from '../constants/Colors';
+import React, { FC, useRef, useState } from 'react';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import { Button } from '@rneui/themed';
 
-interface IJob {
-  id: string
-  name: string
+export interface IJob {
+  id: string;
+  name: string;
 }
 
 interface ItemProps {
   item: IJob
+}
+
+interface IModalPopupFilterProps {
+  modalVisible: boolean;
+  setModalVisible: Function;
 }
 
 const listFilter: IJob[] = [
@@ -30,6 +47,142 @@ const listFilter: IJob[] = [
     name: 'Sales',
   },
 ]
+
+const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVisible }) => {
+  const [category, setCategory] = useState();
+  const [type, setType] = useState();
+  const [location, setLocation] = useState();
+  const [salaryMin, setSalaryMin] = useState();
+  const [salaryMax, setSalaryMax] = useState();
+
+  return (
+    <Modal animationType="slide" visible={modalVisible} transparent={true}>
+      <View style={styles.centeredView}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <ScrollView>
+            <View style={styles.filter}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Filter</Text>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <Text style={{ ...styles.title, color: primaryColor, fontSize: 18 }}>Reset</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.fieldFilter}>
+                <View>
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Job Categories</Text>
+                  <View style={styles.inputFilter}>
+                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                      <FontAwesome5
+                        name="briefcase"
+                        style={{ color: '#000000', fontWeight: '500' }}
+                        size={16}
+                      />
+                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                    </View>
+                    <View>
+                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.fieldFilter}>
+                <View>
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Job Type</Text>
+                  <View style={styles.inputFilter}>
+                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                      <FontAwesome5
+                        name="clock"
+                        style={{ color: '#000000', fontWeight: '500' }}
+                        size={16}
+                      />
+                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                    </View>
+                    <View>
+                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.fieldFilter}>
+                <View>
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Location</Text>
+                  <View style={styles.inputFilter}>
+                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                      <FontAwesome5
+                        name="clock"
+                        style={{ color: '#000000', fontWeight: '500' }}
+                        size={16}
+                      />
+                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                    </View>
+                    <View>
+                      <Feather name="map-pin" style={{ color: '#000000' }} size={16} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.fieldFilter}>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Salary</Text>
+                  <Text style={{ ...styles.text, color: primaryColor }}>Month</Text>
+                </View>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View style={{ ...styles.inputFilter, flex: 1, marginRight: 10 }}>
+                    <Feather
+                      name="dollar-sign"
+                      style={{ color: '#000000', fontWeight: '500' }}
+                      size={16}
+                    />
+                    <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Min" />
+                  </View>
+                  <View style={{ ...styles.inputFilter, flex: 1, marginLeft: 10 }}>
+                    <Feather
+                      name="dollar-sign"
+                      style={{ color: '#000000', fontWeight: '500' }}
+                      size={16}
+                    />
+                    <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Max" />
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  ...styles.fieldFilter,
+                  width: '100%',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  display: 'flex',
+                }}
+              >
+                <Button
+                  title={'Show Result'}
+                  buttonStyle={{
+                    width: 200,
+                    height: 50,
+                    borderRadius: 30,
+                    backgroundColor: '#000000',
+                  }}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </Modal>
+  );
+};
 
 const Item: FC<ItemProps> = ({ item }) => {
   const [listSelected, setListSelected] = React.useState<string[]>([])
@@ -57,11 +210,17 @@ const Item: FC<ItemProps> = ({ item }) => {
 }
 
 export const Filter = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
-      <View style={styles.icon}>
-        <Feather name="filter" size={25} />
-      </View>
+      <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+        <View style={styles.icon}>
+          <Feather name="filter" size={25} />
+        </View>
+      </TouchableOpacity>
+      {modalVisible && (
+        <ModalPopupFilter modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      )}
       <View style={styles.listItem}>
         <FlatList
           horizontal={true}
@@ -110,11 +269,58 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#FAFAFA',
+    borderColor: '#F8F8F8',
   },
   text: {
     color: '#333333',
     fontSize: 16,
     fontWeight: '500',
   },
-})
+
+  centeredView: {
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  filter: {
+    backgroundColor: '#FFFFFF',
+    height: '100%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 15,
+    paddingBottom: 80,
+  },
+
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+
+  fieldFilter: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 20,
+  },
+
+  inputFilter: {
+    backgroundColor: '#FFFFFF',
+    padding: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderColor: '#E5E5E5',
+    borderWidth: 0.5,
+    marginTop: 15,
+    justifyContent: 'space-between',
+  },
+});
+  

@@ -20,7 +20,7 @@ export default function SignInScreen() {
   const nav = useNavigation()
   const [showPass, setShowPass] = useState(true)
   const onSubmit = () => {
-    nav.navigate('InfoCandidate')
+    nav.navigate('Home')
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

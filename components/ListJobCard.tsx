@@ -82,7 +82,6 @@ const Job: FC<IJobProps> = ({ item }) => {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexDirection: 'row',
-                width: width - 80,
               }}
             >
               <Text style={styles.address}>{item.name_company}</Text>
@@ -176,6 +175,8 @@ const styles = StyleSheet.create({
   job: {
     marginBottom: 20,
     marginTop: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   body: {
     marginBottom: 50,
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 10,
     justifyContent: 'space-around',
-    width: '100%',
+    flex: 1,
   },
   nameJob: {
     fontSize: 16,
@@ -221,5 +222,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     color: `${primaryColor}`,
+    textAlign: 'right',
   },
 })
