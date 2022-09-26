@@ -1,7 +1,7 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { grayColor, greenColor, whiteColor } from '../../constants/Colors'
-import { AntDesign, Feather } from '@expo/vector-icons'
+import { formColor, grayColor, greenColor, whiteColor } from '../../constants/Colors'
+import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import InfoTagSceen from './InfoTagSceen'
 import { useNavigation } from '@react-navigation/native'
 const width = Dimensions.get('window').width
@@ -143,6 +143,18 @@ export default function InfoCandidateScreen() {
           </View>
         </View>
       </ScrollView>
+      <TouchableOpacity onPress={() => nav.navigate('CVSScreen')}>
+        <Entypo
+          name="info-with-circle"
+          size={40}
+          color="#576CD6"
+          style={{
+            bottom: 30,
+            position: 'absolute',
+            right: 30,
+          }}
+        />
+      </TouchableOpacity>
     </View>
   )
 }
