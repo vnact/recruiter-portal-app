@@ -30,11 +30,15 @@ export default function CCreateInfoScreen() {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
-        <View
+        <Animated.View
           style={{
-            height: 150,
-            backgroundColor: grayColor,
-            position: 'relative',
+            height: scrollValue.interpolate({
+              inputRange: [0, 100],
+              outputRange: [225, 150],
+              extrapolate: 'clamp',
+            }),
+            backgroundColor: whiteColor,
+            // position: 'relative',
           }}
         >
           <Image
@@ -44,68 +48,68 @@ export default function CCreateInfoScreen() {
             style={styles.image__cover}
           />
 
+          {/* <TouchableOpacity> */}
+          <Animated.Image
+            source={{
+              uri: 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
+            }}
+            style={{
+              ...styles.image__avatar,
+              width: scrollValue.interpolate({
+                inputRange: [0, 100],
+                outputRange: [150, 100],
+                extrapolate: 'clamp',
+              }),
+              height: scrollValue.interpolate({
+                inputRange: [0, 100],
+                outputRange: [150, 100],
+                extrapolate: 'clamp',
+              }),
+              top: scrollValue.interpolate({
+                inputRange: [0, 100],
+                outputRange: [-75, -110],
+                extrapolate: 'clamp',
+              }),
+              left: scrollValue.interpolate({
+                inputRange: [0, 100],
+                outputRange: [0, -150],
+                extrapolate: 'clamp',
+              }),
+              // position: 'relative',
+              // zIndex: 100,
+            }}
+          />
+          {/* </TouchableOpacity> */}
           <TouchableOpacity>
-            <Animated.Image
-              source={{
-                uri: 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
-              }}
+            <Animated.View
               style={{
-                ...styles.image__avatar,
-                width: scrollValue.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: [150, 100],
-                  extrapolate: 'clamp',
-                }),
-                height: scrollValue.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: [150, 100],
-                  extrapolate: 'clamp',
-                }),
+                width: 34,
+                height: 34,
+                backgroundColor: '#576CD6',
+                borderRadius: 17,
+                justifyContent: 'center',
+                alignItems: 'center',
+                // position: 'absolute',
+                // zIndex: 100,
+                // top: 45,
+
+                // left: 230,
                 top: scrollValue.interpolate({
                   inputRange: [0, 100],
-                  outputRange: [-75, -110],
+                  outputRange: [-110, -140],
                   extrapolate: 'clamp',
                 }),
                 left: scrollValue.interpolate({
                   inputRange: [0, 100],
-                  outputRange: [140, 10],
+                  outputRange: [230, 70],
                   extrapolate: 'clamp',
                 }),
-                position: 'absolute',
-                zIndex: 100,
               }}
-            />
+            >
+              <Entypo name="camera" size={20} color={whiteColor} />
+            </Animated.View>
           </TouchableOpacity>
-          {/* <TouchableOpacity>
-              <Animated.View
-                style={{
-                  width: 34,
-                  height: 34,
-                  backgroundColor: whiteColor,
-                  borderRadius: 17,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  position: 'absolute',
-                  // zIndex: 100,
-                  // top: 45,
-
-                  // left: 230,
-                  top: scrollValue.interpolate({
-                    inputRange: [0, 100],
-                    outputRange: [45, -40],
-                    extrapolate: 'clamp',
-                  }),
-                  left: scrollValue.interpolate({
-                    inputRange: [0, 100],
-                    outputRange: [230, 70],
-                    extrapolate: 'clamp',
-                  }),
-                }}
-              >
-                <Entypo name='camera' size={20} color='#576CD6' />
-              </Animated.View>
-            </TouchableOpacity> */}
-        </View>
+        </Animated.View>
         <ScrollView
           onScroll={(e) => {
             scrollValue.setValue(e.nativeEvent.contentOffset.y)
@@ -348,7 +352,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-  form: { marginTop: 85, paddingHorizontal: 15, flex: 1, paddingBottom: 40 },
+  form: {
+    // marginTop: 85,
+    paddingHorizontal: 15,
+    flex: 1,
+    paddingBottom: 40,
+  },
   container: {
     flex: 1,
     backgroundColor: whiteColor,
