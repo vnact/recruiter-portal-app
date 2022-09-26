@@ -1,37 +1,28 @@
-import {
-  Animated,
-  Dimensions,
-  Image,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useCallback } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { Animated, Dimensions, Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import React, { useCallback } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { useFonts } from 'expo-font'
+import * as SplashScreen from 'expo-splash-screen'
 
-const width = Dimensions.get('window').width;
+const width = Dimensions.get('window').width
 export default function RootScreen() {
-  const nav = useNavigation();
+  const nav = useNavigation()
   const image = {
     uri: 'https://img.freepik.com/free-photo/vivid-blurred-colorful-wallpaper-background_58702-3798.jpg?w=740&t=st=1663143760~exp=1663144360~hmac=6d6fd4c0c514cbb8d4568174ace5fabf1b257144731692b1f51a5a99cb200db8',
-  };
+  }
 
   const [FontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  })
 
   const onLayoutRootView = useCallback(async () => {
     if (FontsLoaded) {
-      await SplashScreen.hideAsync();
+      await SplashScreen.hideAsync()
     }
-  }, [FontsLoaded]);
+  }, [FontsLoaded])
 
   if (!FontsLoaded) {
-    return null;
+    return null
   }
 
   return (
@@ -75,7 +66,7 @@ export default function RootScreen() {
         </View> */}
       {/* </ImageBackground> */}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -113,4 +104,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
   },
-});
+})

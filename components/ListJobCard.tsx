@@ -1,29 +1,21 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import React, { FC } from 'react';
-import { MaterialIcons, Feather } from '@expo/vector-icons';
-import { Button } from '@rneui/themed';
-import { primaryColor } from '../constants/Colors';
-const width = Dimensions.get('window').width;
+import { FlatList, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity } from 'react-native'
+import React, { FC } from 'react'
+import { MaterialIcons, Feather } from '@expo/vector-icons'
+import { Button } from '@rneui/themed'
+import { primaryColor } from '../constants/Colors'
+const width = Dimensions.get('window').width
 
 interface IJob {
-  name: string;
-  name_company: string;
-  salary: number;
-  location: string;
-  level: string;
-  created_at: string;
+  name: string
+  name_company: string
+  salary: number
+  location: string
+  level: string
+  created_at: string
 }
 
 interface IJobProps {
-  item: IJob;
+  item: IJob
 }
 
 const data: IJob[] = [
@@ -67,7 +59,7 @@ const data: IJob[] = [
     level: 'Junior',
     created_at: '3d',
   },
-];
+]
 
 const Job: FC<IJobProps> = ({ item }) => {
   return (
@@ -141,8 +133,8 @@ const Job: FC<IJobProps> = ({ item }) => {
         </View>
       </View>
     </TouchableOpacity>
-  );
-};
+  )
+}
 export const ListJobCard = () => {
   return (
     <View style={styles.container}>
@@ -160,8 +152,8 @@ export const ListJobCard = () => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -230,4 +222,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: `${primaryColor}`,
   },
-});
+})

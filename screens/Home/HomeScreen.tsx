@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Filter } from '../../components/Filter';
-import { TopCompany } from '../../components/TopCompany';
-import { ListJobCard } from '../../components/ListJobCard';
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { Filter } from '../../components/Filter'
+import { TopCompany } from '../../components/TopCompany'
+import { ListJobCard } from '../../components/ListJobCard'
 
 export default function HomeScreen() {
   return (
@@ -11,7 +11,7 @@ export default function HomeScreen() {
       <TopCompany />
       <ListJobCard />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     backgroundColor: '#FCFCFCFC',
   },
-});
+})

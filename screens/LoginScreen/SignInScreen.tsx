@@ -8,20 +8,20 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
-} from 'react-native';
-import React, { useState } from 'react';
-import { blackColor, whiteColor } from '../../constants/Colors';
-import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-const width = Dimensions.get('window').width;
+} from 'react-native'
+import React, { useState } from 'react'
+import { blackColor, whiteColor } from '../../constants/Colors'
+import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
+const width = Dimensions.get('window').width
 export default function SignInScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const nav = useNavigation();
-  const [showPass, setShowPass] = useState(true);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const nav = useNavigation()
+  const [showPass, setShowPass] = useState(true)
   const onSubmit = () => {
-    nav.navigate('Home');
-  };
+    nav.navigate('InfoCandidate')
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -56,7 +56,7 @@ export default function SignInScreen() {
         >
           <Image
             source={require('../../assets/images/login-BG.png')}
-            resizeMode='cover'
+            resizeMode="cover"
             style={{
               alignSelf: 'center',
               // top: 100,
@@ -75,35 +75,25 @@ export default function SignInScreen() {
           <Text style={styles.note}>Login to your account</Text>
         </View>
         <View style={styles.form__field}>
-          <FontAwesome
-            name='user'
-            size={24}
-            color='#4B6587'
-            style={{ marginHorizontal: 15 }}
-          />
+          <FontAwesome name="user" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
             onChangeText={setUsername}
             value={username}
-            placeholder='Username'
-            placeholderTextColor='#4B6587'
-            keyboardType='default'
+            placeholder="Username"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
           />
         </View>
         <View style={styles.form__field}>
-          <FontAwesome
-            name='lock'
-            size={24}
-            color='#4B6587'
-            style={{ marginHorizontal: 15 }}
-          />
+          <FontAwesome name="lock" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
             onChangeText={setPassword}
             value={password}
-            placeholder='Password'
-            placeholderTextColor='#4B6587'
-            keyboardType='default'
+            placeholder="Password"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
             secureTextEntry={showPass}
           />
           <TouchableOpacity onPress={() => setShowPass(!showPass)}>
@@ -116,9 +106,9 @@ export default function SignInScreen() {
               }}
             >
               {showPass ? (
-                <Entypo name='eye' size={24} color='#4B6587' />
+                <Entypo name="eye" size={24} color="#4B6587" />
               ) : (
-                <Entypo name='eye-with-line' size={24} color='#4B6587' />
+                <Entypo name="eye-with-line" size={24} color="#4B6587" />
               )}
             </View>
           </TouchableOpacity>
@@ -137,11 +127,7 @@ export default function SignInScreen() {
         <View style={{ bottom: 50, position: 'absolute', width: width }}>
           <TouchableOpacity onPress={() => onSubmit()}>
             <View style={styles.form__submit}>
-              <Text
-                style={{ fontSize: 20, fontWeight: 'bold', color: whiteColor }}
-              >
-                Login
-              </Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: whiteColor }}>Login</Text>
             </View>
           </TouchableOpacity>
           <View
@@ -171,7 +157,7 @@ export default function SignInScreen() {
         </View>
       </View>
     </TouchableWithoutFeedback>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -248,4 +234,4 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 20,
     borderRadius: 25,
   },
-});
+})

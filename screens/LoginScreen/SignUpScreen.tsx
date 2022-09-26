@@ -8,39 +8,39 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from 'react-native';
-import React, { useState } from 'react';
-import { whiteColor } from '../../constants/Colors';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-const width = Dimensions.get('window').width;
+} from 'react-native'
+import React, { useState } from 'react'
+import { whiteColor } from '../../constants/Colors'
+import { Entypo, FontAwesome } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
+const width = Dimensions.get('window').width
 export default function SignUpScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [cPassword, setCPassword] = useState('');
-  const nav = useNavigation();
-  const [showPass, setShowPass] = useState(true);
-  const [showCPass, setShowCPass] = useState(true);
-  const [showNoti, setShowNoti] = useState(false);
-  const [noti, setNoti] = useState('');
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [cPassword, setCPassword] = useState('')
+  const nav = useNavigation()
+  const [showPass, setShowPass] = useState(true)
+  const [showCPass, setShowCPass] = useState(true)
+  const [showNoti, setShowNoti] = useState(false)
+  const [noti, setNoti] = useState('')
   const submit = () => {
     if (password.length < 6) {
-      setNoti('Mật khẩu phải từ 6 kí tự trở lên !');
-      setShowNoti(true);
-      return;
+      setNoti('Mật khẩu phải từ 6 kí tự trở lên !')
+      setShowNoti(true)
+      return
     }
     if (password !== cPassword) {
-      setNoti('Mật khẩu không trùng!');
-      setShowNoti(true);
-      return;
+      setNoti('Mật khẩu không trùng!')
+      setShowNoti(true)
+      return
     }
-  };
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <Image
           source={require('../../assets/images/signup.png')}
-          resizeMode='center'
+          resizeMode="center"
           style={{
             width: 350,
             height: 300,
@@ -68,35 +68,25 @@ export default function SignUpScreen() {
           Create your account
         </Text>
         <View style={styles.form__field}>
-          <FontAwesome
-            name='user'
-            size={24}
-            color='#4B6587'
-            style={{ marginHorizontal: 15 }}
-          />
+          <FontAwesome name="user" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
             onChangeText={setUsername}
             value={username}
-            placeholder='Username'
-            placeholderTextColor='#4B6587'
-            keyboardType='default'
+            placeholder="Username"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
           />
         </View>
         <View style={styles.form__field}>
-          <FontAwesome
-            name='lock'
-            size={24}
-            color='#4B6587'
-            style={{ marginHorizontal: 15 }}
-          />
+          <FontAwesome name="lock" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
             onChangeText={setPassword}
             value={password}
-            placeholder='Password'
-            placeholderTextColor='#4B6587'
-            keyboardType='default'
+            placeholder="Password"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
             secureTextEntry={showPass}
           />
           <TouchableOpacity onPress={() => setShowPass(!showPass)}>
@@ -109,27 +99,22 @@ export default function SignUpScreen() {
               }}
             >
               {showPass ? (
-                <Entypo name='eye' size={24} color='#4B6587' />
+                <Entypo name="eye" size={24} color="#4B6587" />
               ) : (
-                <Entypo name='eye-with-line' size={24} color='#4B6587' />
+                <Entypo name="eye-with-line" size={24} color="#4B6587" />
               )}
             </View>
           </TouchableOpacity>
         </View>
         <View style={styles.form__field}>
-          <FontAwesome
-            name='lock'
-            size={24}
-            color='#4B6587'
-            style={{ marginHorizontal: 15 }}
-          />
+          <FontAwesome name="lock" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
             onChangeText={setCPassword}
             value={cPassword}
-            placeholder='Confirm Password'
-            placeholderTextColor='#4B6587'
-            keyboardType='default'
+            placeholder="Confirm Password"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
             secureTextEntry={showCPass}
           />
           <TouchableOpacity onPress={() => setShowCPass(!showCPass)}>
@@ -142,28 +127,18 @@ export default function SignUpScreen() {
               }}
             >
               {showCPass ? (
-                <Entypo name='eye' size={24} color='#4B6587' />
+                <Entypo name="eye" size={24} color="#4B6587" />
               ) : (
-                <Entypo name='eye-with-line' size={24} color='#4B6587' />
+                <Entypo name="eye-with-line" size={24} color="#4B6587" />
               )}
             </View>
           </TouchableOpacity>
         </View>
-        {showNoti ? (
-          <Text style={{ marginLeft: 50, marginTop: 20, color: '#FF8B8B' }}>
-            {noti}
-          </Text>
-        ) : (
-          ''
-        )}
+        {showNoti ? <Text style={{ marginLeft: 50, marginTop: 20, color: '#FF8B8B' }}>{noti}</Text> : ''}
         <View style={{ bottom: 50, position: 'absolute', width: width }}>
           <TouchableOpacity onPress={() => submit()}>
             <View style={styles.form__submit}>
-              <Text
-                style={{ fontSize: 20, fontWeight: 'bold', color: whiteColor }}
-              >
-                Register
-              </Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: whiteColor }}>Register</Text>
             </View>
           </TouchableOpacity>
           <View
@@ -193,7 +168,7 @@ export default function SignUpScreen() {
         </View>
       </View>
     </TouchableWithoutFeedback>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -232,4 +207,4 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 20,
     borderRadius: 25,
   },
-});
+})

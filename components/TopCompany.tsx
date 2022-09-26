@@ -1,18 +1,18 @@
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
-import React, { FC } from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Button } from '@rneui/themed';
+import { StyleSheet, Text, View, Image, FlatList } from 'react-native'
+import React, { FC } from 'react'
+import { MaterialIcons } from '@expo/vector-icons'
+import { Button } from '@rneui/themed'
 
 interface ICompany {
-  name: string;
-  address: string;
-  salary_max: number;
-  salary_min: number;
-  type_job: string;
+  name: string
+  address: string
+  salary_max: number
+  salary_min: number
+  type_job: string
 }
 
 interface IComPanyProps {
-  item: ICompany;
+  item: ICompany
 }
 
 const data: ICompany[] = [
@@ -86,7 +86,7 @@ const data: ICompany[] = [
     salary_min: 5,
     type_job: 'Remote/Onsite',
   },
-];
+]
 
 const Company: FC<IComPanyProps> = ({ item }) => {
   return (
@@ -141,8 +141,8 @@ const Company: FC<IComPanyProps> = ({ item }) => {
         </Button>
       </View>
     </View>
-  );
-};
+  )
+}
 
 export const TopCompany = () => {
   return (
@@ -161,8 +161,8 @@ export const TopCompany = () => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -238,4 +238,4 @@ const styles = StyleSheet.create({
   body: {
     marginTop: 15,
   },
-});
+})
