@@ -29,6 +29,7 @@ import CCreateEducationScreen from '../screens/InfoScreen/CCreateEducationScreen
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
+import CVScreen from '../screens/InfoScreen/CVScreen'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -57,6 +58,7 @@ function RootNavigator() {
       <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
