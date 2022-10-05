@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome, FontAwesome5 } from '@expo/vector-icons'
+import { AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as React from 'react'
 import { ColorSchemeName, Pressable } from 'react-native'
 
-import Colors from '../constants/Colors'
+import Colors, { mainColor, whiteColor } from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
 import RootScreen from '../screens/LoginScreen/RootScreen'
 import ModalScreen from '../screens/ModalScreen'
@@ -82,12 +82,12 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>()
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme()
-
+  const color = '#59CE8F'
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
       screenOptions={{
-        tabBarActiveTintColor: '#000000',
+        tabBarActiveTintColor: mainColor,
         headerTitleStyle: {
           fontWeight: 'bold',
           fontSize: 20,
@@ -96,15 +96,23 @@ function BottomTabNavigator() {
           fontSize: 12,
           fontWeight: 'bold',
         },
+        tabBarStyle: {
+          backgroundColor: whiteColor,
+        },
+        headerStyle: { backgroundColor: whiteColor },
       }}
     >
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          title: 'Việc làm',
           headerTitleAlign: 'center',
           headerTintColor: '#333333',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          // tabBarLabelStyle: { color: mainColor },
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="briefcase-variant-outline" size={24} color={color} />
+          ),
           headerLeft: () => (
             <Feather
               name="bell"
@@ -126,10 +134,12 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="TabTwo"
-        component={TabTwoScreen}
+        component={InfoCandidateScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false,
+          headerTintColor: '#333333',
+          title: 'Hồ sơ',
+          tabBarIcon: ({ color }) => <AntDesign name="idcard" size={24} color={color} />,
         }}
       />
     </BottomTab.Navigator>

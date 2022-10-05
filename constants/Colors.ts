@@ -7,7 +7,7 @@ export const grayColor = '#EEEEEE'
 export const greenColor = '#395B64'
 export const formColor = '#B2B1B9'
 export const redColor = '#F05454'
-
+export const mainColor = '#59CE8F'
 export default {
   light: {
     text: '#000',
