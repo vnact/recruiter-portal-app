@@ -29,7 +29,11 @@ export type RootStackParamList = {
   Search: undefined
 =======
   CVSScreen: undefined
+<<<<<<< HEAD
 >>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
+=======
+  JobDetailScreen: undefined
+>>>>>>> 48cc865 (feat:job detail)
 }
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

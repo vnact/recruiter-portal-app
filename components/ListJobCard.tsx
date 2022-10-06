@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import { MaterialIcons, Feather } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { primaryColor } from '../constants/Colors'
+import { useNavigation } from '@react-navigation/native'
 const width = Dimensions.get('window').width
 
 interface IJob {
@@ -62,8 +63,9 @@ const data: IJob[] = [
 ]
 
 const Job: FC<IJobProps> = ({ item }) => {
+  const nav = useNavigation()
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen')}>
       <View style={styles.job}>
         <View style={styles.companyHeader}>
           <View style={styles.logo}>

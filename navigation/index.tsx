@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
+import { AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as React from 'react'
 import { ColorSchemeName, Pressable } from 'react-native'
 
-import Colors, { mainColor, whiteColor } from '../constants/Colors'
+import Colors, { blackColor, mainColor, whiteColor } from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
 import RootScreen from '../screens/LoginScreen/RootScreen'
 import ModalScreen from '../screens/ModalScreen'
@@ -33,7 +33,11 @@ import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
 import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 =======
 import CVScreen from '../screens/InfoScreen/CVScreen'
+<<<<<<< HEAD
 >>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
+=======
+import JobDetailScreen from '../screens/JobDetailScreen'
+>>>>>>> 48cc865 (feat:job detail)
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -66,7 +70,23 @@ function RootNavigator() {
       <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
 =======
       <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
+<<<<<<< HEAD
 >>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
+=======
+      <Stack.Screen
+        name="JobDetailScreen"
+        component={JobDetailScreen}
+        options={{
+          // headerStyle: {
+          //   backgroundColor: whiteColor,
+          // },
+          // headerTintColor: blackColor,
+          headerShown: false,
+          // headerBackTitle: '',
+          // headerLeft: () => <MaterialIcons name="keyboard-arrow-left" size={40} color="black" />,
+        }}
+      />
+>>>>>>> 48cc865 (feat:job detail)
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
