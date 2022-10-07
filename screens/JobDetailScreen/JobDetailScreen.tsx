@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 import React, { useState, useRef } from 'react'
-import { formColor, mainColor, redColor, whiteColor } from '../constants/Colors'
+import { formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { SceneMap, TabView } from 'react-native-tab-view'

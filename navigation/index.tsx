@@ -34,10 +34,14 @@ import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 =======
 import CVScreen from '../screens/InfoScreen/CVScreen'
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 =======
 import JobDetailScreen from '../screens/JobDetailScreen'
 >>>>>>> 48cc865 (feat:job detail)
+=======
+import JobDetailScreen from '../screens/JobDetailScreen/JobDetailScreen'
+>>>>>>> e9210d5 (fix:path file)
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
