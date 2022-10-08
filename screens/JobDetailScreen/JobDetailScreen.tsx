@@ -5,6 +5,7 @@ import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import PagerView from 'react-native-pager-view'
+import JDInfoScreen from './JDInfoScreen'
 
 const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
 
@@ -88,13 +89,22 @@ export default function JobDetailScreen() {
             initialPage={pageS}
             onPageSelected={(e) => setPageS(e.nativeEvent.position)}
           >
-            <View>
-              <Text>First page</Text>
-            </View>
+            <JDInfoScreen />
             <View>
               <Text>Second page</Text>
             </View>
           </PagerView>
+        </View>
+        <View style={styles.bottom}>
+          <View>
+            <Text style={{ fontSize: 18, color: formColor }}>Lương cơ bản</Text>
+            <Text style={{ fontSize: 25, color: mainColor }}>2.000$</Text>
+          </View>
+          <TouchableOpacity>
+            <View style={styles.submit}>
+              <Text style={{ fontSize: 18, color: whiteColor }}>Ứng tuyển ngay</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -102,6 +112,23 @@ export default function JobDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  bottom: {
+    height: 100,
+    borderTopWidth: 0.2,
+    borderTopColor: formColor,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 30,
+  },
+  submit: {
+    height: 40,
+    width: 180,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: mainColor,
+  },
   optionInfo: {
     marginTop: 10,
     width: 175,
@@ -192,7 +219,7 @@ const styles = StyleSheet.create({
   positionTitle: {
     fontSize: 25,
     fontWeight: '500',
-    marginVertical: 15,
+    marginVertical: 10,
   },
   companyTitle: {
     fontSize: 25,
