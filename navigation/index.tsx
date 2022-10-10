@@ -29,7 +29,11 @@ import CCreateEducationScreen from '../screens/InfoScreen/CCreateEducationScreen
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
+<<<<<<< HEAD
+import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
+=======
 import CVScreen from '../screens/InfoScreen/CVScreen'
+>>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -58,7 +62,11 @@ function RootNavigator() {
       <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
+<<<<<<< HEAD
+      <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
+=======
       <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
+>>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -106,7 +114,14 @@ function BottomTabNavigator() {
               }}
             />
           ),
-          headerRight: () => <Feather name="search" size={25} style={{ marginRight: 20 }} />,
+          headerRight: () => (
+            <Feather
+              name="search"
+              size={25}
+              style={{ marginRight: 20 }}
+              onPress={() => navigation.navigate('Search')}
+            />
+          ),
         })}
       />
       <BottomTab.Screen
