@@ -9,15 +9,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { primaryColor } from '../constants/Colors';
-import React, { FC, useRef, useState } from 'react';
-import { Feather, FontAwesome5 } from '@expo/vector-icons';
-import { Button } from '@rneui/themed';
+} from 'react-native'
+
+import { Picker } from '@react-native-picker/picker'
+import { GoogleMap } from './GoogleMap'
+import { primaryColor } from '../constants/Colors'
+import React, { FC, useEffect, useRef, useState } from 'react'
+import { Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
+import { Button } from '@rneui/themed'
 
 export interface IJob {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 interface ItemProps {
@@ -25,8 +28,8 @@ interface ItemProps {
 }
 
 interface IModalPopupFilterProps {
-  modalVisible: boolean;
-  setModalVisible: Function;
+  modalVisible: boolean
+  setModalVisible: Function
 }
 
 const listFilter: IJob[] = [
@@ -49,11 +52,13 @@ const listFilter: IJob[] = [
 ]
 
 const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVisible }) => {
-  const [category, setCategory] = useState();
-  const [type, setType] = useState();
-  const [location, setLocation] = useState();
-  const [salaryMin, setSalaryMin] = useState();
-  const [salaryMax, setSalaryMax] = useState();
+  const [category, setCategory] = useState()
+  const [jobType, setJobType] = useState()
+  const [salaryMin, setSalaryMin] = useState()
+  const [salaryMax, setSalaryMax] = useState()
+  const [modalLocation, setModalLocation] = useState(false)
+
+  const [selectedValue, setSelectedValue] = useState(listFilter)
 
   return (
     <Modal animationType="slide" visible={modalVisible} transparent={true}>
@@ -70,55 +75,53 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Job Categories</Text>
+
                   <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="briefcase"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
-                    </View>
-                    <View>
-                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
-                    </View>
+                    <Picker
+                      selectedValue={selectedValue}
+                      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                      style={{ flex: 1 }}
+                    >
+                      <Picker.Item label="Java" value="java" />
+                      <Picker.Item label="JavaScript" value="js" />
+                    </Picker>
                   </View>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Job Type</Text>
+
                   <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="clock"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
-                    </View>
-                    <View>
-                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
-                    </View>
+                    <Picker
+                      selectedValue={selectedValue}
+                      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                      style={{ flex: 1 }}
+                    >
+                      <Picker.Item label="Java" value="java" />
+                      <Picker.Item label="JavaScript" value="js" />
+                    </Picker>
                   </View>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Location</Text>
-                  <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="clock"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                  <TouchableOpacity onPress={() => setModalLocation(true)}>
+                    <View style={{ ...styles.inputFilter, padding: 15 }}>
+                      <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                        <Feather name="map-pin" style={{ color: '#000000' }} size={16} />
+                        <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                      </View>
+                      <View>
+                        <MaterialIcons
+                          name="location-searching"
+                          style={{ color: '#000000', fontWeight: '500' }}
+                          size={16}
+                        />
+                      </View>
                     </View>
-                    <View>
-                      <Feather name="map-pin" style={{ color: '#000000' }} size={16} />
-                    </View>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
@@ -139,20 +142,12 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                     alignItems: 'center',
                   }}
                 >
-                  <View style={{ ...styles.inputFilter, flex: 1, marginRight: 10 }}>
-                    <Feather
-                      name="dollar-sign"
-                      style={{ color: '#000000', fontWeight: '500' }}
-                      size={16}
-                    />
+                  <View style={{ ...styles.inputFilter, flex: 1, marginRight: 10, padding: 15 }}>
+                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
                     <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Min" />
                   </View>
-                  <View style={{ ...styles.inputFilter, flex: 1, marginLeft: 10 }}>
-                    <Feather
-                      name="dollar-sign"
-                      style={{ color: '#000000', fontWeight: '500' }}
-                      size={16}
-                    />
+                  <View style={{ ...styles.inputFilter, flex: 1, marginLeft: 10, padding: 15 }}>
+                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
                     <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Max" />
                   </View>
                 </View>
@@ -179,10 +174,11 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+        <GoogleMap modalLocation={modalLocation} setModalLocation={setModalLocation} />
       </View>
     </Modal>
-  );
-};
+  )
+}
 
 const Item: FC<ItemProps> = ({ item }) => {
   const [listSelected, setListSelected] = React.useState<string[]>([])
@@ -210,7 +206,7 @@ const Item: FC<ItemProps> = ({ item }) => {
 }
 
 export const Filter = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
@@ -218,9 +214,7 @@ export const Filter = () => {
           <Feather name="filter" size={25} />
         </View>
       </TouchableOpacity>
-      {modalVisible && (
-        <ModalPopupFilter modalVisible={modalVisible} setModalVisible={setModalVisible} />
-      )}
+      {modalVisible && <ModalPopupFilter modalVisible={modalVisible} setModalVisible={setModalVisible} />}
       <View style={styles.listItem}>
         <FlatList
           horizontal={true}
@@ -282,6 +276,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.2)',
+    position: 'relative',
   },
   filter: {
     backgroundColor: '#FFFFFF',
@@ -312,7 +307,6 @@ const styles = StyleSheet.create({
 
   inputFilter: {
     backgroundColor: '#FFFFFF',
-    padding: 15,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -322,5 +316,4 @@ const styles = StyleSheet.create({
     marginTop: 15,
     justifyContent: 'space-between',
   },
-});
-  
+})

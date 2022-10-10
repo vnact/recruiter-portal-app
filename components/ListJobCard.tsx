@@ -134,11 +134,15 @@ const Job: FC<IJobProps> = ({ item }) => {
     </TouchableOpacity>
   )
 }
-export const ListJobCard = () => {
+
+interface IListJobCardProps {
+  title?: string
+}
+export const ListJobCard: FC<IListJobCardProps> = ({ title }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Suggested Job</Text>
+        <Text style={styles.title}>{title ? title : 'Suggested Job'}</Text>
         <MaterialIcons name="more-horiz" size={26} />
       </View>
       <View style={styles.body}>

@@ -29,6 +29,7 @@ import CCreateEducationScreen from '../screens/InfoScreen/CCreateEducationScreen
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
+import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -57,6 +58,7 @@ function RootNavigator() {
       <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -104,7 +106,14 @@ function BottomTabNavigator() {
               }}
             />
           ),
-          headerRight: () => <Feather name="search" size={25} style={{ marginRight: 20 }} />,
+          headerRight: () => (
+            <Feather
+              name="search"
+              size={25}
+              style={{ marginRight: 20 }}
+              onPress={() => navigation.navigate('Search')}
+            />
+          ),
         })}
       />
       <BottomTab.Screen
