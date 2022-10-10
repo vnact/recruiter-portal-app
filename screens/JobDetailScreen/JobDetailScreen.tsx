@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, useWindowDimensions, Dimensions } from 'react-native'
 import React, { useState, useRef } from 'react'
 import { formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
@@ -19,6 +19,7 @@ export default function JobDetailScreen() {
   const [isLike, setLike] = useState(false)
   const layout = useWindowDimensions()
   const [index, setIndex] = React.useState(0)
+
   const [routes] = React.useState([
     { key: 'first', title: 'First' },
     { key: 'second', title: 'Second' },
