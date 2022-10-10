@@ -4655,7 +4655,11 @@ internal-ip@4.3.0:
     default-gateway "^4.2.0"
     ipaddr.js "^1.9.0"
 
+<<<<<<< HEAD
 invariant@*, invariant@^2.2.4:
+=======
+invariant@^2.2.4:
+>>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==

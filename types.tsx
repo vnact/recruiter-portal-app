@@ -25,7 +25,11 @@ export type RootStackParamList = {
   CCreateInfo: undefined
   CCreateExp: undefined
   CCreateSkill: undefined
+<<<<<<< HEAD
   Search: undefined
+=======
+  CVSScreen: undefined
+>>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 }
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

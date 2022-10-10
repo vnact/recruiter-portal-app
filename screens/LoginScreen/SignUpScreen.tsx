@@ -151,7 +151,7 @@ export default function SignUpScreen() {
           >
             <Text style={{ color: whiteColor, fontSize: 15 }}>
               Already have an account?{' '}
-              <TouchableOpacity onPress={() => nav.navigate('SignIn')}>
+              <TouchableOpacity onPress={() => nav.navigate('Home')}>
                 <Text
                   style={{
                     color: whiteColor,
