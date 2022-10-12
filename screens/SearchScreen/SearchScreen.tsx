@@ -4,7 +4,7 @@ import { ListJobCard } from '../../components/ListJobCard'
 
 export const SearchScreen = () => {
   return (
-    <View style={styles.container}>   
+    <View style={styles.container}>
       <ListJobCard title="14 Jobs Available" />
     </View>
   )

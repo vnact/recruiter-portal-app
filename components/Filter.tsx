@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-<<<<<<< HEAD
 } from 'react-native'
 
 import { Picker } from '@react-native-picker/picker'
@@ -22,17 +21,6 @@ import { Button } from '@rneui/themed'
 export interface IJob {
   id: string
   name: string
-=======
-} from 'react-native';
-import { primaryColor } from '../constants/Colors';
-import React, { FC, useRef, useState } from 'react';
-import { Feather, FontAwesome5 } from '@expo/vector-icons';
-import { Button } from '@rneui/themed';
-
-export interface IJob {
-  id: string;
-  name: string;
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 }
 
 interface ItemProps {
@@ -40,13 +28,8 @@ interface ItemProps {
 }
 
 interface IModalPopupFilterProps {
-<<<<<<< HEAD
   modalVisible: boolean
   setModalVisible: Function
-=======
-  modalVisible: boolean;
-  setModalVisible: Function;
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 }
 
 const listFilter: IJob[] = [
@@ -69,7 +52,6 @@ const listFilter: IJob[] = [
 ]
 
 const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVisible }) => {
-<<<<<<< HEAD
   const [category, setCategory] = useState()
   const [jobType, setJobType] = useState()
   const [salaryMin, setSalaryMin] = useState()
@@ -77,13 +59,6 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
   const [modalLocation, setModalLocation] = useState(false)
 
   const [selectedValue, setSelectedValue] = useState(listFilter)
-=======
-  const [category, setCategory] = useState();
-  const [type, setType] = useState();
-  const [location, setLocation] = useState();
-  const [salaryMin, setSalaryMin] = useState();
-  const [salaryMax, setSalaryMax] = useState();
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 
   return (
     <Modal animationType="slide" visible={modalVisible} transparent={true}>
@@ -100,7 +75,6 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Job Categories</Text>
-<<<<<<< HEAD
 
                   <View style={styles.inputFilter}>
                     <Picker
@@ -111,27 +85,21 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                       <Picker.Item label="Java" value="java" />
                       <Picker.Item label="JavaScript" value="js" />
                     </Picker>
-=======
+                  </View>
                   <View style={styles.inputFilter}>
                     <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="briefcase"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
+                      <FontAwesome5 name="briefcase" style={{ color: '#000000', fontWeight: '500' }} size={16} />
                       <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
                     </View>
                     <View>
                       <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
                     </View>
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
                   </View>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Job Type</Text>
-<<<<<<< HEAD
 
                   <View style={styles.inputFilter}>
                     <Picker
@@ -142,27 +110,12 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                       <Picker.Item label="Java" value="java" />
                       <Picker.Item label="JavaScript" value="js" />
                     </Picker>
-=======
-                  <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="clock"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
-                    </View>
-                    <View>
-                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
-                    </View>
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
                   </View>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
                 <View>
                   <Text style={{ ...styles.title, fontSize: 18 }}>Location</Text>
-<<<<<<< HEAD
                   <TouchableOpacity onPress={() => setModalLocation(true)}>
                     <View style={{ ...styles.inputFilter, padding: 15 }}>
                       <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
@@ -178,21 +131,6 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                       </View>
                     </View>
                   </TouchableOpacity>
-=======
-                  <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5
-                        name="clock"
-                        style={{ color: '#000000', fontWeight: '500' }}
-                        size={16}
-                      />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
-                    </View>
-                    <View>
-                      <Feather name="map-pin" style={{ color: '#000000' }} size={16} />
-                    </View>
-                  </View>
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
                 </View>
               </View>
               <View style={styles.fieldFilter}>
@@ -213,29 +151,12 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                     alignItems: 'center',
                   }}
                 >
-<<<<<<< HEAD
-                  <View style={{ ...styles.inputFilter, flex: 1, marginRight: 10, padding: 15 }}>
-                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
-                    <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Min" />
-                  </View>
-                  <View style={{ ...styles.inputFilter, flex: 1, marginLeft: 10, padding: 15 }}>
-                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
-=======
                   <View style={{ ...styles.inputFilter, flex: 1, marginRight: 10 }}>
-                    <Feather
-                      name="dollar-sign"
-                      style={{ color: '#000000', fontWeight: '500' }}
-                      size={16}
-                    />
+                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
                     <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Min" />
                   </View>
                   <View style={{ ...styles.inputFilter, flex: 1, marginLeft: 10 }}>
-                    <Feather
-                      name="dollar-sign"
-                      style={{ color: '#000000', fontWeight: '500' }}
-                      size={16}
-                    />
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
+                    <Feather name="dollar-sign" style={{ color: '#000000', fontWeight: '500' }} size={16} />
                     <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Max" />
                   </View>
                 </View>
@@ -262,18 +183,11 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-<<<<<<< HEAD
         <GoogleMap modalLocation={modalLocation} setModalLocation={setModalLocation} />
       </View>
     </Modal>
   )
 }
-=======
-      </View>
-    </Modal>
-  );
-};
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
 
 const Item: FC<ItemProps> = ({ item }) => {
   const [listSelected, setListSelected] = React.useState<string[]>([])
@@ -301,11 +215,7 @@ const Item: FC<ItemProps> = ({ item }) => {
 }
 
 export const Filter = () => {
-<<<<<<< HEAD
   const [modalVisible, setModalVisible] = useState(false)
-=======
-  const [modalVisible, setModalVisible] = useState(false);
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
@@ -313,13 +223,7 @@ export const Filter = () => {
           <Feather name="filter" size={25} />
         </View>
       </TouchableOpacity>
-<<<<<<< HEAD
       {modalVisible && <ModalPopupFilter modalVisible={modalVisible} setModalVisible={setModalVisible} />}
-=======
-      {modalVisible && (
-        <ModalPopupFilter modalVisible={modalVisible} setModalVisible={setModalVisible} />
-      )}
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
       <View style={styles.listItem}>
         <FlatList
           horizontal={true}
@@ -381,10 +285,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.2)',
-<<<<<<< HEAD
     position: 'relative',
-=======
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
   },
   filter: {
     backgroundColor: '#FFFFFF',
@@ -415,10 +316,7 @@ const styles = StyleSheet.create({
 
   inputFilter: {
     backgroundColor: '#FFFFFF',
-<<<<<<< HEAD
-=======
     padding: 15,
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -428,9 +326,4 @@ const styles = StyleSheet.create({
     marginTop: 15,
     justifyContent: 'space-between',
   },
-<<<<<<< HEAD
 })
-=======
-});
-  
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379

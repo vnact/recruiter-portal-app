@@ -29,19 +29,9 @@ import CCreateEducationScreen from '../screens/InfoScreen/CCreateEducationScreen
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
-<<<<<<< HEAD
 import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
-=======
 import CVScreen from '../screens/InfoScreen/CVScreen'
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
-=======
-import JobDetailScreen from '../screens/JobDetailScreen'
->>>>>>> 48cc865 (feat:job detail)
-=======
 import JobDetailScreen from '../screens/JobDetailScreen/JobDetailScreen'
->>>>>>> e9210d5 (fix:path file)
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -70,13 +60,8 @@ function RootNavigator() {
       <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
-<<<<<<< HEAD
       <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
-=======
       <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
-<<<<<<< HEAD
->>>>>>> 2cce46910487b1b4733a1c166c9e6c1e1bab5379
-=======
       <Stack.Screen
         name="JobDetailScreen"
         component={JobDetailScreen}
@@ -90,7 +75,6 @@ function RootNavigator() {
           // headerLeft: () => <MaterialIcons name="keyboard-arrow-left" size={40} color="black" />,
         }}
       />
->>>>>>> 48cc865 (feat:job detail)
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
