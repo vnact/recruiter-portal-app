@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import PagerView from 'react-native-pager-view'
 import JDInfoScreen from './JDInfoScreen'
+import JDCompany from './JDCompanyScreen'
+import JDCompanyScreen from './JDCompanyScreen'
 
 const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
 
@@ -90,10 +92,8 @@ export default function JobDetailScreen() {
             initialPage={pageS}
             onPageSelected={(e) => setPageS(e.nativeEvent.position)}
           >
-            <JDInfoScreen />
-            <View>
-              <Text>Second page</Text>
-            </View>
+            <JDInfoScreen key="abc" />
+            <JDCompanyScreen />
           </PagerView>
         </View>
         <View style={styles.bottom}>
