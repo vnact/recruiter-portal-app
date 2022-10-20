@@ -13,14 +13,17 @@ import React, { useState } from 'react'
 import { blackColor, whiteColor } from '../../constants/Colors'
 import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { useAppDispatch } from '../../app/hook'
+import { loginAction } from '../../reducers/authSlice'
 const width = Dimensions.get('window').width
 export default function SignInScreen() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const nav = useNavigation()
   const [showPass, setShowPass] = useState(true)
+  const dispatch = useAppDispatch()
   const onSubmit = () => {
-    nav.navigate('Home')
+    dispatch(loginAction({ email, password }))
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -78,9 +81,9 @@ export default function SignInScreen() {
           <FontAwesome name="user" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
           <TextInput
             style={styles.input}
-            onChangeText={setUsername}
-            value={username}
-            placeholder="Username"
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Email"
             placeholderTextColor="#4B6587"
             keyboardType="default"
           />

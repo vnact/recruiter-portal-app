@@ -32,6 +32,9 @@ import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'
 import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 import CVScreen from '../screens/InfoScreen/CVScreen'
 import JobDetailScreen from '../screens/JobDetailScreen/JobDetailScreen'
+import { selectIsLoggedIn, selectLoading } from '../reducers/authSlice'
+import { useAppSelector } from '../app/hook'
+import SplashScreen from '../screens/SplashScreen'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -48,36 +51,53 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 function RootNavigator() {
+  const loading = useAppSelector(selectLoading)
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
+  // if (loading == 'loading') {
+  //   return (
+  //     <Stack.Navigator>
+  //       <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false, animation: 'none' }} />
+  //     </Stack.Navigator>
+  //   )
+  // }
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Screen name="SignIn" component={SignInScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="InfoCandidate" component={InfoCandidateScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="CCreateEducation" component={CCreateEducationScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
-      <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
-      <Stack.Screen
-        name="JobDetailScreen"
-        component={JobDetailScreen}
-        options={{
-          // headerStyle: {
-          //   backgroundColor: whiteColor,
-          // },
-          // headerTintColor: blackColor,
-          headerShown: false,
-          // headerBackTitle: '',
-          // headerLeft: () => <MaterialIcons name="keyboard-arrow-left" size={40} color="black" />,
-        }}
-      />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
+      {!(isLoggedIn && loading === 'success') ? (
+        <>
+          <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SignIn" component={SignInScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false }} />
+
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+          <Stack.Screen name="InfoCandidate" component={InfoCandidateScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CCreateEducation" component={CCreateEducationScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
+          <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="JobDetailScreen"
+            component={JobDetailScreen}
+            options={{
+              // headerStyle: {
+              //   backgroundColor: whiteColor,
+              // },
+              // headerTintColor: blackColor,
+              headerShown: false,
+              // headerBackTitle: '',
+              // headerLeft: () => <MaterialIcons name="keyboard-arrow-left" size={40} color="black" />,
+            }}
+          />
+          <Stack.Group screenOptions={{ presentation: 'modal' }}>
+            <Stack.Screen name="Modal" component={ModalScreen} />
+          </Stack.Group>
+        </>
+      )}
     </Stack.Navigator>
   )
 }
