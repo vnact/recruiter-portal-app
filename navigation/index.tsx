@@ -71,7 +71,6 @@ function RootNavigator() {
       ) : (
         <>
           <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false }} />
-
           <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
           <Stack.Screen name="InfoCandidate" component={InfoCandidateScreen} options={{ headerShown: false }} />
           <Stack.Screen name="CCreateEducation" component={CCreateEducationScreen} options={{ headerShown: false }} />

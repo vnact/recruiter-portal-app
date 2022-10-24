@@ -17,8 +17,8 @@ import { useAppDispatch } from '../../app/hook'
 import { loginAction } from '../../reducers/authSlice'
 const width = Dimensions.get('window').width
 export default function SignInScreen() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('daclip26@gmail.com')
+  const [password, setPassword] = useState('12345')
   const nav = useNavigation()
   const [showPass, setShowPass] = useState(true)
   const dispatch = useAppDispatch()

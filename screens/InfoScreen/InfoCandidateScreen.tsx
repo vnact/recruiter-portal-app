@@ -1,12 +1,16 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { formColor, grayColor, greenColor, whiteColor } from '../../constants/Colors'
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import InfoTagSceen from './InfoTagSceen'
 import { useNavigation } from '@react-navigation/native'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
 const width = Dimensions.get('window').width
 export default function InfoCandidateScreen() {
   const nav = useNavigation()
+  const dispatch = useAppDispatch()
+  // const dataUser=useAppSelector(selectData)
+  useEffect(() => {})
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>

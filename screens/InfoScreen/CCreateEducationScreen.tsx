@@ -17,28 +17,62 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import moment from 'moment'
-interface MyFormValues {
-  school: string | null
-  major: string | null
-  timeStart: string | null
-  timeEnd: string | null
-  description: string | null
-}
+import { useAppDispatch } from '../../app/hook'
+import { CreateEducationAction } from '../../reducers/educationSlice'
+// interface MyFormValues {
+//   school: string | null
+//   major: string | null
+//   timeStart: string | null
+//   timeEnd: string | null
+//   description: string | null
+// }
 const width = Dimensions.get('window').width
 export default function CCreateEducationScreen() {
-  const [showPickDate, setShowPickDate] = useState(false)
-  const [studying, setStudying] = useState(false)
+  const dispatch = useAppDispatch()
   const nav = useNavigation()
-  const [dateStart, setDateStart] = useState('Bắt đầu')
-  const [dateEnd, setDateEnd] = useState('Kết thúc')
+  const [showPickDate, setShowPickDate] = useState(false)
+  const [dateStart, setDateStart] = useState('2018-01-01')
+  const [dateEnd, setDateEnd] = useState('2018-01-01')
+  const [studying, setStudying] = useState(true)
+  const [school, setSchool] = useState('Học viện Kỹ thuật Mật mã')
+  const [field, setFiled] = useState('Công nghệ thông tin')
+  const [desc, setDesc] = useState(
+    'Trường Học viện Kỹ Thuật Mật mã thuộc ban cơ yếu chính phủ, chuyên đào tạo các kỹ sự ATTT,CNTT và DT',
+  )
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
-  const initialValues: MyFormValues = {
-    school: null,
-    major: null,
-    timeEnd: null,
-    timeStart: null,
-    description: null,
+  // const initialValues: MyFormValues = {
+  //   school: null,
+  //   major: null,
+  //   timeEnd: null,
+  //   timeStart: null,
+  //   description: null,
+  // }
+
+  const onSubmit = () => {
+    dispatch(
+      CreateEducationAction({
+        school,
+        filedOfStudy: field,
+        startTime: dateStart,
+        endTime: dateEnd,
+        isCompleted: studying,
+        description: desc,
+      }),
+    )
+    // if (dateEnd == '')
+    //   dispatch(
+    //     CreateEducationAction({
+    //       school,
+    //       filedOfStudy: field,
+    //       start_time: dateStart,
+    //       isCompleted: studying,
+    //       description: desc,
+    //     }),
+    //   )
+    // else
+    // console.log(moment(dateStart))
+    // console.log({ dateStart, dateEnd, school, field, studying, desc })
   }
   return (
     // <Formik initialValues={initialValues} onSubmit={(values) => {}}>
@@ -68,13 +102,25 @@ export default function CCreateEducationScreen() {
             <Text style={styles.label}>
               Trường <Text style={styles.star}>*</Text>
             </Text>
-            <TextInput placeholderTextColor={formColor} placeholder="Tên Trường" style={styles.input}></TextInput>
+            <TextInput
+              placeholderTextColor={formColor}
+              placeholder="Tên Trường"
+              style={styles.input}
+              value={school}
+              onChangeText={setSchool}
+            ></TextInput>
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>
               Chuyên ngành <Text style={styles.star}>*</Text>
             </Text>
-            <TextInput placeholderTextColor={formColor} placeholder="VD: Công nghệ thông tin" style={styles.input} />
+            <TextInput
+              value={field}
+              onChangeText={setFiled}
+              placeholderTextColor={formColor}
+              placeholder="VD: Công nghệ thông tin"
+              style={styles.input}
+            />
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>
@@ -167,6 +213,8 @@ export default function CCreateEducationScreen() {
           <View style={styles.field}>
             <Text style={styles.label}>Mô tả chi tiết</Text>
             <TextInput
+              value={desc}
+              onChangeText={setDesc}
               multiline
               placeholderTextColor={formColor}
               placeholder="Tên Trường"
@@ -181,7 +229,7 @@ export default function CCreateEducationScreen() {
                 </View>
               </TouchableOpacity>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => onSubmit()}>
               <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
                 <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
               </View>

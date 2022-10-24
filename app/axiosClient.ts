@@ -38,13 +38,13 @@ apiInstance.interceptors.request.use(async (config) => {
 apiInstance.interceptors.response.use(
   (e) => e,
   (error) => {
-    const { status, data } = error || {}
+    const { status, message } = error || {}
     // const errorMessage = `${data.message}`
     // console.log('abcsa')
-    console.log(error.data.message)
-    console.log(`Error with status ${status}: ${data.message}`)
+    // console.log('aaa', JSON.stringify(error, null, '\t'))
+    console.log(`Error with status ${status || 500}: ${message}`)
 
-    Toast.show(data.message || 'Some thing wrong happen', { duration: 2000, shadow: false })
-    // return Promise.reject(new Error(errorMessage))
+    Toast.show(message || 'Some thing wrong happen', { duration: 2000, shadow: false })
+    // return Promise.reject(new Error(errorMessage))s
   },
 )
