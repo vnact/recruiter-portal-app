@@ -13,9 +13,12 @@ import React, { useState } from 'react'
 import { whiteColor } from '../../constants/Colors'
 import { Entypo, FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { useAppDispatch } from '../../app/hook'
+import { registerAction } from '../../reducers/authSlice'
 const width = Dimensions.get('window').width
 export default function SignUpScreen() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [cPassword, setCPassword] = useState('')
   const nav = useNavigation()
@@ -23,9 +26,23 @@ export default function SignUpScreen() {
   const [showCPass, setShowCPass] = useState(true)
   const [showNoti, setShowNoti] = useState(false)
   const [noti, setNoti] = useState('')
-  const submit = () => {
-    if (password.length < 6) {
-      setNoti('Mật khẩu phải từ 6 kí tự trở lên !')
+
+  const dispatch = useAppDispatch()
+  const pipe = () => {
+    setNoti('')
+    setShowNoti(false)
+    if (email.length == 0) {
+      setNoti('Email không được để trống !')
+      setShowNoti(true)
+      return
+    }
+    if (name.length == 0) {
+      setNoti('Username không được để trống !')
+      setShowNoti(true)
+      return
+    }
+    if (password.length < 5) {
+      setNoti('Mật khẩu phải từ 5 kí tự trở lên !')
       setShowNoti(true)
       return
     }
@@ -34,6 +51,10 @@ export default function SignUpScreen() {
       setShowNoti(true)
       return
     }
+  }
+  const submit = () => {
+    pipe()
+    !showNoti && dispatch(registerAction({ email, password, name }))
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -68,11 +89,22 @@ export default function SignUpScreen() {
           Create your account
         </Text>
         <View style={styles.form__field}>
-          <FontAwesome name="user" size={24} color="#4B6587" style={{ marginHorizontal: 15 }} />
+          <Entypo name="email" size={20} color="#4B6587" style={{ marginHorizontal: 11 }} />
           <TextInput
             style={styles.input}
-            onChangeText={setUsername}
-            value={username}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Email"
+            placeholderTextColor="#4B6587"
+            keyboardType="default"
+          />
+        </View>
+        <View style={styles.form__field}>
+          <FontAwesome name="user" size={24} color="#4B6587" style={{ marginHorizontal: 13 }} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setName}
+            value={name}
             placeholder="Username"
             placeholderTextColor="#4B6587"
             keyboardType="default"
