@@ -15,9 +15,6 @@ export default function InfoCandidateScreen() {
   useEffect(() => {
     dispatch(GetSelfAction())
   }, [])
-  useEffect(() => {
-    console.log(dataUser?.educations)
-  })
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>
