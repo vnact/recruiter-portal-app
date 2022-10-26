@@ -6,27 +6,38 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
+  Modal,
   Animated,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native'
-import React, { useRef, useState } from 'react'
-import { blackColor, formColor, grayColor, redColor, whiteColor } from '../../constants/Colors'
+import React, { useRef, useState, useEffect } from 'react'
+import { blackColor, formColor, grayColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useNavigation } from '@react-navigation/native'
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import moment from 'moment'
-import { Entypo } from '@expo/vector-icons'
+import { Entypo, MaterialIcons } from '@expo/vector-icons'
+import Layout from '../../constants/Layout'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetAllIndustryAction, selectIndustry, selectLoading } from '../../reducers/industrySlice'
 
 const width = Dimensions.get('window').width
 export default function CCreateInfoScreen() {
+  const dispatch = useAppDispatch()
   const [date, setDate] = useState(new Date())
+  const [modalVisible, setModalVisible] = useState(false)
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
   const scrollValue = useRef(new Animated.Value(0)).current
   const [gender, setGender] = useState(null)
   const [dateBirth, setDateBirth] = useState('Ngày sinh của bạn')
+  const loading = useAppSelector(selectLoading)
+  const dataIndustry = useAppSelector(selectIndustry)
+  useEffect(() => {
+    dispatch(GetAllIndustryAction())
+  })
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -252,6 +263,28 @@ export default function CCreateInfoScreen() {
             </View>
             <View style={styles.field}>
               <Text style={styles.label}>
+                Ngành nghề ứng tuyển <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                editable={false}
+                onPressIn={() => setModalVisible(true)}
+                placeholderTextColor={formColor}
+                placeholder="Ngành nghề bạn ứng tuyển"
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Vị trí <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                placeholderTextColor={formColor}
+                placeholder="Vị trí công việc"
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
                 Địa chỉ <Text style={styles.star}>*</Text>
               </Text>
               <TextInput
@@ -321,6 +354,31 @@ export default function CCreateInfoScreen() {
               </TouchableOpacity>
             </View>
           </View>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible)
+            }}
+          >
+            <View style={styles.modalView}>
+              <View style={styles.top}>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
+                </TouchableOpacity>
+                <TextInput autoFocus={true} placeholder="Nhập vào từ khóa" placeholderTextColor={formColor}></TextInput>
+              </View>
+              <View style={styles.list}>
+                {dataIndustry &&
+                  dataIndustry.map((e) => (
+                    <View style={styles.item}>
+                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                    </View>
+                  ))}
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </View>
     </TouchableWithoutFeedback>
@@ -328,6 +386,20 @@ export default function CCreateInfoScreen() {
 }
 
 const styles = StyleSheet.create({
+  list: {},
+  item: { paddingHorizontal: 15, borderBottomWidth: 0.2, height: 50, justifyContent: 'center' },
+  top: {
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    borderBottomWidth: 0.2,
+    paddingBottom: 10,
+  },
+  modalView: {
+    paddingTop: 55,
+    width: Layout.window.width,
+    height: Layout.window.height,
+    backgroundColor: whiteColor,
+  },
   formSubmit: {
     flexDirection: 'row',
     // bottom: 50,

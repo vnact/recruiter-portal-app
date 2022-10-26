@@ -9,9 +9,9 @@ import {
   View,
 } from 'react-native'
 import React, { useState } from 'react'
-import { blackColor, formColor, grayColor, greenColor, redColor, whiteColor } from '../../constants/Colors'
-import { FastField, Field, Form, Formik } from 'formik'
-import { Ionicons } from '@expo/vector-icons'
+import { blackColor, formColor, redColor, whiteColor } from '../../constants/Colors'
+// import { FastField, Field, Form, Formik } from 'formik'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
@@ -30,10 +30,11 @@ const width = Dimensions.get('window').width
 export default function CCreateEducationScreen() {
   const dispatch = useAppDispatch()
   const nav = useNavigation()
+
   const [showPickDate, setShowPickDate] = useState(false)
   const [dateStart, setDateStart] = useState('2018-01-01')
   const [dateEnd, setDateEnd] = useState('2018-01-01')
-  const [studying, setStudying] = useState(true)
+  const [studying, setStudying] = useState(false)
   const [school, setSchool] = useState('Học viện Kỹ thuật Mật mã')
   const [field, setFiled] = useState('Công nghệ thông tin')
   const [desc, setDesc] = useState(
@@ -50,27 +51,17 @@ export default function CCreateEducationScreen() {
   // }
 
   const onSubmit = () => {
-    dispatch(
-      CreateEducationAction({
-        school,
-        filedOfStudy: field,
-        startTime: dateStart,
-        endTime: dateEnd,
-        isCompleted: studying,
-        description: desc,
-      }),
-    )
-    // if (dateEnd == '')
-    //   dispatch(
-    //     CreateEducationAction({
-    //       school,
-    //       filedOfStudy: field,
-    //       start_time: dateStart,
-    //       isCompleted: studying,
-    //       description: desc,
-    //     }),
-    //   )
-    // else
+    let payload = {
+      school,
+      fieldOfStudy: field,
+      startTime: dateStart,
+      endTime: dateEnd || null,
+      isCompleted: !studying,
+      description: desc,
+    }
+    studying && delete payload['endTime']
+    console.log(payload)
+    dispatch(CreateEducationAction(payload))
     // console.log(moment(dateStart))
     // console.log({ dateStart, dateEnd, school, field, studying, desc })
   }
@@ -114,13 +105,17 @@ export default function CCreateEducationScreen() {
             <Text style={styles.label}>
               Chuyên ngành <Text style={styles.star}>*</Text>
             </Text>
+            {/* <TouchableOpacity onPress={() => setModalVisible(true)}> */}
             <TextInput
+              editable={false}
               value={field}
               onChangeText={setFiled}
               placeholderTextColor={formColor}
               placeholder="VD: Công nghệ thông tin"
               style={styles.input}
+              onPressIn={() => setModalVisible(true)}
             />
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>
@@ -182,8 +177,8 @@ export default function CCreateEducationScreen() {
               // isDarkModeEnabled={false}
               onConfirm={(date) => {
                 if (whatTime == 'start') {
-                  setDateStart(moment(date).format('DD/MM/YYYY'))
-                } else setDateEnd(moment(date).format('DD/MM/YYYY'))
+                  setDateStart(moment(date).format('YYYY-MM-DD'))
+                } else setDateEnd(moment(date).format('YYYY-MM-DD'))
                 setShowPickDate(false)
               }}
               onCancel={() => setShowPickDate(false)}

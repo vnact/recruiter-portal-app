@@ -35,6 +35,7 @@ export const educationSlice = createSlice({
       .addCase(CreateEducationAction.rejected, (state, payload) => {
         state.loading = 'error'
         state.message = payload.error.message
+        console.log('error is ' + payload.error.message)
       })
   },
 })

@@ -5,12 +5,19 @@ import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import InfoTagSceen from './InfoTagSceen'
 import { useNavigation } from '@react-navigation/native'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetSelfAction, selectUser } from '../../reducers/userSlice'
+import moment from 'moment'
 const width = Dimensions.get('window').width
 export default function InfoCandidateScreen() {
   const nav = useNavigation()
   const dispatch = useAppDispatch()
-  // const dataUser=useAppSelector(selectData)
-  useEffect(() => {})
+  const dataUser = useAppSelector(selectUser)
+  useEffect(() => {
+    dispatch(GetSelfAction())
+  }, [])
+  useEffect(() => {
+    console.log(dataUser?.educations)
+  })
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>
@@ -87,14 +94,22 @@ export default function InfoCandidateScreen() {
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
-                <View style={styles.item__info}>
-                  <Text style={styles.item__text1}>Học Viện Kĩ Thuật Mật Mã</Text>
-                  <Text style={styles.item__text2}>Công nghệ thông tin</Text>
-                  <Text style={styles.item__text3}>9/2018 - Hiện Tại</Text>
-                </View>
-              </View>
+              {dataUser?.educations
+                ? dataUser.educations.map((e) => (
+                    <View style={styles.item}>
+                      <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.school}</Text>
+                        <Text style={styles.item__text2}>{e.fieldOfStudy}</Text>
+                        <Text style={styles.item__text3}>
+                          {e.isCompleted
+                            ? moment(e.startTime).format('DD/MM/YYYY') + ' - ' + moment(e.endTime).format('DD/MM/YYYY')
+                            : moment(e.startTime).format('DD/MM/YYYY') + ' - Hiện tại'}
+                        </Text>
+                      </View>
+                    </View>
+                  ))
+                : ''}
             </View>
           </View>
           <View style={styles.container__item}>
