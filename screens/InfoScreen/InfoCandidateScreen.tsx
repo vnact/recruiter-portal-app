@@ -14,6 +14,8 @@ export default function InfoCandidateScreen() {
   const dataUser = useAppSelector(selectUser)
   useEffect(() => {
     dispatch(GetSelfAction())
+    console.log('ádasd')
+    console.log(dataUser?.skills[0])
   }, [])
   return (
     <View style={styles.container}>
@@ -86,13 +88,14 @@ export default function InfoCandidateScreen() {
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Học vấn</Text>
-              <TouchableOpacity onPress={() => nav.navigate('CCreateEducation')}>
+              <TouchableOpacity onPress={() => nav.navigate('CCreateEducation', {})}>
                 <AntDesign name="pluscircleo" size={20} color="#576CD6" />
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
-              {dataUser?.educations
-                ? dataUser.educations.map((e) => (
+              {dataUser?.educations && dataUser?.educations.length != 0 ? (
+                dataUser.educations.map((e) => (
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateEducation', { id: e.id })}>
                     <View style={styles.item}>
                       <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
                       <View style={styles.item__info}>
@@ -105,8 +108,24 @@ export default function InfoCandidateScreen() {
                         </Text>
                       </View>
                     </View>
-                  ))
-                : ''}
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Hãy thêm học vấn của bạn
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
           <View style={styles.container__item}>

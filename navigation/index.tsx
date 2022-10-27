@@ -25,7 +25,7 @@ import SignUpScreen from '../screens/LoginScreen/SignUpScreen'
 import HomeScreen from '../screens/Home/HomeScreen'
 
 import InfoCandidateScreen from '../screens/InfoScreen/InfoCandidateScreen'
-import CCreateEducationScreen from '../screens/InfoScreen/CCreateEducationScreen'
+import { CCreateEducationScreen } from '../screens/InfoScreen/CCreateEducationScreen'
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import CCreateSkillScreen from '../screens/InfoScreen/CCreateSkillScreen'

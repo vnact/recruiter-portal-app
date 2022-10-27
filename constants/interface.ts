@@ -32,7 +32,7 @@ export interface baseEntity {
 }
 
 export interface IEducation {
-  id: number
+  id?: number
   school: string
   isCompleted?: boolean
   degree?: string
@@ -61,6 +61,7 @@ export interface IUser {
   placeOfOrigin?: string
   description?: string
   educations: IEducation[]
+  skills: IUserSkill[]
 }
 export interface ICompany {
   name: string
@@ -99,6 +100,9 @@ export interface ICareer {
 export interface IIndustry {
   id: number
   name: string
+}
+export interface IUserSkill {
+  skill: ISkill[]
 }
 export interface ISkill {
   id: number

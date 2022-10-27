@@ -22,6 +22,7 @@ import { Entypo, MaterialIcons } from '@expo/vector-icons'
 import Layout from '../../constants/Layout'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllIndustryAction, selectIndustry, selectLoading } from '../../reducers/industrySlice'
+import { IIndustry } from '../../constants/interface'
 
 const width = Dimensions.get('window').width
 export default function CCreateInfoScreen() {
@@ -31,13 +32,27 @@ export default function CCreateInfoScreen() {
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
   const scrollValue = useRef(new Animated.Value(0)).current
+  const [keyword, setKeyWord] = useState('')
   const [gender, setGender] = useState(null)
+  const [industry, setIndustry] = useState<string | undefined>(undefined)
   const [dateBirth, setDateBirth] = useState('Ngày sinh của bạn')
   const loading = useAppSelector(selectLoading)
   const dataIndustry = useAppSelector(selectIndustry)
+  // let industriesList = dataIndustry
+  let [industriesList, setIndustriesList] = useState<IIndustry[] | undefined>(dataIndustry)
+  const fillterList = (key: string) => {
+    console.log(key)
+    setIndustriesList(dataIndustry?.filter((e) => e.name.includes(key)))
+    console.log(industriesList)
+  }
   useEffect(() => {
     dispatch(GetAllIndustryAction())
-  })
+    // console.log('1')
+    // console.log(industriesList)
+  }, [])
+  useEffect(() => {
+    fillterList(keyword)
+  }, [keyword])
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -268,6 +283,7 @@ export default function CCreateInfoScreen() {
               <TextInput
                 editable={false}
                 onPressIn={() => setModalVisible(true)}
+                value={industry}
                 placeholderTextColor={formColor}
                 placeholder="Ngành nghề bạn ứng tuyển"
                 style={styles.input}
@@ -367,14 +383,27 @@ export default function CCreateInfoScreen() {
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
                   <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
                 </TouchableOpacity>
-                <TextInput autoFocus={true} placeholder="Nhập vào từ khóa" placeholderTextColor={formColor}></TextInput>
+                <TextInput
+                  autoFocus={true}
+                  placeholder="Nhập vào từ khóa"
+                  placeholderTextColor={formColor}
+                  value={keyword}
+                  onChangeText={setKeyWord}
+                ></TextInput>
               </View>
               <View style={styles.list}>
-                {dataIndustry &&
-                  dataIndustry.map((e) => (
-                    <View style={styles.item}>
-                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
-                    </View>
+                {industriesList &&
+                  industriesList.map((e, key) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIndustry(e.name)
+                        setModalVisible(false)
+                      }}
+                    >
+                      <View style={styles.item} key={key}>
+                        <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                      </View>
+                    </TouchableOpacity>
                   ))}
               </View>
             </View>

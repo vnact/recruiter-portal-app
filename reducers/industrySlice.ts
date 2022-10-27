@@ -28,7 +28,7 @@ export const industrySlice = createSlice({
       .addCase(GetAllIndustryAction.fulfilled, (state, payload) => {
         console.log(payload.payload.data)
         state.loading = 'success'
-        state.industries = payload.payload.data
+        state.industries = payload.payload
       })
       .addCase(GetAllIndustryAction.rejected, (state, payload) => {
         state.loading = 'error'

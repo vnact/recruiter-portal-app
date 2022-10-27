@@ -28,7 +28,6 @@ const userSlice = createSlice({
       .addCase(GetSelfAction.fulfilled, (state, payload) => {
         state.loading = 'success'
         state.user = payload.payload
-        console.log(state.user?.educations[0])
       })
       .addCase(GetSelfAction.rejected, (state, payload) => {
         state.loading = 'error'
