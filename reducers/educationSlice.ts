@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
 import { IEducation } from '../constants/interface'
+import { GetSelfAction } from './userSlice'
 
 interface IEducationState {
   loading: 'idle' | 'loading' | 'success' | 'error'
@@ -12,8 +13,32 @@ interface IEducationState {
 const initialState: IEducationState = {
   loading: 'idle',
 }
-export const CreateEducationAction = createAsyncThunk('education/create', async (payload: Omit<IEducation, 'id'>) => {
-  const { data } = await apiInstance.post('education', payload)
+interface IIdEducation {
+  id: number
+}
+export const CreateEducationAction = createAsyncThunk(
+  'education/create',
+  async (payload: Omit<IEducation, 'id'>, thunk) => {
+    const { data } = await apiInstance.post('education', payload)
+    thunk.dispatch(GetSelfAction())
+    return data
+  },
+)
+export const DeleteEducationAction = createAsyncThunk('education/delete', async (payload: { id: number }, thunk) => {
+  const { id } = payload
+  await apiInstance.delete(`education/${id}`)
+  thunk.dispatch(GetSelfAction())
+  return
+})
+export const UpdateEducationAction = createAsyncThunk('education/update', async (payload: IEducation, thunk) => {
+  const { id, ...dataUpdate } = payload
+  await apiInstance.patch(`education/${id}`, dataUpdate)
+  thunk.dispatch(GetSelfAction())
+  return
+})
+export const GetOneEducationAction = createAsyncThunk('education/id', async (payload: IIdEducation) => {
+  const { id } = payload
+  const { data } = await apiInstance.get(`education/${id}`)
   return data
 })
 export const educationSlice = createSlice({
@@ -21,21 +46,40 @@ export const educationSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(CreateEducationAction.pending, (state) => {
-        console.log('Loading edu')
-        state.loading = 'loading'
-        state.message = undefined
-      })
-      .addCase(CreateEducationAction.fulfilled, (state, payload) => {
-        console.log('Success edu')
-        state.loading = 'success'
-        // state.message = payload.payload.message
-      })
-      .addCase(CreateEducationAction.rejected, (state, payload) => {
-        state.loading = 'error'
-        state.message = payload.error.message
-      })
+    ;[CreateEducationAction, UpdateEducationAction, DeleteEducationAction].forEach((act) => {
+      builder
+        .addCase(act.pending, (state) => {
+          console.log('Loading edu')
+          state.loading = 'loading'
+          state.message = undefined
+        })
+        .addCase(act.fulfilled, (state, payload) => {
+          console.log('Success edu')
+          state.loading = 'success'
+          // state.message = payload.payload.message
+        })
+        .addCase(act.rejected, (state, payload) => {
+          state.loading = 'error'
+          state.message = payload.error.message
+          console.log('error is ' + payload.error.message)
+        })
+    }),
+      builder
+        .addCase(GetOneEducationAction.pending, (state) => {
+          console.log('Loading edu')
+          state.loading = 'loading'
+          state.message = undefined
+        })
+        .addCase(GetOneEducationAction.fulfilled, (state, payload) => {
+          console.log('Success edu')
+          state.loading = 'success'
+          state.education = payload.payload
+        })
+        .addCase(GetOneEducationAction.rejected, (state, payload) => {
+          state.loading = 'error'
+          state.message = payload.error.message
+          console.log('error is ' + payload.error.message)
+        })
   },
 })
 export default educationSlice.reducer

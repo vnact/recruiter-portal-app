@@ -21,10 +21,10 @@ export type RootStackParamList = {
   SignUp: undefined
   Home: NavigatorScreenParams<RootTabParamList> | undefined
   InfoCandidate: undefined
-  CCreateEducation: undefined
+  CCreateEducation: { id?: number }
   CCreateInfo: undefined
   CCreateExp: undefined
-  CCreateSkill: undefined
+  CCreateSkill: { id?: number }
   Search: undefined
   CVSScreen: undefined
   JobDetailScreen: undefined

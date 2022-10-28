@@ -36,6 +36,7 @@ const initialState: IAuthState = {
 }
 export const loginAction = createAsyncThunk('auth/login', async (payload: ILoginPayload) => {
   //   console.log({ payload })
+  console.log(payload)
   const { data } = await apiInstance.post<ILoginSuccessResponse>('/auth/login', payload)
   return data
 })

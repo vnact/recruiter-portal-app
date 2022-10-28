@@ -1,10 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../reducers/authSlice'
 import educationReducer from '../reducers/educationSlice'
+import userReducer from '../reducers/userSlice'
+import industryReducer from '../reducers/industrySlice'
+import skillReducer from '../reducers/skillSlice'
+import userSkillReducer from '../reducers/userSkillSlice'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     education: educationReducer,
+    user: userReducer,
+    industry: industryReducer,
+    skill: skillReducer,
+    userSkill: userSkillReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

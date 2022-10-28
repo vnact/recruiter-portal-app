@@ -7,18 +7,26 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from 'react-native'
-import React, { useState } from 'react'
-import { blackColor, formColor, grayColor, greenColor, redColor, whiteColor } from '../../constants/Colors'
-import { FastField, Field, Form, Formik } from 'formik'
-import { Ionicons } from '@expo/vector-icons'
+import React, { useState, useEffect } from 'react'
+import { blackColor, formColor, redColor, whiteColor } from '../../constants/Colors'
+// import { FastField, Field, Form, Formik } from 'formik'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import moment from 'moment'
-import { useAppDispatch } from '../../app/hook'
-import { CreateEducationAction } from '../../reducers/educationSlice'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import {
+  CreateEducationAction,
+  DeleteEducationAction,
+  GetOneEducationAction,
+  selectingEducation,
+  UpdateEducationAction,
+} from '../../reducers/educationSlice'
+import { RootStackScreenProps } from '../../types'
 // interface MyFormValues {
 //   school: string | null
 //   major: string | null
@@ -27,20 +35,37 @@ import { CreateEducationAction } from '../../reducers/educationSlice'
 //   description: string | null
 // }
 const width = Dimensions.get('window').width
-export default function CCreateEducationScreen() {
+export const CCreateEducationScreen: React.FC<RootStackScreenProps<'CCreateEducation'>> = ({ route }) => {
   const dispatch = useAppDispatch()
   const nav = useNavigation()
+  const { id } = route.params
+  useEffect(() => {
+    if (id) {
+      dispatch(GetOneEducationAction({ id }))
+    }
+  }, [])
+  const educationData = useAppSelector(selectingEducation)
+  useEffect(() => {
+    if (educationData && id) {
+      educationData.endTime && setDateEnd(educationData.endTime)
+      setDateStart(educationData.startTime)
+      educationData.description && setDesc(educationData.description)
+      setFiled(educationData.fieldOfStudy)
+      setSchool(educationData.school)
+      setStudying(!educationData.isCompleted)
+      console.log(studying)
+    }
+  }, [educationData])
+
   const [showPickDate, setShowPickDate] = useState(false)
-  const [dateStart, setDateStart] = useState('2018-01-01')
-  const [dateEnd, setDateEnd] = useState('2018-01-01')
-  const [studying, setStudying] = useState(true)
-  const [school, setSchool] = useState('Học viện Kỹ thuật Mật mã')
-  const [field, setFiled] = useState('Công nghệ thông tin')
-  const [desc, setDesc] = useState(
-    'Trường Học viện Kỹ Thuật Mật mã thuộc ban cơ yếu chính phủ, chuyên đào tạo các kỹ sự ATTT,CNTT và DT',
-  )
-  const [working, setWorking] = useState(false)
-  const [whatTime, setWhatTime] = useState('')
+  const [dateStart, setDateStart] = useState<string | undefined>()
+  const [dateEnd, setDateEnd] = useState<string | undefined>()
+  const [studying, setStudying] = useState(false)
+  const [school, setSchool] = useState<string | undefined>()
+  const [field, setFiled] = useState<string | undefined>()
+  const [desc, setDesc] = useState<string | undefined>()
+  // const [working, setWorking] = useState(undefined)
+  const [whatTime, setWhatTime] = useState<string | undefined>()
   // const initialValues: MyFormValues = {
   //   school: null,
   //   major: null,
@@ -48,31 +73,49 @@ export default function CCreateEducationScreen() {
   //   timeStart: null,
   //   description: null,
   // }
-
-  const onSubmit = () => {
-    dispatch(
-      CreateEducationAction({
+  const onDelete = () => {
+    Alert.alert('Cảnh báo', 'Bạn có muốn xóa không ?', [
+      {
+        text: 'Cancel',
+        onPress: () => nav.goBack(),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          if (id) {
+            await dispatch(DeleteEducationAction({ id }))
+            alert('Xóa thành công')
+            nav.goBack()
+          }
+        },
+      },
+    ])
+  }
+  const onSubmit = async () => {
+    if (dateStart && school && field) {
+      let payload = {
+        id: id || undefined,
         school,
-        filedOfStudy: field,
+        fieldOfStudy: field,
         startTime: dateStart,
-        endTime: dateEnd,
-        isCompleted: studying,
+        endTime: dateEnd || undefined,
+        isCompleted: !studying,
         description: desc,
-      }),
-    )
-    // if (dateEnd == '')
-    //   dispatch(
-    //     CreateEducationAction({
-    //       school,
-    //       filedOfStudy: field,
-    //       start_time: dateStart,
-    //       isCompleted: studying,
-    //       description: desc,
-    //     }),
-    //   )
-    // else
-    // console.log(moment(dateStart))
-    // console.log({ dateStart, dateEnd, school, field, studying, desc })
+      }
+      if (id) {
+        await dispatch(UpdateEducationAction(payload))
+        alert('Cập nhật thành công')
+        nav.goBack()
+      } else {
+        await dispatch(CreateEducationAction(payload))
+        alert('Tạo thành công')
+        nav.goBack()
+        // if (studying) delete payload['endTime']
+        // studying && delete payload['endTime']
+        // console.log(payload)
+      }
+    }
   }
   return (
     // <Formik initialValues={initialValues} onSubmit={(values) => {}}>
@@ -114,13 +157,16 @@ export default function CCreateEducationScreen() {
             <Text style={styles.label}>
               Chuyên ngành <Text style={styles.star}>*</Text>
             </Text>
+            {/* <TouchableOpacity onPress={() => setModalVisible(true)}> */}
             <TextInput
               value={field}
               onChangeText={setFiled}
               placeholderTextColor={formColor}
               placeholder="VD: Công nghệ thông tin"
               style={styles.input}
+              // onPressIn={() => setModalVisible(true)}
             />
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>
@@ -182,14 +228,15 @@ export default function CCreateEducationScreen() {
               // isDarkModeEnabled={false}
               onConfirm={(date) => {
                 if (whatTime == 'start') {
-                  setDateStart(moment(date).format('DD/MM/YYYY'))
-                } else setDateEnd(moment(date).format('DD/MM/YYYY'))
+                  setDateStart(moment(date).format('YYYY-MM-DD'))
+                } else setDateEnd(moment(date).format('YYYY-MM-DD'))
                 setShowPickDate(false)
               }}
               onCancel={() => setShowPickDate(false)}
             />
           </View>
           <BouncyCheckbox
+            isChecked={studying}
             size={22}
             fillColor={redColor}
             unfillColor="#FFFFFF"
@@ -224,16 +271,25 @@ export default function CCreateEducationScreen() {
           <View style={styles.formSubmit}>
             <TouchableOpacity>
               <TouchableOpacity onPress={() => nav.goBack()}>
-                <View style={styles.submit}>
+                <View style={{ ...styles.submit, backgroundColor: '#F7DC6F' }}>
                   <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
                 </View>
               </TouchableOpacity>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => onSubmit()}>
               <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
-                <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
+                <Text style={{ color: whiteColor, fontSize: 18 }}>{id ? 'Cập nhật' : 'Thêm mới'}</Text>
               </View>
             </TouchableOpacity>
+            {id && (
+              <TouchableOpacity>
+                <TouchableOpacity onPress={() => onDelete()}>
+                  <View style={{ ...styles.submit, backgroundColor: redColor }}>
+                    <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
+                  </View>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -257,7 +313,7 @@ const styles = StyleSheet.create({
   },
   submit: {
     backgroundColor: redColor,
-    width: 150,
+    width: 130,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
