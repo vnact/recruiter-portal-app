@@ -14,8 +14,8 @@ export default function InfoCandidateScreen() {
   const dataUser = useAppSelector(selectUser)
   useEffect(() => {
     dispatch(GetSelfAction())
-    console.log('ádasd')
-    console.log(dataUser?.skills[0])
+    // console.log('ádasd')
+    // console.log(dataUser?.skills[0])
   }, [])
   return (
     <View style={styles.container}>
@@ -131,25 +131,39 @@ export default function InfoCandidateScreen() {
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Kĩ năng</Text>
-              <TouchableOpacity onPress={() => nav.navigate('CCreateSkill')}>
+              <TouchableOpacity onPress={() => nav.navigate('CCreateSkill', {})}>
                 <AntDesign name="pluscircleo" size={20} color="#576CD6" />
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
-                <View style={styles.item__info}>
-                  <Text
-                    style={{
-                      ...styles.item__text1,
-                      fontWeight: '100',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    Hãy thêm kĩ năng của bạn nhé !
-                  </Text>
+              {dataUser?.skills && dataUser.skills.length != 0 ? (
+                dataUser.skills.map((e) => (
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateSkill', { id: e.skill.id })}>
+                    <View style={styles.item}>
+                      <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.skill.name}</Text>
+                        <Text style={styles.item__text2}>{e.certificate}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Hãy thêm kĩ năng của bạn nhé !
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
           <View style={styles.container__item}>

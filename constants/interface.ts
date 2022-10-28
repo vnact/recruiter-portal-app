@@ -102,7 +102,8 @@ export interface IIndustry {
   name: string
 }
 export interface IUserSkill {
-  skill: ISkill[]
+  certificate?: string
+  skill: ISkill
 }
 export interface ISkill {
   id: number

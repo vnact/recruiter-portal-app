@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
@@ -17,14 +18,16 @@ import Layout from '../../constants/Layout'
 import { ISkill } from '../../constants/interface'
 import { GetAllSkillAction, selectSkills } from '../../reducers/skillSlice'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
-import { CreateUserSkillAction } from '../../reducers/userSkillSlice'
+import { CreateUserSkillAction, DeleteUserSkillAction } from '../../reducers/userSkillSlice'
+import { RootStackScreenProps } from '../../types'
 const width = Dimensions.get('window').width
-export default function CCreateSkillScreen() {
+export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> = ({ route }) => {
+  const { id } = route.params
   const nav = useNavigation()
   const [modalVisible, setModalVisible] = useState(false)
   const [skill, setSkill] = useState<string | undefined>()
   const [idSkill, setIdSkill] = useState<number | undefined>()
-  const [desc, setDesc] = useState<string | undefined>()
+  const [certificate, setCertificate] = useState<string | undefined>()
   const [keyword, setKeyWord] = useState('')
   const dataSkills = useAppSelector(selectSkills)
   const dispatch = useAppDispatch()
@@ -40,14 +43,47 @@ export default function CCreateSkillScreen() {
     // console.log(industriesList)
   }, [])
   useEffect(() => {
+    if (id && dataSkills) {
+      setIdSkill(id)
+      setSkill(dataSkills[id - 1].name)
+    }
+  }, [dataSkills])
+  useEffect(() => {
     fillterList(keyword)
   }, [keyword])
-  const submit = () => {
+  const submit = async () => {
+    if (skill && idSkill) {
+      const payload = {
+        skills_id: [idSkill],
+        certificate,
+      }
+      await dispatch(CreateUserSkillAction(payload))
+      Alert.alert('Bạn thêm kĩ năng thành công!')
+      nav.goBack()
+    }
+  }
+  const deleteSkill = async () => {
     if (skill && idSkill) {
       const payload = {
         skills_id: [idSkill],
       }
-      dispatch(CreateUserSkillAction(payload))
+      Alert.alert('Cảnh báo', 'Bạn có muốn xóa không ?', [
+        {
+          text: 'Cancel',
+          onPress: () => nav.goBack(),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            if (id) {
+              await dispatch(DeleteUserSkillAction(payload))
+              alert('Xóa thành công')
+              nav.goBack()
+            }
+          },
+        },
+      ])
     }
   }
   return (
@@ -97,8 +133,8 @@ export default function CCreateSkillScreen() {
           <View style={styles.field}>
             <Text style={styles.label}>Mô tả chi tiết</Text>
             <TextInput
-              value={desc}
-              onChangeText={setDesc}
+              value={certificate}
+              onChangeText={setCertificate}
               multiline
               placeholderTextColor={formColor}
               placeholder="Mô tả chi tiết kỹ nằng"
@@ -113,11 +149,19 @@ export default function CCreateSkillScreen() {
                 </View>
               </TouchableOpacity>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => submit()}>
-              <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
-                <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
-              </View>
-            </TouchableOpacity>
+            {id ? (
+              <TouchableOpacity onPress={() => deleteSkill()}>
+                <View style={{ ...styles.submit, backgroundColor: redColor }}>
+                  <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => submit()}>
+                <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
+                  <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <Modal
@@ -277,7 +321,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submit: {
-    backgroundColor: redColor,
+    backgroundColor: '#F7DC6F',
     width: 150,
     height: 50,
     justifyContent: 'center',

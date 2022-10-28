@@ -9,9 +9,6 @@ interface ISkillState {
   userSkill?: ISkill
   message?: string
 }
-interface ISkills {
-  skills_id: number[]
-}
 const initialState: ISkillState = {
   loading: 'idle',
 }
@@ -21,19 +18,22 @@ interface IIdSkill {
 interface IUserSkill extends ISkills {
   userId: number
 }
-export const CreateUserSkillAction = createAsyncThunk(
-  'user-skill/create',
-  async (payload: Omit<ISkills, 'id'>, thunk) => {
-    const { data } = await apiInstance.post('user-skill', payload)
-    thunk.dispatch(GetSelfAction())
-    return data
-  },
-)
-export const DeleteUserSkillAction = createAsyncThunk('user-skill/delete', async (payload: { id: number }, thunk) => {
-  const { id } = payload
-  await apiInstance.delete(`UserSkill/${id}`)
+interface ISkills {
+  skills_id: number[]
+  certificate?: string
+}
+interface ISkillDelete {
+  skills_id: number[]
+}
+export const DeleteUserSkillAction = createAsyncThunk('user-skill/delete', async (payload: ISkillDelete, thunk) => {
+  await apiInstance.delete('user-skill', { data: payload })
   thunk.dispatch(GetSelfAction())
   return
+})
+export const CreateUserSkillAction = createAsyncThunk('user-skill/create', async (payload: ISkills, thunk) => {
+  const { data } = await apiInstance.post('user-skill', payload)
+  thunk.dispatch(GetSelfAction())
+  return data
 })
 export const UpdateUserSkillAction = createAsyncThunk('user-skill/update', async (payload: IUserSkill, thunk) => {
   const { userId, ...dataUpdate } = payload
@@ -66,7 +66,7 @@ export const UserSkillSlice = createSlice({
         .addCase(act.rejected, (state, payload) => {
           state.loading = 'error'
           state.message = payload.error.message
-          console.log('error is ' + payload.error.message)
+          console.log('error is ' + payload.error)
         })
     }),
       builder
