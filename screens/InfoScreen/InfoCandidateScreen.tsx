@@ -12,6 +12,7 @@ export default function InfoCandidateScreen() {
   const nav = useNavigation()
   const dispatch = useAppDispatch()
   const dataUser = useAppSelector(selectUser)
+  console.log(dataUser?.skills)
   useEffect(() => {
     dispatch(GetSelfAction())
     // console.log('ádasd')

@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { AntDesign, Entypo, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
@@ -35,6 +35,7 @@ import { JobDetailScreen } from '../screens/JobDetailScreen/JobDetailScreen'
 import { selectIsLoggedIn, selectLoading } from '../reducers/authSlice'
 import { useAppSelector } from '../app/hook'
 import SplashScreen from '../screens/SplashScreen'
+import ListJobScreen from '../screens/ListJobScreen/ListJobScreen'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -112,7 +113,7 @@ function BottomTabNavigator() {
   const color = '#59CE8F'
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="RootTab"
       screenOptions={{
         tabBarActiveTintColor: mainColor,
         headerTitleStyle: {
@@ -130,15 +131,15 @@ function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        name="Home"
+        name="JobList"
         component={HomeScreen}
-        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+        options={({ navigation }: RootTabScreenProps<'JobList'>) => ({
           title: 'Việc làm',
           headerTitleAlign: 'center',
           headerTintColor: '#333333',
           // tabBarLabelStyle: { color: mainColor },
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="briefcase-variant-outline" size={24} color={color} />
+            <MaterialCommunityIcons name="briefcase-variant-outline" size={28} color={color} />
           ),
           headerLeft: () => (
             <Feather
@@ -160,13 +161,23 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
+        name="CV"
         component={InfoCandidateScreen}
         options={{
           headerShown: false,
           headerTintColor: '#333333',
           title: 'Hồ sơ',
           tabBarIcon: ({ color }) => <AntDesign name="idcard" size={24} color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="List"
+        component={ListJobScreen}
+        options={{
+          headerShown: false,
+          headerTintColor: '#333333',
+          title: 'Danh sách',
+          tabBarIcon: ({ color }) => <Entypo name="list" size={28} color={color} />,
         }}
       />
     </BottomTab.Navigator>

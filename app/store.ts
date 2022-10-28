@@ -5,6 +5,8 @@ import userReducer from '../reducers/userSlice'
 import industryReducer from '../reducers/industrySlice'
 import skillReducer from '../reducers/skillSlice'
 import userSkillReducer from '../reducers/userSkillSlice'
+import companyReducer from '../reducers/companySlice'
+import careerReducer from '../reducers/careerSlice'
 import jobReducer from '../reducers/jobSlice'
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     industry: industryReducer,
     skill: skillReducer,
     userSkill: userSkillReducer,
+    company: companyReducer,
+    career: careerReducer,
     job: jobReducer,
   },
   middleware: (getDefaultMiddleware) =>

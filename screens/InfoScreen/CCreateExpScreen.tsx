@@ -8,26 +8,51 @@ import {
   Animated,
   TouchableWithoutFeedback,
   Keyboard,
+  Modal,
 } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
-import { Ionicons } from '@expo/vector-icons'
-import { blackColor, formColor, redColor, whiteColor } from '../../constants/Colors'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { blackColor, formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
 const width = Dimensions.get('window').width
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import moment from 'moment'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import Layout from '../../constants/Layout'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetAllCompanyAction, selectCompanies } from '../../reducers/companySlice'
 
 export default function CCreateExpScreen() {
+  interface ICompany {
+    id: number
+    name: string
+  }
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalCareerVisible, setModalCareerVisible] = useState(false)
+  const [company, setCompany] = useState<string | undefined>()
+  const [idCompany, setIdCompany] = useState<number | undefined>()
+  const [keyword, setKeyWord] = useState('')
   const scrollValue = useRef(new Animated.Value(0)).current
   const [gender, setGender] = useState(null)
   const [dateStart, setDateStart] = useState('Bắt đầu')
   const [dateEnd, setDateEnd] = useState('Kết thúc')
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
+  const dataCompanies = useAppSelector(selectCompanies)
+  const dispatch = useAppDispatch()
+  let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>(dataCompanies)
+  const fillterList = (key: string) => {
+    setCompaniesList(dataCompanies?.filter((e) => e.name.includes(key)))
+  }
+  useEffect(() => {
+    dispatch(GetAllCompanyAction())
+  }, [])
+  useEffect(() => {
+    fillterList(keyword)
+  }, [keyword])
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -54,6 +79,9 @@ export default function CCreateExpScreen() {
               Công ty <Text style={styles.star}>*</Text>
             </Text>
             <TextInput
+              editable={false}
+              value={company}
+              onPressIn={() => setModalVisible(true)}
               placeholderTextColor={formColor}
               placeholder="Tên công ty bạn đã làm việc"
               style={styles.input}
@@ -64,6 +92,8 @@ export default function CCreateExpScreen() {
               Vị trí <Text style={styles.star}>*</Text>
             </Text>
             <TextInput
+              editable={false}
+              onPressIn={() => setModalCareerVisible(true)}
               placeholderTextColor={formColor}
               placeholder="Vị trí của bạn trong công ty"
               style={styles.input}
@@ -136,7 +166,7 @@ export default function CCreateExpScreen() {
               onCancel={() => setShowPickDate(false)}
             />
           </View>
-          <BouncyCheckbox
+          {/* <BouncyCheckbox
             size={22}
             fillColor={redColor}
             unfillColor="#FFFFFF"
@@ -156,7 +186,7 @@ export default function CCreateExpScreen() {
             onPress={(isChecked: boolean) => {
               setWorking(isChecked)
             }}
-          />
+          /> */}
           <View style={styles.field}>
             <Text style={styles.label}>Mô tả chi tiết</Text>
             <TextInput
@@ -181,12 +211,104 @@ export default function CCreateExpScreen() {
             </TouchableOpacity>
           </View>
         </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible)
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.top}>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
+              </TouchableOpacity>
+              <TextInput
+                autoFocus={true}
+                placeholder="Nhập vào từ khóa"
+                placeholderTextColor={formColor}
+                value={keyword}
+                onChangeText={setKeyWord}
+              ></TextInput>
+            </View>
+            <View style={styles.list}>
+              {companiesList &&
+                companiesList.map((e, key) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCompany(e.name)
+                      setIdCompany(key + 1)
+                      setModalVisible(false)
+                    }}
+                  >
+                    <View style={styles.item} key={key}>
+                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalCareerVisible}
+          onRequestClose={() => {
+            setModalCareerVisible(!modalCareerVisible)
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.top}>
+              <TouchableOpacity onPress={() => setModalCareerVisible(false)}>
+                <MaterialIcons name="arrow-back-ios" size={30} color={blackColor} />
+              </TouchableOpacity>
+              <TextInput
+                autoFocus={true}
+                placeholder="Nhập vào từ khóa"
+                placeholderTextColor={formColor}
+                value={keyword}
+                onChangeText={setKeyWord}
+              ></TextInput>
+            </View>
+            <View style={styles.list}>
+              {companiesList &&
+                companiesList.map((e, key) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCompany(e.name)
+                      setIdCompany(key + 1)
+                      setModalVisible(false)
+                    }}
+                  >
+                    <View style={styles.item} key={key}>
+                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
+  list: {},
+  item: { paddingHorizontal: 15, borderBottomWidth: 0.2, height: 50, justifyContent: 'center' },
+  top: {
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    borderBottomWidth: 0.2,
+    paddingBottom: 10,
+  },
+  modalView: {
+    paddingTop: 55,
+    width: Layout.window.width,
+    height: Layout.window.height,
+    backgroundColor: whiteColor,
+  },
   container: {
     // alignItems: 'center',
     // justifyContent: 'center',
