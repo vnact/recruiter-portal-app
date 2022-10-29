@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
+  ScrollView,
 } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 
@@ -22,6 +23,8 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Layout from '../../constants/Layout'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllCompanyAction, selectCompanies } from '../../reducers/companySlice'
+import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
+import { ICareer } from '../../constants/interface'
 
 export default function CCreateExpScreen() {
   interface ICompany {
@@ -34,7 +37,8 @@ export default function CCreateExpScreen() {
   const [modalCareerVisible, setModalCareerVisible] = useState(false)
   const [company, setCompany] = useState<string | undefined>()
   const [idCompany, setIdCompany] = useState<number | undefined>()
-  const [keyword, setKeyWord] = useState('')
+  const [keywordCompany, setKeyWordCompany] = useState('')
+  const [keywordCareer, setKeyWordCareer] = useState('')
   const scrollValue = useRef(new Animated.Value(0)).current
   const [gender, setGender] = useState(null)
   const [dateStart, setDateStart] = useState('Bắt đầu')
@@ -42,17 +46,26 @@ export default function CCreateExpScreen() {
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
   const dataCompanies = useAppSelector(selectCompanies)
+  const dataCareer = useAppSelector(selectCareers)
   const dispatch = useAppDispatch()
+  let [careerList, setCareerList] = useState<ICareer[] | undefined>(dataCareer)
   let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>(dataCompanies)
   const fillterList = (key: string) => {
     setCompaniesList(dataCompanies?.filter((e) => e.name.includes(key)))
   }
+  const fillterCareerList = (key: string) => {
+    setCareerList(dataCareer?.filter((e) => e.name.includes(key)))
+  }
   useEffect(() => {
     dispatch(GetAllCompanyAction())
+    dispatch(GetAllCareerAction())
   }, [])
   useEffect(() => {
-    fillterList(keyword)
-  }, [keyword])
+    fillterList(keywordCompany)
+  }, [keywordCompany])
+  useEffect(() => {
+    fillterCareerList(keywordCareer)
+  }, [keywordCareer])
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -228,8 +241,8 @@ export default function CCreateExpScreen() {
                 autoFocus={true}
                 placeholder="Nhập vào từ khóa"
                 placeholderTextColor={formColor}
-                value={keyword}
-                onChangeText={setKeyWord}
+                value={keywordCompany}
+                onChangeText={setKeyWordCompany}
               ></TextInput>
             </View>
             <View style={styles.list}>
@@ -267,25 +280,27 @@ export default function CCreateExpScreen() {
                 autoFocus={true}
                 placeholder="Nhập vào từ khóa"
                 placeholderTextColor={formColor}
-                value={keyword}
-                onChangeText={setKeyWord}
+                value={keywordCareer}
+                onChangeText={setKeyWordCareer}
               ></TextInput>
             </View>
             <View style={styles.list}>
-              {companiesList &&
-                companiesList.map((e, key) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setCompany(e.name)
-                      setIdCompany(key + 1)
-                      setModalVisible(false)
-                    }}
-                  >
-                    <View style={styles.item} key={key}>
-                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+              <ScrollView>
+                {careerList &&
+                  careerList.map((e, key) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCompany(e.name)
+                        setIdCompany(key + 1)
+                        setModalVisible(false)
+                      }}
+                    >
+                      <View style={styles.item} key={key}>
+                        <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+              </ScrollView>
             </View>
           </View>
         </Modal>

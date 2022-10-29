@@ -6,16 +6,16 @@ import { IIndustry, ISkill } from '../constants/interface'
 interface ICareer {
   id: number
   name: string
-  parent: ICareer
+  parent?: ICareer
   industry: IIndustry
 }
-interface ICompanyState {
+interface ICareerState {
   loading: 'idle' | 'loading' | 'success' | 'error'
   careers?: ICareer[]
   message?: string
 }
 
-const initialState: ICompanyState = {
+const initialState: ICareerState = {
   loading: 'idle',
 }
 
@@ -30,13 +30,17 @@ export const careerSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(GetAllCareerAction.pending, (state) => {
+        console.log('laoding career')
         state.loading = 'loading'
       })
       .addCase(GetAllCareerAction.fulfilled, (state, payload) => {
+        console.log('success career')
         state.loading = 'success'
         state.careers = payload.payload
+        console.log(payload.payload)
       })
       .addCase(GetAllCareerAction.rejected, (state, payload) => {
+        console.log('error career')
         state.loading = 'error'
         state.message = payload.error.message
       })
