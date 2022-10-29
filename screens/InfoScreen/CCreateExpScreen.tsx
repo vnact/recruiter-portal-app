@@ -14,7 +14,7 @@ import {
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import { blackColor, formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
+import { blackColor, formColor, grayColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
 const width = Dimensions.get('window').width
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
@@ -36,29 +36,35 @@ export default function CCreateExpScreen() {
   const [modalVisible, setModalVisible] = useState(false)
   const [modalCareerVisible, setModalCareerVisible] = useState(false)
   const [company, setCompany] = useState<string | undefined>()
+  const [career, setCareer] = useState<string | undefined>()
   const [idCompany, setIdCompany] = useState<number | undefined>()
+  const [idCareer, setIdCareer] = useState<number | undefined>()
   const [keywordCompany, setKeyWordCompany] = useState('')
   const [keywordCareer, setKeyWordCareer] = useState('')
   const scrollValue = useRef(new Animated.Value(0)).current
-  const [gender, setGender] = useState(null)
-  const [dateStart, setDateStart] = useState('Bắt đầu')
-  const [dateEnd, setDateEnd] = useState('Kết thúc')
+  const [dateStart, setDateStart] = useState<string | undefined>('Bắt đầu')
+  const [dateEnd, setDateEnd] = useState<string | undefined>('Kết thúc')
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
   const dataCompanies = useAppSelector(selectCompanies)
-  const dataCareer = useAppSelector(selectCareers)
+  const dataCareerCompact = useAppSelector(selectCareers)?.filter((e) => e.parent == null)
+  const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
   const dispatch = useAppDispatch()
-  let [careerList, setCareerList] = useState<ICareer[] | undefined>(dataCareer)
-  let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>(dataCompanies)
+  let [careerList, setCareerList] = useState<ICareer[] | undefined>()
+  let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>()
   const fillterList = (key: string) => {
     setCompaniesList(dataCompanies?.filter((e) => e.name.includes(key)))
   }
   const fillterCareerList = (key: string) => {
-    setCareerList(dataCareer?.filter((e) => e.name.includes(key)))
+    setCareerList(dataCareerCompact?.filter((e) => e.name.includes(key)))
   }
   useEffect(() => {
     dispatch(GetAllCompanyAction())
     dispatch(GetAllCareerAction())
+    setCareerList(dataCareerCompact)
+    setCompaniesList(dataCompanies)
+    // const a = dataCareer?.filter((e) => e.parent == null)
+    // console.log(JSON.stringify(a, null, '\t'))
   }, [])
   useEffect(() => {
     fillterList(keywordCompany)
@@ -66,6 +72,12 @@ export default function CCreateExpScreen() {
   useEffect(() => {
     fillterCareerList(keywordCareer)
   }, [keywordCareer])
+  const checkParent = (id: number) => {
+    return dataCareerChild?.filter((e) => e.parent?.id == id)[0] ? true : false
+  }
+  const findParent = (id: number) => {
+    return dataCareerChild?.filter((e) => e.parent?.id == id)
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -94,7 +106,10 @@ export default function CCreateExpScreen() {
             <TextInput
               editable={false}
               value={company}
-              onPressIn={() => setModalVisible(true)}
+              onPressIn={() => {
+                setModalVisible(true)
+                setKeyWordCompany('')
+              }}
               placeholderTextColor={formColor}
               placeholder="Tên công ty bạn đã làm việc"
               style={styles.input}
@@ -106,9 +121,13 @@ export default function CCreateExpScreen() {
             </Text>
             <TextInput
               editable={false}
-              onPressIn={() => setModalCareerVisible(true)}
+              onPressIn={() => {
+                setModalCareerVisible(true)
+                setKeyWordCareer('')
+              }}
               placeholderTextColor={formColor}
               placeholder="Vị trí của bạn trong công ty"
+              value={career}
               style={styles.input}
             ></TextInput>
           </View>
@@ -277,28 +296,84 @@ export default function CCreateExpScreen() {
                 <MaterialIcons name="arrow-back-ios" size={30} color={blackColor} />
               </TouchableOpacity>
               <TextInput
-                autoFocus={true}
+                // autoFocus={true}
                 placeholder="Nhập vào từ khóa"
                 placeholderTextColor={formColor}
                 value={keywordCareer}
                 onChangeText={setKeyWordCareer}
+                onFocus={() => console.log('focus')}
+                // clearTextOnFocus={true}
               ></TextInput>
             </View>
             <View style={styles.list}>
               <ScrollView>
                 {careerList &&
                   careerList.map((e, key) => (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setCompany(e.name)
-                        setIdCompany(key + 1)
-                        setModalVisible(false)
-                      }}
-                    >
-                      <View style={styles.item} key={key}>
-                        <Text style={{ fontSize: 18 }}>{e.name}</Text>
-                      </View>
-                    </TouchableOpacity>
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (checkParent(e.id)) {
+                            setIdCareer(e.id)
+                          } else {
+                            setKeyWordCareer(e.name)
+                            setCareer(e.name)
+                            setIdCareer(e.id)
+                            setModalCareerVisible(false)
+                          }
+                        }}
+                      >
+                        <View>
+                          <View style={styles.item} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                            {checkParent(e.id) ? (
+                              <View
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  borderRadius: 15,
+                                  backgroundColor: mainColor,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Text style={{ color: whiteColor }}>{findParent(e.id)?.length}</Text>
+                              </View>
+                            ) : (
+                              <></>
+                            )}
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                      {e.id == idCareer && checkParent(e.id) && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setKeyWordCareer(e.name)
+                            setCareer(e.name)
+                            setIdCareer(e.id)
+                            setModalCareerVisible(false)
+                          }}
+                        >
+                          <View style={styles.itemChild} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      {e.id == idCareer &&
+                        findParent(e.id)?.map((e) => (
+                          <TouchableOpacity
+                            onPress={() => {
+                              setKeyWordCareer(e.name)
+                              setCareer(e.name)
+                              setIdCareer(e.id)
+                              setModalCareerVisible(false)
+                            }}
+                          >
+                            <View style={styles.itemChild} key={key}>
+                              <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                    </View>
                   ))}
               </ScrollView>
             </View>
@@ -310,8 +385,24 @@ export default function CCreateExpScreen() {
 }
 
 const styles = StyleSheet.create({
+  itemChild: {
+    paddingHorizontal: 40,
+    borderBottomWidth: 0.2,
+    backgroundColor: grayColor,
+    height: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
   list: {},
-  item: { paddingHorizontal: 15, borderBottomWidth: 0.2, height: 50, justifyContent: 'center' },
+  item: {
+    paddingHorizontal: 15,
+    borderBottomWidth: 0.2,
+    height: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
   top: {
     paddingHorizontal: 15,
     flexDirection: 'row',

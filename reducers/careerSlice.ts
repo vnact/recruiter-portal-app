@@ -37,7 +37,6 @@ export const careerSlice = createSlice({
         console.log('success career')
         state.loading = 'success'
         state.careers = payload.payload
-        console.log(payload.payload)
       })
       .addCase(GetAllCareerAction.rejected, (state, payload) => {
         console.log('error career')
