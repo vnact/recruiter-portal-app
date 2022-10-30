@@ -18,6 +18,9 @@ export default function InfoCandidateScreen() {
     // console.log('ádasd')
     // console.log(dataUser?.skills[0])
   }, [])
+  const log = () => {
+    console.log(JSON.stringify(dataUser, null, '\t'))
+  }
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>
@@ -175,25 +178,44 @@ export default function InfoCandidateScreen() {
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
-                <View style={styles.item__info}>
-                  <Text
-                    style={{
-                      ...styles.item__text1,
-                      fontWeight: '100',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    Hãy thêm thông tin về kinh nghiệm của bạn nhé !
-                  </Text>
+              {dataUser?.experiences && dataUser?.experiences.length != 0 ? (
+                dataUser.experiences.map((e) => (
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateExp')}>
+                    <View style={styles.item}>
+                      <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.company.name}</Text>
+                        {/* <Text style={styles.item__text2}>{e.company.address}</Text> */}
+                        <Text style={styles.item__text2}>{e.career.name}</Text>
+                        <Text style={styles.item__text2}>{e.employmentType}</Text>
+                        <Text style={styles.item__text3}>
+                          {moment(e.start_date).format('DD/MM/YYYY') + ' - ' + moment(e.end_date).format('DD/MM/YYYY')}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Hãy thêm thông tin về kinh nghiệm của bạn nhé !
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
         </View>
       </ScrollView>
-      <TouchableOpacity onPress={() => nav.navigate('CVSScreen')}>
+      <TouchableOpacity onPress={() => log()}>
         <Entypo
           name="info-with-circle"
           size={40}

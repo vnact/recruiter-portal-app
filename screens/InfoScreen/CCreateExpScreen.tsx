@@ -24,7 +24,9 @@ import Layout from '../../constants/Layout'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllCompanyAction, selectCompanies } from '../../reducers/companySlice'
 import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
-import { ICareer } from '../../constants/interface'
+import { EmploymentType, ICareer, IExperience } from '../../constants/interface'
+import { CreateExperienceAction } from '../../reducers/experienceSlice'
+import { Picker } from '@react-native-picker/picker'
 
 export default function CCreateExpScreen() {
   interface ICompany {
@@ -35,20 +37,27 @@ export default function CCreateExpScreen() {
   const nav = useNavigation()
   const [modalVisible, setModalVisible] = useState(false)
   const [modalCareerVisible, setModalCareerVisible] = useState(false)
-  const [company, setCompany] = useState<string | undefined>()
-  const [career, setCareer] = useState<string | undefined>()
   const [idCompany, setIdCompany] = useState<number | undefined>()
   const [idCareer, setIdCareer] = useState<number | undefined>()
   const [keywordCompany, setKeyWordCompany] = useState('')
   const [keywordCareer, setKeyWordCareer] = useState('')
-  const scrollValue = useRef(new Animated.Value(0)).current
+  const [company, setCompany] = useState<string | undefined>()
+  const [career, setCareer] = useState<string | undefined>()
+  const [employment_type, setEmployment_type] = useState<EmploymentType | undefined>()
   const [dateStart, setDateStart] = useState<string | undefined>('Bắt đầu')
   const [dateEnd, setDateEnd] = useState<string | undefined>('Kết thúc')
+  const [description, setDescription] = useState<string | undefined>()
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
   const dataCompanies = useAppSelector(selectCompanies)
   const dataCareerCompact = useAppSelector(selectCareers)?.filter((e) => e.parent == null)
   const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
+  const typeEmployee = Object.keys(EmploymentType).map((name) => {
+    return {
+      name,
+      value: EmploymentType[name as keyof typeof EmploymentType],
+    }
+  })
   const dispatch = useAppDispatch()
   let [careerList, setCareerList] = useState<ICareer[] | undefined>()
   let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>()
@@ -63,6 +72,7 @@ export default function CCreateExpScreen() {
     dispatch(GetAllCareerAction())
     setCareerList(dataCareerCompact)
     setCompaniesList(dataCompanies)
+
     // const a = dataCareer?.filter((e) => e.parent == null)
     // console.log(JSON.stringify(a, null, '\t'))
   }, [])
@@ -77,6 +87,22 @@ export default function CCreateExpScreen() {
   }
   const findParent = (id: number) => {
     return dataCareerChild?.filter((e) => e.parent?.id == id)
+  }
+  const onSubmit = () => {
+    if (idCareer && idCompany && dateStart && dateEnd && employment_type) {
+      const payload: Omit<IExperience, 'id'> = {
+        career_id: idCareer,
+        employment_type,
+        start_date: dateStart,
+        end_date: dateEnd,
+        company_id: idCompany,
+        description,
+        title: 'áda',
+      }
+      console.log(payload)
+      console.log({ employment_type })
+      dispatch(CreateExperienceAction(payload))
+    }
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -98,66 +124,78 @@ export default function CCreateExpScreen() {
             <Text style={styles.header__title}>Kinh nghiệm</Text>
           </View>
         </View>
+
         <View style={styles.form}>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Công ty <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              editable={false}
-              value={company}
-              onPressIn={() => {
-                setModalVisible(true)
-                setKeyWordCompany('')
-              }}
-              placeholderTextColor={formColor}
-              placeholder="Tên công ty bạn đã làm việc"
-              style={styles.input}
-            ></TextInput>
-          </View>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Vị trí <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              editable={false}
-              onPressIn={() => {
-                setModalCareerVisible(true)
-                setKeyWordCareer('')
-              }}
-              placeholderTextColor={formColor}
-              placeholder="Vị trí của bạn trong công ty"
-              value={career}
-              style={styles.input}
-            ></TextInput>
-          </View>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Thời gian <Text style={styles.star}>*</Text>
-            </Text>
-            <View style={styles.boxFieldTime}>
-              <View style={!working ? styles.fieldTime : styles.fieldTimeFull}>
-                <Text style={styles.labelTime}>Bắt đầu</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowPickDate(true)
-                    setWhatTime('start')
-                  }}
-                >
-                  <View style={!working ? styles.inputTime : styles.inputTimeFull}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '200',
-                        color: formColor,
-                      }}
-                    >
-                      {dateStart}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              {!working ? (
+          <ScrollView>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Công ty <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                editable={false}
+                value={company}
+                onPressIn={() => {
+                  setModalVisible(true)
+                  setKeyWordCompany('')
+                }}
+                placeholderTextColor={formColor}
+                placeholder="Tên công ty bạn đã làm việc"
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Vị trí <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                editable={false}
+                onPressIn={() => {
+                  setModalCareerVisible(true)
+                  setKeyWordCareer('')
+                }}
+                placeholderTextColor={formColor}
+                placeholder="Vị trí của bạn trong công ty"
+                value={career}
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Loại hình <Text style={styles.star}>*</Text>
+              </Text>
+              <Picker selectedValue={employment_type} onValueChange={(itemValue) => setEmployment_type(itemValue)}>
+                {typeEmployee.map((e) => (
+                  <Picker.Item label={e.name} value={e.value} />
+                ))}
+              </Picker>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Thời gian <Text style={styles.star}>*</Text>
+              </Text>
+              <View style={styles.boxFieldTime}>
+                <View style={!working ? styles.fieldTime : styles.fieldTimeFull}>
+                  <Text style={styles.labelTime}>Bắt đầu</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowPickDate(true)
+                      setWhatTime('start')
+                    }}
+                  >
+                    <View style={!working ? styles.inputTime : styles.inputTimeFull}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '200',
+                          color: formColor,
+                        }}
+                      >
+                        {dateStart}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
                 <View style={styles.fieldTime}>
                   <Text style={styles.labelTime}>Kết thúc</Text>
                   <TouchableOpacity
@@ -179,26 +217,23 @@ export default function CCreateExpScreen() {
                     </View>
                   </TouchableOpacity>
                 </View>
-              ) : (
-                ''
-              )}
+              </View>
+              <DateTimePickerModal
+                isVisible={showPickDate}
+                mode="date"
+                // textColor={blackColor}
+                // accentColor={blackColor}
+                // isDarkModeEnabled={false}
+                onConfirm={(date) => {
+                  if (whatTime == 'start') {
+                    setDateStart(moment(date).format('YYYY-MM-DD'))
+                  } else setDateEnd(moment(date).format('YYYY-MM-DD'))
+                  setShowPickDate(false)
+                }}
+                onCancel={() => setShowPickDate(false)}
+              />
             </View>
-            <DateTimePickerModal
-              isVisible={showPickDate}
-              mode="date"
-              // textColor={blackColor}
-              // accentColor={blackColor}
-              // isDarkModeEnabled={false}
-              onConfirm={(date) => {
-                if (whatTime == 'start') {
-                  setDateStart(moment(date).format('DD/MM/YYYY'))
-                } else setDateEnd(moment(date).format('DD/MM/YYYY'))
-                setShowPickDate(false)
-              }}
-              onCancel={() => setShowPickDate(false)}
-            />
-          </View>
-          {/* <BouncyCheckbox
+            {/* <BouncyCheckbox
             size={22}
             fillColor={redColor}
             unfillColor="#FFFFFF"
@@ -219,29 +254,34 @@ export default function CCreateExpScreen() {
               setWorking(isChecked)
             }}
           /> */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Mô tả chi tiết</Text>
-            <TextInput
-              multiline
-              placeholderTextColor={formColor}
-              placeholder="Mô tả chi tiết về công việc của bạn đã làm"
-              style={{ ...styles.input, height: 150 }}
-            ></TextInput>
-          </View>
-          <View style={styles.formSubmit}>
-            <TouchableOpacity>
-              <TouchableOpacity onPress={() => nav.goBack()}>
-                <View style={styles.submit}>
-                  <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Mô tả chi tiết <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                multiline
+                value={description}
+                onChangeText={setDescription}
+                placeholderTextColor={formColor}
+                placeholder="Mô tả chi tiết về công việc của bạn đã làm"
+                style={{ ...styles.input, height: 150 }}
+              ></TextInput>
+            </View>
+            <View style={styles.formSubmit}>
+              <TouchableOpacity>
+                <TouchableOpacity onPress={() => nav.goBack()}>
+                  <View style={styles.submit}>
+                    <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
+                  </View>
+                </TouchableOpacity>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onSubmit()}>
+                <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
+                  <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
                 </View>
               </TouchableOpacity>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
-                <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </ScrollView>
         </View>
         <Modal
           animationType="slide"
@@ -504,10 +544,10 @@ const styles = StyleSheet.create({
   boxFieldTime: { flexDirection: 'row', justifyContent: 'space-between' },
   formSubmit: {
     flexDirection: 'row',
-    bottom: 50,
-    position: 'absolute',
+    // bottom: 50,
+    // position: 'absolute',
     width: 399,
-    marginHorizontal: 15,
+    // marginHorizontal: 15,
     justifyContent: 'space-around',
     height: 70,
     alignItems: 'center',
