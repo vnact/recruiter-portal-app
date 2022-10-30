@@ -23,7 +23,7 @@ export type RootStackParamList = {
   InfoCandidate: undefined
   CCreateEducation: { id?: number }
   CCreateInfo: undefined
-  CCreateExp: undefined
+  CCreateExp: { id?: number }
   CCreateSkill: { id?: number }
   Search: undefined
   CVSScreen: undefined

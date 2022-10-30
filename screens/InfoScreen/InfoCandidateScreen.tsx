@@ -7,11 +7,16 @@ import { useNavigation } from '@react-navigation/native'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetSelfAction, selectUser } from '../../reducers/userSlice'
 import moment from 'moment'
+import { EmploymentType } from '../../constants/interface'
 const width = Dimensions.get('window').width
 export default function InfoCandidateScreen() {
   const nav = useNavigation()
   const dispatch = useAppDispatch()
   const dataUser = useAppSelector(selectUser)
+  const typeEmployee = new Map()
+  Object.keys(EmploymentType).map((name) => {
+    typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
+  })
   console.log(dataUser?.skills)
   useEffect(() => {
     dispatch(GetSelfAction())
@@ -173,23 +178,25 @@ export default function InfoCandidateScreen() {
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Kinh nghiệm</Text>
-              <TouchableOpacity onPress={() => nav.navigate('CCreateExp')}>
+              <TouchableOpacity onPress={() => nav.navigate('CCreateExp', {})}>
                 <AntDesign name="pluscircleo" size={20} color="#576CD6" />
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
               {dataUser?.experiences && dataUser?.experiences.length != 0 ? (
                 dataUser.experiences.map((e) => (
-                  <TouchableOpacity onPress={() => nav.navigate('CCreateExp')}>
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateExp', { id: e.id })}>
                     <View style={styles.item}>
                       <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.company.name}</Text>
                         {/* <Text style={styles.item__text2}>{e.company.address}</Text> */}
-                        <Text style={styles.item__text2}>{e.career.name}</Text>
-                        <Text style={styles.item__text2}>{e.employmentType}</Text>
+                        <Text style={styles.item__text2}>
+                          {e.career.name + ' - ' + typeEmployee.get(e.employmentType)}
+                        </Text>
+                        {/* <Text style={styles.item__text2}>{typeEmployee.get(e.employmentType)}</Text> */}
                         <Text style={styles.item__text3}>
-                          {moment(e.start_date).format('DD/MM/YYYY') + ' - ' + moment(e.end_date).format('DD/MM/YYYY')}
+                          {moment(e.startDate).format('DD/MM/YYYY') + ' - ' + moment(e.endDate).format('DD/MM/YYYY')}
                         </Text>
                       </View>
                     </View>

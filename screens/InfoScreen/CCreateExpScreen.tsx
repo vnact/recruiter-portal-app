@@ -10,6 +10,7 @@ import {
   Keyboard,
   Modal,
   ScrollView,
+  Alert,
 } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 
@@ -25,14 +26,22 @@ import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllCompanyAction, selectCompanies } from '../../reducers/companySlice'
 import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
 import { EmploymentType, ICareer, IExperience } from '../../constants/interface'
-import { CreateExperienceAction } from '../../reducers/experienceSlice'
+import {
+  CreateExperienceAction,
+  DeleteExperienceAction,
+  GetOneExperienceAction,
+  selectExperience,
+  UpdateExperienceAction,
+} from '../../reducers/experienceSlice'
 import { Picker } from '@react-native-picker/picker'
+import { RootStackScreenProps } from '../../types'
 
-export default function CCreateExpScreen() {
+export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({ route }) => {
   interface ICompany {
     id: number
     name: string
   }
+  const { id } = route.params
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
   const [modalVisible, setModalVisible] = useState(false)
@@ -52,6 +61,8 @@ export default function CCreateExpScreen() {
   const dataCompanies = useAppSelector(selectCompanies)
   const dataCareerCompact = useAppSelector(selectCareers)?.filter((e) => e.parent == null)
   const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
+  const dataCareer = useAppSelector(selectCareers)
+
   const typeEmployee = Object.keys(EmploymentType).map((name) => {
     return {
       name,
@@ -67,6 +78,30 @@ export default function CCreateExpScreen() {
   const fillterCareerList = (key: string) => {
     setCareerList(dataCareerCompact?.filter((e) => e.name.includes(key)))
   }
+  useEffect(() => {
+    if (id) {
+      dispatch(GetOneExperienceAction({ id }))
+    }
+  }, [])
+  const expdata = useAppSelector(selectExperience)
+
+  useEffect(() => {
+    if (expdata && id) {
+      setDateEnd(expdata.endDate)
+      setDateStart(expdata.startDate)
+      setCompany(expdata.company.name)
+      setCareer(expdata.career.name)
+      setIdCareer(expdata.career.id)
+      setIdCompany(expdata.company.id)
+      setDescription(expdata.description)
+      console.log(
+        Object.keys(EmploymentType)[
+          Object.values(EmploymentType).indexOf(expdata.employmentType as unknown as EmploymentType)
+        ],
+      )
+      // setEmployment_type(expdata.employmentType)
+    }
+  }, [expdata])
   useEffect(() => {
     dispatch(GetAllCompanyAction())
     dispatch(GetAllCareerAction())
@@ -88,20 +123,47 @@ export default function CCreateExpScreen() {
   const findParent = (id: number) => {
     return dataCareerChild?.filter((e) => e.parent?.id == id)
   }
-  const onSubmit = () => {
+  const onDelete = () => {
+    Alert.alert('Cảnh báo', 'Bạn có muốn xóa không ?', [
+      {
+        text: 'Cancel',
+        onPress: () => nav.goBack(),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          if (id) {
+            await dispatch(DeleteExperienceAction({ id }))
+            alert('Xóa thành công')
+            nav.goBack()
+          }
+        },
+      },
+    ])
+  }
+  const onSubmit = async () => {
     if (idCareer && idCompany && dateStart && dateEnd && employment_type) {
-      const payload: Omit<IExperience, 'id'> = {
+      const payload = {
+        id: id || undefined,
         career_id: idCareer,
         employment_type,
         start_date: dateStart,
         end_date: dateEnd,
         company_id: idCompany,
         description,
-        title: 'áda',
+        title: 'ádsa',
       }
-      console.log(payload)
-      console.log({ employment_type })
-      dispatch(CreateExperienceAction(payload))
+      if (id) {
+        console.log('ad')
+        await dispatch(UpdateExperienceAction(payload))
+        alert('Cập nhật thành công')
+        nav.goBack()
+      } else {
+        await dispatch(CreateExperienceAction(payload))
+        alert('Tạo thành công')
+        nav.goBack()
+      }
     }
   }
   return (
@@ -270,16 +332,25 @@ export default function CCreateExpScreen() {
             <View style={styles.formSubmit}>
               <TouchableOpacity>
                 <TouchableOpacity onPress={() => nav.goBack()}>
-                  <View style={styles.submit}>
+                  <View style={{ ...styles.submit, backgroundColor: '#F7DC6F' }}>
                     <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
                   </View>
                 </TouchableOpacity>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => onSubmit()}>
                 <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
-                  <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
+                  <Text style={{ color: whiteColor, fontSize: 18 }}>{id ? 'Cập nhật' : 'Thêm mới'}</Text>
                 </View>
               </TouchableOpacity>
+              {id && (
+                <TouchableOpacity>
+                  <TouchableOpacity onPress={() => onDelete()}>
+                    <View style={{ ...styles.submit, backgroundColor: redColor }}>
+                      <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
+                    </View>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              )}
             </View>
           </ScrollView>
         </View>
@@ -554,7 +625,7 @@ const styles = StyleSheet.create({
   },
   submit: {
     backgroundColor: redColor,
-    width: 150,
+    width: 120,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

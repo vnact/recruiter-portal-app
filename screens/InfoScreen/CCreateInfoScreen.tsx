@@ -23,6 +23,7 @@ import Layout from '../../constants/Layout'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllIndustryAction, selectIndustry, selectLoading } from '../../reducers/industrySlice'
 import { IIndustry } from '../../constants/interface'
+import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
 
 const width = Dimensions.get('window').width
 export default function CCreateInfoScreen() {
@@ -35,9 +36,13 @@ export default function CCreateInfoScreen() {
   const [keyword, setKeyWord] = useState('')
   const [gender, setGender] = useState(null)
   const [industry, setIndustry] = useState<string | undefined>(undefined)
+  const [career, setCareer] = useState<string | undefined>(undefined)
+  const careerData = useAppSelector(selectCareers)
   const [dateBirth, setDateBirth] = useState('Ngày sinh của bạn')
   const loading = useAppSelector(selectLoading)
   const dataIndustry = useAppSelector(selectIndustry)
+  const [modalCareerVisible, setModalCareerVisible] = useState(false)
+  const [showCareer, setShowCareer] = useState(false)
   // let industriesList = dataIndustry
   let [industriesList, setIndustriesList] = useState<IIndustry[] | undefined>(dataIndustry)
   const fillterList = (key: string) => {
@@ -47,6 +52,7 @@ export default function CCreateInfoScreen() {
   }
   useEffect(() => {
     dispatch(GetAllIndustryAction())
+    dispatch(GetAllCareerAction())
     // console.log('1')
     // console.log(industriesList)
   }, [])
@@ -282,7 +288,9 @@ export default function CCreateInfoScreen() {
               </Text>
               <TextInput
                 editable={false}
-                onPressIn={() => setModalVisible(true)}
+                onPressIn={() => {
+                  setModalVisible(true)
+                }}
                 value={industry}
                 placeholderTextColor={formColor}
                 placeholder="Ngành nghề bạn ứng tuyển"
@@ -294,6 +302,11 @@ export default function CCreateInfoScreen() {
                 Vị trí <Text style={styles.star}>*</Text>
               </Text>
               <TextInput
+                editable={false}
+                value={career}
+                onPressIn={() => {
+                  setModalCareerVisible(true)
+                }}
                 placeholderTextColor={formColor}
                 placeholder="Vị trí công việc"
                 style={styles.input}
@@ -380,7 +393,12 @@ export default function CCreateInfoScreen() {
           >
             <View style={styles.modalView}>
               <View style={styles.top}>
-                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(false)
+                    setShowCareer(true)
+                  }}
+                >
                   <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
                 </TouchableOpacity>
                 <TextInput

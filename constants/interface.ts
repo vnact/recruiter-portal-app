@@ -65,16 +65,18 @@ export interface IUser {
   appliedJobs: IApplyJob[]
   experiences: IExperienceGetMe[]
 }
-interface IExperienceGetMe {
+export interface IExperienceGetMe {
+  id: number
   title: string
-  start_date: string
-  end_date: string
+  startDate: string
+  endDate: string
   description: string
   employmentType: string
   company: ICompany
   career: ICareer
 }
 export interface ICompany {
+  id: number
   name: string
   phone: string
   email: string
@@ -132,7 +134,7 @@ export interface ISkill {
 }
 export interface IExperience {
   title: string
-  id: number
+  id?: number
   company_id: number
   career_id: number
   employment_type: EmploymentType
@@ -140,6 +142,16 @@ export interface IExperience {
   end_date?: string
   description?: string
   companyName?: string
+}
+export interface IExperienceCreate {
+  title: string
+  id?: number
+  company_id: number
+  career_id: number
+  employment_type: EmploymentType
+  start_date: string
+  end_date?: string
+  description?: string
 }
 export interface IFavoriteJob {
   id: number

@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
-import { IEducation, IExperience } from '../constants/interface'
+import { IEducation, IExperience, IExperienceCreate, IExperienceGetMe } from '../constants/interface'
 import { GetSelfAction } from './userSlice'
 
 interface IExperienceState {
   loading: 'idle' | 'loading' | 'success' | 'error'
-  experience?: IEducation
+  experience?: IExperienceGetMe
   message?: string
 }
 
@@ -18,7 +18,7 @@ interface IIdExperience {
 }
 export const CreateExperienceAction = createAsyncThunk(
   'experience/create',
-  async (payload: Omit<IExperience, 'id'>, thunk) => {
+  async (payload: Omit<IExperienceCreate, 'id'>, thunk) => {
     const { data } = await apiInstance.post('experience', payload)
     thunk.dispatch(GetSelfAction())
     return data
@@ -30,12 +30,16 @@ export const DeleteExperienceAction = createAsyncThunk('experience/delete', asyn
   thunk.dispatch(GetSelfAction())
   return
 })
-export const UpdateExperienceAction = createAsyncThunk('experience/update', async (payload: IExperience, thunk) => {
-  const { id, ...dataUpdate } = payload
-  await apiInstance.patch(`experience/${id}`, dataUpdate)
-  thunk.dispatch(GetSelfAction())
-  return
-})
+export const UpdateExperienceAction = createAsyncThunk(
+  'experience/update',
+  async (payload: IExperienceCreate, thunk) => {
+    const { id, ...dataUpdate } = payload
+    console.log(JSON.stringify(payload, null, '\t'))
+    await apiInstance.patch(`experience/${id}`, dataUpdate)
+    thunk.dispatch(GetSelfAction())
+    return
+  },
+)
 export const GetOneExperienceAction = createAsyncThunk('experience/id', async (payload: IIdExperience) => {
   const { id } = payload
   const { data } = await apiInstance.get(`experience/${id}`)
