@@ -31,7 +31,7 @@ import CCreateExpScreen from '../screens/InfoScreen/CCreateExpScreen'
 import { CCreateSkillScreen } from '../screens/InfoScreen/CCreateSkillScreen'
 import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 import CVScreen from '../screens/InfoScreen/CVScreen'
-import JobDetailScreen from '../screens/JobDetailScreen/JobDetailScreen'
+import { JobDetailScreen } from '../screens/JobDetailScreen/JobDetailScreen'
 import { selectIsLoggedIn, selectLoading } from '../reducers/authSlice'
 import { useAppSelector } from '../app/hook'
 import SplashScreen from '../screens/SplashScreen'
@@ -53,13 +53,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 function RootNavigator() {
   const loading = useAppSelector(selectLoading)
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
-  // if (loading == 'loading') {
-  //   return (
-  //     <Stack.Navigator>
-  //       <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false, animation: 'none' }} />
-  //     </Stack.Navigator>
-  //   )
-  // }
+  if (loading == 'loading') {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false, animation: 'none' }} />
+      </Stack.Navigator>
+    )
+  }
   return (
     <Stack.Navigator>
       {!(isLoggedIn && loading === 'success') ? (

@@ -4,68 +4,17 @@ import { MaterialIcons, Feather } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { primaryColor } from '../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
+import { IJob } from '../constants/interface'
 const width = Dimensions.get('window').width
-
-interface IJob {
-  name: string
-  name_company: string
-  salary: number
-  location: string
-  level: string
-  created_at: string
-}
 
 interface IJobProps {
   item: IJob
 }
 
-const data: IJob[] = [
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-]
-
 const Job: FC<IJobProps> = ({ item }) => {
   const nav = useNavigation()
   return (
-    <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen')}>
+    <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: item.id })}>
       <View style={styles.job}>
         <View style={styles.companyHeader}>
           <View style={styles.logo}>
@@ -77,7 +26,7 @@ const Job: FC<IJobProps> = ({ item }) => {
             />
           </View>
           <View style={styles.infoCompany}>
-            <Text style={styles.nameJob}>{item.name}</Text>
+            <Text style={styles.nameJob}>{item.title}</Text>
             <View
               style={{
                 display: 'flex',
@@ -86,8 +35,8 @@ const Job: FC<IJobProps> = ({ item }) => {
                 flexDirection: 'row',
               }}
             >
-              <Text style={styles.address}>{item.name_company}</Text>
-              <Text style={styles.salary}>${item.salary}/Mo</Text>
+              <Text style={styles.address}>{item.company.name}</Text>
+              <Text style={styles.salary}>${item.minSalary}/Mo</Text>
             </View>
           </View>
         </View>
@@ -129,7 +78,7 @@ const Job: FC<IJobProps> = ({ item }) => {
             }}
           >
             <MaterialIcons name="fiber-manual-record" />
-            <Text>{item.created_at}</Text>
+            <Text>{item.startDate}</Text>
           </View>
         </View>
       </View>
@@ -139,8 +88,15 @@ const Job: FC<IJobProps> = ({ item }) => {
 
 interface IListJobCardProps {
   title?: string
+  data: IJob[]
+  page: number
+  setPage: (page: number) => void
 }
-export const ListJobCard: FC<IListJobCardProps> = ({ title }) => {
+export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage }) => {
+  const nextPage = () => {
+    setPage(page + 1)
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -150,10 +106,12 @@ export const ListJobCard: FC<IListJobCardProps> = ({ title }) => {
       <View style={styles.body}>
         <FlatList
           data={data}
-          keyExtractor={(item, index) => item.name + index}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => <Job item={item} key={index} />}
           scrollEnabled={true}
           showsVerticalScrollIndicator={false}
+          onEndReachedThreshold={0.25}
+          onEndReached={() => nextPage()}
         />
       </View>
     </View>

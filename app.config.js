@@ -33,6 +33,7 @@ module.exports = {
     },
     extra: {
       googleApiKey: process.env.GOOGLE_API_KEY,
+      API_URL: process.env.API_URL,
     },
   },
 }

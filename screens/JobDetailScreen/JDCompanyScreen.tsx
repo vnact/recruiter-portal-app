@@ -1,7 +1,8 @@
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { FC } from 'react'
 import { formColor } from '../../constants/Colors'
 import { ListJobCard } from '../../components/ListJobCard'
+import { ICompany } from '../../constants/interface'
 
 const desc: string[] = [
   'SERVICES',
@@ -18,7 +19,12 @@ const desc: string[] = [
   'BPO (Business Process Outsourcing)',
   'Experience in simple jobs like data entry, labeling image with high productivity and low costs.',
 ]
-export default function JDCompanyScreen() {
+
+interface IProps {
+  company: ICompany
+}
+
+export const JDCompanyScreen: FC<IProps> = ({ company }) => {
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -31,9 +37,7 @@ export default function JDCompanyScreen() {
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Địa chỉ công ty:</Text>
-                <Text style={styles.itemContent}>
-                  0905-T2B Tòa nhà TSQ, Phường Mỗ Lao, quận Hà Đông, thành phố Hà Nội.
-                </Text>
+                <Text style={styles.itemContent}>{company.address}</Text>
               </View>
             </View>
             <View style={styles.item}>

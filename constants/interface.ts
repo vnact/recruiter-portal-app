@@ -1,4 +1,4 @@
-export declare enum ExpLevel {
+export enum ExpLevel {
   NoExp = 'no_exp',
   LessThanOne = 'less_than_one',
   OnePlus = 'one_plus',
@@ -7,7 +7,7 @@ export declare enum ExpLevel {
   FourPlus = 'four_plus',
   FivePlus = 'five_plus',
 }
-export declare enum EmploymentType {
+export enum EmploymentType {
   FullTime = 'full_time',
   PartTime = 'part_time',
   SelfEmployed = 'self_employed',
@@ -17,7 +17,7 @@ export declare enum EmploymentType {
   Apprenticeship = 'apprenticeship',
   Seasonal = 'seasonal',
 }
-export declare enum CompanySize {
+export enum CompanySize {
   OnePlus = 'one_plus',
   NinePlus = 'nine_plus',
   TwentyFivePlus = 'twenty_five_plus',
@@ -51,7 +51,7 @@ export interface IUser {
   gender?: string
   birthday?: string
   height?: number
-  wieght?: number
+  weight?: number
   level?: ExpLevel
   highSchool?: string
   familyRegisterNumber?: string
@@ -62,6 +62,7 @@ export interface IUser {
   description?: string
   educations: IEducation[]
   skills: IUserSkill[]
+  appliedJobs: IApplyJob[]
 }
 export interface ICompany {
   name: string
@@ -90,7 +91,28 @@ export interface ICompany {
 
   jobs: IJob[]
 }
-export interface IJob {}
+export interface IJob {
+  id: number
+  title: string
+  description: string
+  location: string
+  gpsLat: number
+  gpsLng: number
+  minSalary: number
+  maxSalary: number
+  startDate: string
+  endDate: string
+  employmentType: EmploymentType[]
+  workplaces: IWorkplace[]
+  company: ICompany
+  skills: ISkill[]
+  applies: number
+  level: ExpLevel
+  career: ICareer
+  recruits: number
+  favoriteJob: IFavoriteJob[]
+}
+
 export interface ICareer {
   id: number
   name: string
@@ -119,4 +141,26 @@ export interface IExperience {
   endDate?: string
   description?: string
   companyName?: string
+}
+
+export interface IFavoriteJob {
+  id: number
+  jobId: number
+  userId: number
+}
+export interface IPagination {
+  page: number
+  size?: number
+}
+
+export enum IWorkplace {
+  OnSite = 'on_site',
+  Remote = 'remote',
+  Hybird = 'hybird',
+}
+
+export interface IApplyJob {
+  id: number
+  jobID: number
+  userID: number
 }

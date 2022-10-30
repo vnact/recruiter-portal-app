@@ -11,24 +11,31 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { blackColor, formColor, mainColor, whiteColor } from '../../constants/Colors'
 import MapView, { Marker, Callout } from 'react-native-maps'
 import { AntDesign } from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import MapViewDirections from 'react-native-maps-directions'
+import { IJob } from '../../constants/interface'
+import Constants from 'expo-constants'
 
-export default function JDInfoScreen() {
-  interface ILocation {
-    latitude: number
-    longitude: number
-  }
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDL2WlK0ksyJvNW38b-EsjzruhqM3ol7oA'
+interface IProps {
+  job: IJob
+}
+interface ILocation {
+  latitude: number
+  longitude: number
+}
+
+export const JDInfoScreen: FC<IProps> = ({ job }) => {
   const [isShow, setShow] = useState(false)
   const initialRegion = { latitude: 20.98714, longitude: 105.783, latitudeDelta: 0.01, longitudeDelta: 0.01 }
   const [destination, setDestination] = useState<ILocation | null>({
-    latitude: 21.030090156796025,
-    longitude: 105.77648383059098,
+    // latitude: 21.030090156796025,
+    // longitude: 105.77648383059098,
+    latitude: job.company.gpsLat,
+    longitude: job.company.gpsLng,
   })
   const [distance, setDistance] = useState<any>()
   const [duration, setDuration] = useState<any>()
@@ -42,11 +49,7 @@ export default function JDInfoScreen() {
       setDuration(arg.duration)
     }
   }
-  const desc: string[] = [
-    'Tham gia xây dựng và phát triển sản phẩm TMĐT (dựa trên Big Data), giúp 50 triệu người mua shopping online thông minh hơn và giúp 1 triệu người bán kinh doanh thông minh hơn. Hiện tại đang phục vụ 3 triệu người mua và 5000 doanh nghiệp hàng tháng.',
-    'Khắc phục sự cố, duy trì hiệu suất cao và khả năng đáp ứng tải cao của hệ thống',
-    'Hỗ trợ xử lý phản hồi về mặt kỹ thuật, tham gia xây dựng sản phẩm sát với yêu cầu khách hàng đầu cuối.',
-  ]
+  const desc: string[] = [job.description]
   const request: string[] = [
     'Có kinh nghiệm 1 năm trở lên trong vai trò Fullstack Engineer',
     'Thông thạo một trong các ngôn ngữ, framework (Python: FastAPI; ES6: NextJS, NuxtJS; Database: Postgresql, ElasticSearch)',
@@ -100,7 +103,11 @@ export default function JDInfoScreen() {
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Hình thức làm việc :</Text>
-                <Text style={styles.itemContent}>Full time</Text>
+                {job.workplaces.map((item, index) => (
+                  <Text key={index} style={styles.itemContent}>
+                    {item}
+                  </Text>
+                ))}
               </View>
             </View>
             <View style={styles.item}>
@@ -109,7 +116,7 @@ export default function JDInfoScreen() {
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Số lượng cân tuyển :</Text>
-                <Text style={styles.itemContent}>2 người</Text>
+                <Text style={styles.itemContent}>{job.recruits + 5} người</Text>
               </View>
             </View>
             <View style={styles.item}>
@@ -134,9 +141,13 @@ export default function JDInfoScreen() {
               <View style={styles.boxIcon}>
                 <Image source={require('../../assets/images/icon/role-icon.png')} style={styles.icon} />
               </View>
-              <View style={styles.itemRight}>
+              <View style={{ ...styles.itemRight, flexDirection: 'row' }}>
                 <Text style={styles.itemTitle}>Chức vụ :</Text>
-                <Text style={styles.itemContent}>Fullstack Senior</Text>
+                {job.employmentType.map((item, index) => (
+                  <Text key={index} style={styles.itemContent}>
+                    {item}{' '}
+                  </Text>
+                ))}
               </View>
             </View>
             <View style={styles.item}>
@@ -150,9 +161,7 @@ export default function JDInfoScreen() {
               >
                 <View style={styles.itemRight}>
                   <Text style={styles.itemTitle}>Địa chỉ :</Text>
-                  <Text style={styles.itemContent}>
-                    0905-T2B Tòa nhà TSQ, Phường Mỗ Lao, quận Hà Đông, thành phố Hà Nội.
-                  </Text>
+                  <Text style={styles.itemContent}>{job.company.address}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -172,8 +181,8 @@ export default function JDInfoScreen() {
         </View>
         <View style={styles.boxDesc}>
           <Text style={styles.boxTitle}>Thông tin chung</Text>
-          {desc.map((e) => (
-            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }}>
+          {desc.map((e, i) => (
+            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }} key={i}>
               {'\u25CF' + '  '}
               {e}
             </Text>
@@ -181,8 +190,8 @@ export default function JDInfoScreen() {
         </View>
         <View style={styles.boxRequest}>
           <Text style={styles.boxTitle}>Yêu cầu ứng viên</Text>
-          {request.map((e) => (
-            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }}>
+          {request.map((e, i) => (
+            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }} key={i}>
               {'\u25CF' + '  '}
               {e}
             </Text>
@@ -190,8 +199,8 @@ export default function JDInfoScreen() {
         </View>
         <View style={styles.boxBenifit}>
           <Text style={styles.boxTitle}>Quyền lợi</Text>
-          {benifit.map((e) => (
-            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }}>
+          {benifit.map((e, i) => (
+            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }} key={i}>
               {'\u25CF' + '  '}
               {e}
             </Text>
@@ -230,7 +239,7 @@ export default function JDInfoScreen() {
                 <MapViewDirections
                   origin={origin}
                   destination={destination}
-                  apikey={GOOGLE_MAPS_APIKEY}
+                  apikey={Constants?.manifest?.extra?.googleApiKey}
                   strokeWidth={3}
                   strokeColor="hotpink"
                   onReady={traceRouteOnReady}
@@ -447,5 +456,6 @@ const styles = StyleSheet.create({
 
   itemContent: {
     fontSize: 16,
+    textTransform: 'capitalize',
   },
 })

@@ -35,8 +35,6 @@ const initialState: IAuthState = {
   loading: 'idle',
 }
 export const loginAction = createAsyncThunk('auth/login', async (payload: ILoginPayload) => {
-  //   console.log({ payload })
-  console.log(payload)
   const { data } = await apiInstance.post<ILoginSuccessResponse>('/auth/login', payload)
   return data
 })
@@ -52,12 +50,10 @@ export const authSlice = createSlice({
     ;[loginAction, registerAction].forEach((act) => {
       builder
         .addCase(act.pending, (state) => {
-          console.log('loading')
           state.loading = 'loading'
           state.error = undefined
         })
         .addCase(act.fulfilled, (state, payload) => {
-          console.log('success')
           state.loading = 'success'
           state.isLoggedIn = true
           state.user = payload.payload.user

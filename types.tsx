@@ -27,7 +27,7 @@ export type RootStackParamList = {
   CCreateSkill: { id?: number }
   Search: undefined
   CVSScreen: undefined
-  JobDetailScreen: undefined
+  JobDetailScreen: { id: number }
   Splash: undefined
 }
 
