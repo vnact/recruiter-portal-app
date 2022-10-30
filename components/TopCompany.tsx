@@ -2,91 +2,11 @@ import { StyleSheet, Text, View, Image, FlatList } from 'react-native'
 import React, { FC } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
-
-interface ICompany {
-  name: string
-  address: string
-  salary_max: number
-  salary_min: number
-  type_job: string
-}
+import { ICompany, IJob } from '../constants/interface'
 
 interface IComPanyProps {
-  item: ICompany
+  item: IJob
 }
-
-const data: ICompany[] = [
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-  {
-    name: 'Google',
-    address: 'Ha noi',
-    salary_max: 10,
-    salary_min: 5,
-    type_job: 'Remote/Onsite',
-  },
-]
 
 const Company: FC<IComPanyProps> = ({ item }) => {
   return (
@@ -101,8 +21,8 @@ const Company: FC<IComPanyProps> = ({ item }) => {
           />
         </View>
         <View style={styles.infoCompany}>
-          <Text style={styles.nameCompany}>{item.name}</Text>
-          <Text style={styles.address}>{item.address}</Text>
+          <Text style={styles.nameCompany}>{item.company.name}</Text>
+          <Text style={styles.address}>{item.location}</Text>
         </View>
       </View>
       <View style={styles.infoJob}>
@@ -116,7 +36,7 @@ const Company: FC<IComPanyProps> = ({ item }) => {
         >
           <MaterialIcons name="fiber-manual-record" />
           <Text style={styles.text}>
-            Slary: ${item.salary_min}k-{item.salary_max}k/Mo
+            Slary: ${item.minSalary}k-{item.maxSalary}k/Mo
           </Text>
         </View>
         <View
@@ -127,7 +47,7 @@ const Company: FC<IComPanyProps> = ({ item }) => {
           }}
         >
           <MaterialIcons name="fiber-manual-record" />
-          <Text style={styles.text}>{item.type_job}</Text>
+          <Text style={styles.text}>{item.workplaces[0]}</Text>
         </View>
       </View>
       <View style={styles.button}>
@@ -144,7 +64,15 @@ const Company: FC<IComPanyProps> = ({ item }) => {
   )
 }
 
-export const TopCompany = () => {
+interface IPropTopCompany {
+  companies: IJob[]
+  page: number
+  setPage: (page: number) => void
+}
+export const TopCompany: FC<IPropTopCompany> = ({ companies, page, setPage }) => {
+  const nextPage = () => {
+    setPage(page + 1)
+  }
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -153,11 +81,13 @@ export const TopCompany = () => {
       </View>
       <View style={styles.body}>
         <FlatList
-          data={data}
-          keyExtractor={(item, index) => item.name}
+          data={companies}
+          keyExtractor={(item, index) => item.title + index}
           renderItem={({ item, index }) => <Company item={item} key={index} />}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
+          onEndReached={nextPage}
+          onEndReachedThreshold={0.5}
         />
       </View>
     </View>

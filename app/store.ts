@@ -5,6 +5,7 @@ import userReducer from '../reducers/userSlice'
 import industryReducer from '../reducers/industrySlice'
 import skillReducer from '../reducers/skillSlice'
 import userSkillReducer from '../reducers/userSkillSlice'
+import jobReducer from '../reducers/jobSlice'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -13,6 +14,7 @@ export const store = configureStore({
     industry: industryReducer,
     skill: skillReducer,
     userSkill: userSkillReducer,
+    job: jobReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
