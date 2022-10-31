@@ -138,10 +138,9 @@ export interface IExperience {
   company_id: number
   career_id: number
   employment_type: EmploymentType
-  start_date: string
-  end_date?: string
+  startDate: string
+  endDate?: string
   description?: string
-  companyName?: string
 }
 export interface IExperienceCreate {
   title: string

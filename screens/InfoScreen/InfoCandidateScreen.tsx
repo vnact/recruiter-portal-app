@@ -17,15 +17,9 @@ export default function InfoCandidateScreen() {
   Object.keys(EmploymentType).map((name) => {
     typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
   })
-  console.log(dataUser?.skills)
   useEffect(() => {
     dispatch(GetSelfAction())
-    // console.log('ádasd')
-    // console.log(dataUser?.skills[0])
   }, [])
-  const log = () => {
-    console.log(JSON.stringify(dataUser, null, '\t'))
-  }
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>
@@ -50,7 +44,7 @@ export default function InfoCandidateScreen() {
             marginBottom: 5,
           }}
         >
-          Bea Suzy
+          {dataUser?.name}
         </Text>
         <Text
           style={{
@@ -59,16 +53,14 @@ export default function InfoCandidateScreen() {
             marginBottom: 5,
           }}
         >
-          Ca sĩ, Diễn viên
+          {dataUser?.email}
         </Text>
         <Text
           style={{
             fontSize: 15,
             fontWeight: '200',
           }}
-        >
-          KMA
-        </Text>
+        ></Text>
         <TouchableOpacity
           style={{
             position: 'absolute',
@@ -89,7 +81,7 @@ export default function InfoCandidateScreen() {
             justifyContent: 'center',
           }}
         >
-          <Text>Mô tả về bản thân</Text>
+          <Text>{dataUser?.description}</Text>
         </View>
       </View>
       <ScrollView style={{ backgroundColor: '#EEEEEE' }}>
@@ -222,7 +214,7 @@ export default function InfoCandidateScreen() {
           </View>
         </View>
       </ScrollView>
-      <TouchableOpacity onPress={() => log()}>
+      <TouchableOpacity onPress={() => nav.navigate('CVSScreen')}>
         <Entypo
           name="info-with-circle"
           size={40}

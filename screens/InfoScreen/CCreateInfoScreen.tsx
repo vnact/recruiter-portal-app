@@ -22,37 +22,54 @@ import { Entypo, MaterialIcons } from '@expo/vector-icons'
 import Layout from '../../constants/Layout'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetAllIndustryAction, selectIndustry, selectLoading } from '../../reducers/industrySlice'
-import { IIndustry } from '../../constants/interface'
+import { ICareer, IIndustry } from '../../constants/interface'
 import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
+import BouncyCheckboxGroup, { ICheckboxButton } from 'react-native-bouncy-checkbox-group'
 
 const width = Dimensions.get('window').width
 export default function CCreateInfoScreen() {
   const dispatch = useAppDispatch()
-  const [date, setDate] = useState(new Date())
   const [modalVisible, setModalVisible] = useState(false)
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
   const scrollValue = useRef(new Animated.Value(0)).current
   const [keyword, setKeyWord] = useState('')
-  const [gender, setGender] = useState(null)
+  const [keywordCareer, setKeyWordCareer] = useState()
+  const [gender, setGender] = useState<string | undefined>()
   const [industry, setIndustry] = useState<string | undefined>(undefined)
   const [career, setCareer] = useState<string | undefined>(undefined)
-  const careerData = useAppSelector(selectCareers)
   const [dateBirth, setDateBirth] = useState('Ngày sinh của bạn')
   const loading = useAppSelector(selectLoading)
+  const careerData = useAppSelector(selectCareers)
   const dataIndustry = useAppSelector(selectIndustry)
   const [modalCareerVisible, setModalCareerVisible] = useState(false)
-  const [showCareer, setShowCareer] = useState(false)
-  // let industriesList = dataIndustry
-  let [industriesList, setIndustriesList] = useState<IIndustry[] | undefined>(dataIndustry)
+  const [idIndustry, setIdIndustry] = useState<number | undefined>()
+  const [idCareer, setIdCareer] = useState<number | undefined>()
+  const [industriesList, setIndustriesList] = useState<IIndustry[] | undefined>(dataIndustry)
+  const [careerList, setCareerList] = useState<ICareer[] | undefined>(careerData)
+  const [careerListCompact, setCareerListCompact] = useState<ICareer[] | undefined>()
+  const dataGender = [
+    { id: 0, value: 'male', text: 'Nam' },
+    { id: 1, value: 'female', text: 'Nữ' },
+  ]
   const fillterList = (key: string) => {
-    console.log(key)
     setIndustriesList(dataIndustry?.filter((e) => e.name.includes(key)))
-    console.log(industriesList)
   }
   useEffect(() => {
-    dispatch(GetAllIndustryAction())
-    dispatch(GetAllCareerAction())
+    console.log(idIndustry)
+    if (idIndustry) setCareerListCompact(careerList?.filter((e) => e.industry.id == idIndustry))
+  }, [idIndustry])
+  useEffect(() => {
+    Promise.all([dispatch(GetAllIndustryAction()), dispatch(GetAllCareerAction())]).then((e) => {
+      setIndustriesList(dataIndustry)
+      setCareerList(careerData)
+    })
+    // dispatch(GetAllIndustryAction())
+    //     dispatch(GetAllCareerAction())
+    // setIndustriesList(dataIndustry)
+    // setCareerList(careerData)
+    // console.log(JSON.stringify(careerData, null, '\t'))
+
     // console.log('1')
     // console.log(industriesList)
   }, [])
@@ -212,7 +229,13 @@ export default function CCreateInfoScreen() {
               <Text style={styles.label}>
                 Giới tính <Text style={styles.star}>*</Text>
               </Text>
-              <View style={{ flexDirection: 'row' }}>
+              <BouncyCheckboxGroup
+                data={dataGender}
+                onChange={(selectedItem: ICheckboxButton) => {
+                  selectedItem.id == 0 ? setGender('male') : setGender('female')
+                }}
+              />
+              {/* <View style={{ flexDirection: 'row' }}>
                 <BouncyCheckbox
                   size={22}
                   fillColor={redColor}
@@ -256,7 +279,7 @@ export default function CCreateInfoScreen() {
                     // setStudying(isChecked);
                   }}
                 />
-              </View>
+              </View> */}
             </View>
             <View style={styles.fieldFlex}>
               <View style={{ ...styles.field, width: 180 }}>
@@ -305,7 +328,8 @@ export default function CCreateInfoScreen() {
                 editable={false}
                 value={career}
                 onPressIn={() => {
-                  setModalCareerVisible(true)
+                  if (idIndustry) setModalCareerVisible(true)
+                  else alert('Chọn ngành nghề ứng tuyển trước')
                 }}
                 placeholderTextColor={formColor}
                 placeholder="Vị trí công việc"
@@ -396,7 +420,6 @@ export default function CCreateInfoScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(false)
-                    setShowCareer(true)
                   }}
                 >
                   <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
@@ -415,6 +438,50 @@ export default function CCreateInfoScreen() {
                     <TouchableOpacity
                       onPress={() => {
                         setIndustry(e.name)
+                        setIdIndustry(e.id)
+                        setModalVisible(false)
+                      }}
+                    >
+                      <View style={styles.item} key={key}>
+                        <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalCareerVisible}
+            onRequestClose={() => {
+              setModalCareerVisible(!modalCareerVisible)
+            }}
+          >
+            <View style={styles.modalView}>
+              <View style={styles.top}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalCareerVisible(false)
+                  }}
+                >
+                  <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
+                </TouchableOpacity>
+                <TextInput
+                  autoFocus={true}
+                  placeholder="Nhập vào từ khóa"
+                  placeholderTextColor={formColor}
+                  value={keywordCareer}
+                  onChangeText={setKeyWord}
+                ></TextInput>
+              </View>
+              <View style={styles.list}>
+                {careerListCompact &&
+                  careerListCompact.map((e, key) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCareer(e.name)
+                        setIdCareer(e.id)
                         setModalVisible(false)
                       }}
                     >

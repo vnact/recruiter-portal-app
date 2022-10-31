@@ -103,13 +103,10 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
     }
   }, [expdata])
   useEffect(() => {
-    dispatch(GetAllCompanyAction())
-    dispatch(GetAllCareerAction())
-    setCareerList(dataCareerCompact)
-    setCompaniesList(dataCompanies)
-
-    // const a = dataCareer?.filter((e) => e.parent == null)
-    // console.log(JSON.stringify(a, null, '\t'))
+    Promise.all([dispatch(GetAllCompanyAction()), dispatch(GetAllCareerAction())]).then(() => {
+      setCareerList(dataCareerCompact)
+      setCompaniesList(dataCompanies)
+    })
   }, [])
   useEffect(() => {
     fillterList(keywordCompany)
