@@ -48,6 +48,7 @@ export default function CCreateInfoScreen() {
   const [industriesList, setIndustriesList] = useState<IIndustry[] | undefined>(dataIndustry)
   const [careerList, setCareerList] = useState<ICareer[] | undefined>(careerData)
   const [careerListCompact, setCareerListCompact] = useState<ICareer[] | undefined>()
+
   const dataGender = [
     { id: 0, value: 'male', text: 'Nam' },
     { id: 1, value: 'female', text: 'Nữ' },

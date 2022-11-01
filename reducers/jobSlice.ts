@@ -3,6 +3,7 @@ import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
 import { IJob, IPagination, ISearchJob } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
+import { getAllApplyAction, getAllFavoriteAction } from './jobListSlice'
 
 export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) => {
   const { data } = await apiInstance.get('/jobs', {
@@ -23,6 +24,7 @@ export const GetJobByIdAction = createAsyncThunk('job/getById', async (id: numbe
 export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number, thunk) => {
   const { data } = await apiInstance.post(`/apply`, { jobID: id })
   thunk.dispatch(GetSelfActionWithoutEffect())
+  thunk.dispatch(getAllApplyAction())
   return data
 })
 
@@ -31,6 +33,7 @@ export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', asyn
     jobId: id,
   })
   thunk.dispatch(GetSelfActionWithoutEffect())
+  thunk.dispatch(getAllFavoriteAction())
   return data
 })
 
