@@ -25,9 +25,9 @@ const userSlice = createSlice({
         state.loading = 'loading'
         state.message = undefined
       })
-      .addCase(GetSelfAction.fulfilled, (state, action) => {
+      .addCase(GetSelfAction.fulfilled, (state, payload) => {
         state.loading = 'success'
-        state.user = action.payload
+        state.user = payload.payload
       })
       .addCase(GetSelfAction.rejected, (state, payload) => {
         state.loading = 'error'

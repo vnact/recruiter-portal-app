@@ -1,13 +1,25 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated } from 'react-native'
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { grayColor, greenColor, redColor, whiteColor } from '../../constants/Colors'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import InfoTagSceen from './InfoTagSceen'
 import { useNavigation } from '@react-navigation/native'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetSelfAction, selectUser } from '../../reducers/userSlice'
+import { EmploymentType } from '../../constants/interface'
 const width = Dimensions.get('window').width
 export default function CVScreen() {
   const scrollValue = useRef(new Animated.Value(0)).current
   const nav = useNavigation()
+  const dispatch = useAppDispatch()
+  const dataUser = useAppSelector(selectUser)
+  useEffect(() => {
+    dispatch(GetSelfAction())
+  }, [])
+  const typeEmployee = new Map()
+  Object.keys(EmploymentType).map((name) => {
+    typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
+  })
   return (
     <View style={styles.container}>
       <View style={{ height: 150 }}>
@@ -69,7 +81,7 @@ export default function CVScreen() {
             marginBottom: 5,
           }}
         >
-          Bea Suzy
+          {dataUser?.name}
         </Text>
         <Text
           style={{
@@ -78,7 +90,7 @@ export default function CVScreen() {
             marginBottom: 5,
           }}
         >
-          Ca sĩ, Diễn viên
+          {/* {dataUser.?} */}
         </Text>
         <Text
           style={{
@@ -86,7 +98,7 @@ export default function CVScreen() {
             fontWeight: '200',
           }}
         >
-          KMA
+          {dataUser?.email}
         </Text>
 
         <View
@@ -99,7 +111,7 @@ export default function CVScreen() {
             justifyContent: 'center',
           }}
         >
-          <Text>Mô tả về bản thân</Text>
+          <Text>{dataUser?.description}</Text>
         </View>
       </Animated.View>
       <ScrollView
@@ -115,48 +127,42 @@ export default function CVScreen() {
               <Text style={styles.title}>Học vấn</Text>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <View style={styles.itemT}>
+              {dataUser?.educations && dataUser.educations.length != 0 ? (
+                dataUser.educations.map((e) => (
+                  <View style={styles.item}>
+                    <View style={styles.itemT}>
+                      <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.school}</Text>
+                        <Text style={styles.item__text2}>{e.fieldOfStudy}</Text>
+                        <Text style={styles.item__text3}>
+                          {e.isCompleted ? e.startTime + ' - ' + e.endTime : e.startTime + ' - Hiện Tại'}
+                        </Text>
+                      </View>
+                    </View>
+                    {e.description && (
+                      <View style={styles.itemB}>
+                        <Text style={styles.item__desc}>{e.description}</Text>
+                      </View>
+                    )}
+                  </View>
+                ))
+              ) : (
+                <View style={styles.item}>
                   <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
                   <View style={styles.item__info}>
-                    <Text style={styles.item__text1}>Học Viện Kĩ Thuật Mật Mã</Text>
-                    <Text style={styles.item__text2}>Công nghệ thông tin</Text>
-                    <Text style={styles.item__text3}>9/2018 - Hiện Tại</Text>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Người ứng tuyển chưa thêm !
+                    </Text>
                   </View>
                 </View>
-                <View style={styles.itemB}>
-                  <Text style={styles.item__desc}>
-                    Học viện Kỹ thuật Mật mã (tiếng Anh: Vietnam Academy of Cryptography Techniques) là một trường đại
-                    học công lập trực thuộc Ban Cơ yếu Chính phủ, được thành lập ngày 17 tháng 2 năm 1995 có chức năng
-                    đào tạo cán bộ có trình độ đại học, sau đại học và nghiên cứu khoa học kỹ thuật mật mã của ngành Cơ
-                    yếu Việt Nam. Học viện cũng được chính phủ Việt Nam lựa chọn là một trong tám cơ sở trọng điểm đào
-                    tạo nhân lực an toàn thông tin Việt Nam theo Đề án đào tạo và phát triển nguồn nhân lực an toàn, an
-                    ninh thông tin đến năm 2025
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.list}>
-              <View style={styles.item}>
-                <View style={styles.itemT}>
-                  <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
-                  <View style={styles.item__info}>
-                    <Text style={styles.item__text1}>Học Viện Kĩ Thuật Mật Mã</Text>
-                    <Text style={styles.item__text2}>Công nghệ thông tin</Text>
-                    <Text style={styles.item__text3}>9/2018 - Hiện Tại</Text>
-                  </View>
-                </View>
-                <View style={styles.itemB}>
-                  <Text style={styles.item__desc}>
-                    Học viện Kỹ thuật Mật mã (tiếng Anh: Vietnam Academy of Cryptography Techniques) là một trường đại
-                    học công lập trực thuộc Ban Cơ yếu Chính phủ, được thành lập ngày 17 tháng 2 năm 1995 có chức năng
-                    đào tạo cán bộ có trình độ đại học, sau đại học và nghiên cứu khoa học kỹ thuật mật mã của ngành Cơ
-                    yếu Việt Nam. Học viện cũng được chính phủ Việt Nam lựa chọn là một trong tám cơ sở trọng điểm đào
-                    tạo nhân lực an toàn thông tin Việt Nam theo Đề án đào tạo và phát triển nguồn nhân lực an toàn, an
-                    ninh thông tin đến năm 2025
-                  </Text>
-                </View>
-              </View>
+              )}
             </View>
           </View>
           <View style={styles.container__item}>
@@ -164,22 +170,36 @@ export default function CVScreen() {
               <Text style={styles.title}>Kĩ năng</Text>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <View style={styles.itemT}>
-                  <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
-                  <View style={styles.item__info}>
-                    <Text
-                      style={{
-                        ...styles.item__text1,
-                        fontWeight: '100',
-                        fontStyle: 'italic',
-                      }}
-                    >
-                      Hãy thêm kĩ năng của bạn nhé !
-                    </Text>
+              {dataUser?.skills && dataUser.skills.length != 0 ? (
+                dataUser.skills.map((e) => (
+                  <View style={styles.item}>
+                    <View style={styles.itemT}>
+                      <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.skill.name}</Text>
+                        <Text style={styles.item__text2}>{e.certificate}</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <View style={styles.itemT}>
+                    <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
+                    <View style={styles.item__info}>
+                      <Text
+                        style={{
+                          ...styles.item__text1,
+                          fontWeight: '100',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        Người ứng tuyển chưa thêm kĩ năng!
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
           <View style={styles.container__item}>
@@ -187,22 +207,39 @@ export default function CVScreen() {
               <Text style={styles.title}>Kinh nghiệm</Text>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <View style={styles.itemT}>
-                  <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
-                  <View style={styles.item__info}>
-                    <Text
-                      style={{
-                        ...styles.item__text1,
-                        fontWeight: '100',
-                        fontStyle: 'italic',
-                      }}
-                    >
-                      Hãy thêm thông tin về kinh nghiệm của bạn nhé !
-                    </Text>
+              {dataUser?.experiences && dataUser.experiences.length != 0 ? (
+                dataUser.experiences.map((e) => (
+                  <View style={styles.item}>
+                    <View style={styles.itemT}>
+                      <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.company.name}</Text>
+                        <Text style={styles.item__text2}>
+                          {e.career.name + ' - ' + typeEmployee.get(e.employmentType)}
+                        </Text>
+                        <Text style={styles.item__text3}>{e.startDate + ' - ' + e.endDate}</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <View style={styles.itemT}>
+                    <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                    <View style={styles.item__info}>
+                      <Text
+                        style={{
+                          ...styles.item__text1,
+                          fontWeight: '100',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        Hãy thêm thông tin về kinh nghiệm của bạn nhé !
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
         </View>
@@ -294,6 +331,7 @@ const styles = StyleSheet.create({
   },
   item__info: {
     paddingHorizontal: 10,
+
     flex: 1,
   },
   item__text1: {

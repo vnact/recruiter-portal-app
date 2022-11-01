@@ -8,26 +8,161 @@ import {
   Animated,
   TouchableWithoutFeedback,
   Keyboard,
+  Modal,
+  ScrollView,
+  Alert,
 } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
-import { Ionicons } from '@expo/vector-icons'
-import { blackColor, formColor, redColor, whiteColor } from '../../constants/Colors'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { blackColor, formColor, grayColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
 const width = Dimensions.get('window').width
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import moment from 'moment'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import Layout from '../../constants/Layout'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetAllCompanyAction, selectCompanies } from '../../reducers/companySlice'
+import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
+import { EmploymentType, ICareer, IExperience } from '../../constants/interface'
+import {
+  CreateExperienceAction,
+  DeleteExperienceAction,
+  GetOneExperienceAction,
+  selectExperience,
+  UpdateExperienceAction,
+} from '../../reducers/experienceSlice'
+import { Picker } from '@react-native-picker/picker'
+import { RootStackScreenProps } from '../../types'
 
-export default function CCreateExpScreen() {
+export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({ route }) => {
+  interface ICompany {
+    id: number
+    name: string
+  }
+  const { id } = route.params
   const [showPickDate, setShowPickDate] = useState(false)
   const nav = useNavigation()
-  const scrollValue = useRef(new Animated.Value(0)).current
-  const [gender, setGender] = useState(null)
-  const [dateStart, setDateStart] = useState('Bắt đầu')
-  const [dateEnd, setDateEnd] = useState('Kết thúc')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalCareerVisible, setModalCareerVisible] = useState(false)
+  const [idCompany, setIdCompany] = useState<number | undefined>()
+  const [idCareer, setIdCareer] = useState<number | undefined>()
+  const [keywordCompany, setKeyWordCompany] = useState('')
+  const [keywordCareer, setKeyWordCareer] = useState('')
+  const [company, setCompany] = useState<string | undefined>()
+  const [career, setCareer] = useState<string | undefined>()
+  const [employment_type, setEmployment_type] = useState<EmploymentType | undefined>()
+  const [dateStart, setDateStart] = useState<string | undefined>('Bắt đầu')
+  const [dateEnd, setDateEnd] = useState<string | undefined>('Kết thúc')
+  const [description, setDescription] = useState<string | undefined>()
   const [working, setWorking] = useState(false)
   const [whatTime, setWhatTime] = useState('')
+  const dataCompanies = useAppSelector(selectCompanies)
+  const dataCareerCompact = useAppSelector(selectCareers)?.filter((e) => e.parent == null)
+  const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
+  const dataCareer = useAppSelector(selectCareers)
+
+  const typeEmployee = Object.keys(EmploymentType).map((name) => {
+    return {
+      name,
+      value: EmploymentType[name as keyof typeof EmploymentType],
+    }
+  })
+  const dispatch = useAppDispatch()
+  let [careerList, setCareerList] = useState<ICareer[] | undefined>()
+  let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>()
+  const fillterList = (key: string) => {
+    setCompaniesList(dataCompanies?.filter((e) => e.name.includes(key)))
+  }
+  const fillterCareerList = (key: string) => {
+    setCareerList(dataCareerCompact?.filter((e) => e.name.includes(key)))
+  }
+  useEffect(() => {
+    if (id) {
+      dispatch(GetOneExperienceAction({ id }))
+    }
+  }, [])
+  const expdata = useAppSelector(selectExperience)
+
+  useEffect(() => {
+    if (expdata && id) {
+      setDateEnd(expdata.endDate)
+      setDateStart(expdata.startDate)
+      setCompany(expdata.company.name)
+      setCareer(expdata.career.name)
+      setIdCareer(expdata.career.id)
+      setIdCompany(expdata.company.id)
+      setDescription(expdata.description)
+      console.log(
+        Object.keys(EmploymentType)[
+          Object.values(EmploymentType).indexOf(expdata.employmentType as unknown as EmploymentType)
+        ],
+      )
+      // setEmployment_type(expdata.employmentType)
+    }
+  }, [expdata])
+  useEffect(() => {
+    Promise.all([dispatch(GetAllCompanyAction()), dispatch(GetAllCareerAction())]).then(() => {
+      setCareerList(dataCareerCompact)
+      setCompaniesList(dataCompanies)
+    })
+  }, [])
+  useEffect(() => {
+    fillterList(keywordCompany)
+  }, [keywordCompany])
+  useEffect(() => {
+    fillterCareerList(keywordCareer)
+  }, [keywordCareer])
+  const checkParent = (id: number) => {
+    return dataCareerChild?.filter((e) => e.parent?.id == id)[0] ? true : false
+  }
+  const findParent = (id: number) => {
+    return dataCareerChild?.filter((e) => e.parent?.id == id)
+  }
+  const onDelete = () => {
+    Alert.alert('Cảnh báo', 'Bạn có muốn xóa không ?', [
+      {
+        text: 'Cancel',
+        onPress: () => nav.goBack(),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          if (id) {
+            await dispatch(DeleteExperienceAction({ id }))
+            alert('Xóa thành công')
+            nav.goBack()
+          }
+        },
+      },
+    ])
+  }
+  const onSubmit = async () => {
+    if (idCareer && idCompany && dateStart && dateEnd && employment_type) {
+      const payload = {
+        id: id || undefined,
+        career_id: idCareer,
+        employment_type,
+        start_date: dateStart,
+        end_date: dateEnd,
+        company_id: idCompany,
+        description,
+        title: 'ádsa',
+      }
+      if (id) {
+        console.log('ad')
+        await dispatch(UpdateExperienceAction(payload))
+        alert('Cập nhật thành công')
+        nav.goBack()
+      } else {
+        await dispatch(CreateExperienceAction(payload))
+        alert('Tạo thành công')
+        nav.goBack()
+      }
+    }
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -48,54 +183,78 @@ export default function CCreateExpScreen() {
             <Text style={styles.header__title}>Kinh nghiệm</Text>
           </View>
         </View>
+
         <View style={styles.form}>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Công ty <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              placeholderTextColor={formColor}
-              placeholder="Tên công ty bạn đã làm việc"
-              style={styles.input}
-            ></TextInput>
-          </View>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Vị trí <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              placeholderTextColor={formColor}
-              placeholder="Vị trí của bạn trong công ty"
-              style={styles.input}
-            ></TextInput>
-          </View>
-          <View style={styles.field}>
-            <Text style={styles.label}>
-              Thời gian <Text style={styles.star}>*</Text>
-            </Text>
-            <View style={styles.boxFieldTime}>
-              <View style={!working ? styles.fieldTime : styles.fieldTimeFull}>
-                <Text style={styles.labelTime}>Bắt đầu</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowPickDate(true)
-                    setWhatTime('start')
-                  }}
-                >
-                  <View style={!working ? styles.inputTime : styles.inputTimeFull}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '200',
-                        color: formColor,
-                      }}
-                    >
-                      {dateStart}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              {!working ? (
+          <ScrollView>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Công ty <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                editable={false}
+                value={company}
+                onPressIn={() => {
+                  setModalVisible(true)
+                  setKeyWordCompany('')
+                }}
+                placeholderTextColor={formColor}
+                placeholder="Tên công ty bạn đã làm việc"
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Vị trí <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                editable={false}
+                onPressIn={() => {
+                  setModalCareerVisible(true)
+                  setKeyWordCareer('')
+                }}
+                placeholderTextColor={formColor}
+                placeholder="Vị trí của bạn trong công ty"
+                value={career}
+                style={styles.input}
+              ></TextInput>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Loại hình <Text style={styles.star}>*</Text>
+              </Text>
+              <Picker selectedValue={employment_type} onValueChange={(itemValue) => setEmployment_type(itemValue)}>
+                {typeEmployee.map((e) => (
+                  <Picker.Item label={e.name} value={e.value} />
+                ))}
+              </Picker>
+            </View>
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Thời gian <Text style={styles.star}>*</Text>
+              </Text>
+              <View style={styles.boxFieldTime}>
+                <View style={!working ? styles.fieldTime : styles.fieldTimeFull}>
+                  <Text style={styles.labelTime}>Bắt đầu</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowPickDate(true)
+                      setWhatTime('start')
+                    }}
+                  >
+                    <View style={!working ? styles.inputTime : styles.inputTimeFull}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '200',
+                          color: formColor,
+                        }}
+                      >
+                        {dateStart}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
                 <View style={styles.fieldTime}>
                   <Text style={styles.labelTime}>Kết thúc</Text>
                   <TouchableOpacity
@@ -117,26 +276,23 @@ export default function CCreateExpScreen() {
                     </View>
                   </TouchableOpacity>
                 </View>
-              ) : (
-                ''
-              )}
+              </View>
+              <DateTimePickerModal
+                isVisible={showPickDate}
+                mode="date"
+                // textColor={blackColor}
+                // accentColor={blackColor}
+                // isDarkModeEnabled={false}
+                onConfirm={(date) => {
+                  if (whatTime == 'start') {
+                    setDateStart(moment(date).format('YYYY-MM-DD'))
+                  } else setDateEnd(moment(date).format('YYYY-MM-DD'))
+                  setShowPickDate(false)
+                }}
+                onCancel={() => setShowPickDate(false)}
+              />
             </View>
-            <DateTimePickerModal
-              isVisible={showPickDate}
-              mode="date"
-              // textColor={blackColor}
-              // accentColor={blackColor}
-              // isDarkModeEnabled={false}
-              onConfirm={(date) => {
-                if (whatTime == 'start') {
-                  setDateStart(moment(date).format('DD/MM/YYYY'))
-                } else setDateEnd(moment(date).format('DD/MM/YYYY'))
-                setShowPickDate(false)
-              }}
-              onCancel={() => setShowPickDate(false)}
-            />
-          </View>
-          <BouncyCheckbox
+            {/* <BouncyCheckbox
             size={22}
             fillColor={redColor}
             unfillColor="#FFFFFF"
@@ -156,37 +312,217 @@ export default function CCreateExpScreen() {
             onPress={(isChecked: boolean) => {
               setWorking(isChecked)
             }}
-          />
-          <View style={styles.field}>
-            <Text style={styles.label}>Mô tả chi tiết</Text>
-            <TextInput
-              multiline
-              placeholderTextColor={formColor}
-              placeholder="Mô tả chi tiết về công việc của bạn đã làm"
-              style={{ ...styles.input, height: 150 }}
-            ></TextInput>
-          </View>
-          <View style={styles.formSubmit}>
-            <TouchableOpacity>
-              <TouchableOpacity onPress={() => nav.goBack()}>
-                <View style={styles.submit}>
-                  <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
+          /> */}
+            <View style={styles.field}>
+              <Text style={styles.label}>
+                Mô tả chi tiết <Text style={styles.star}>*</Text>
+              </Text>
+              <TextInput
+                multiline
+                value={description}
+                onChangeText={setDescription}
+                placeholderTextColor={formColor}
+                placeholder="Mô tả chi tiết về công việc của bạn đã làm"
+                style={{ ...styles.input, height: 150 }}
+              ></TextInput>
+            </View>
+            <View style={styles.formSubmit}>
+              <TouchableOpacity>
+                <TouchableOpacity onPress={() => nav.goBack()}>
+                  <View style={{ ...styles.submit, backgroundColor: '#F7DC6F' }}>
+                    <Text style={{ color: whiteColor, fontSize: 18 }}>Hủy bỏ</Text>
+                  </View>
+                </TouchableOpacity>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onSubmit()}>
+                <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
+                  <Text style={{ color: whiteColor, fontSize: 18 }}>{id ? 'Cập nhật' : 'Thêm mới'}</Text>
                 </View>
               </TouchableOpacity>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
-                <Text style={{ color: whiteColor, fontSize: 18 }}>Thêm mới</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              {id && (
+                <TouchableOpacity>
+                  <TouchableOpacity onPress={() => onDelete()}>
+                    <View style={{ ...styles.submit, backgroundColor: redColor }}>
+                      <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
+                    </View>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              )}
+            </View>
+          </ScrollView>
         </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible)
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.top}>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
+              </TouchableOpacity>
+              <TextInput
+                autoFocus={true}
+                placeholder="Nhập vào từ khóa"
+                placeholderTextColor={formColor}
+                value={keywordCompany}
+                onChangeText={setKeyWordCompany}
+              ></TextInput>
+            </View>
+            <View style={styles.list}>
+              {companiesList &&
+                companiesList.map((e, key) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCompany(e.name)
+                      setIdCompany(key + 1)
+                      setModalVisible(false)
+                    }}
+                  >
+                    <View style={styles.item} key={key}>
+                      <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalCareerVisible}
+          onRequestClose={() => {
+            setModalCareerVisible(!modalCareerVisible)
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.top}>
+              <TouchableOpacity onPress={() => setModalCareerVisible(false)}>
+                <MaterialIcons name="arrow-back-ios" size={30} color={blackColor} />
+              </TouchableOpacity>
+              <TextInput
+                // autoFocus={true}
+                placeholder="Nhập vào từ khóa"
+                placeholderTextColor={formColor}
+                value={keywordCareer}
+                onChangeText={setKeyWordCareer}
+                onFocus={() => console.log('focus')}
+                // clearTextOnFocus={true}
+              ></TextInput>
+            </View>
+            <View style={styles.list}>
+              <ScrollView>
+                {careerList &&
+                  careerList.map((e, key) => (
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (checkParent(e.id)) {
+                            setIdCareer(e.id)
+                          } else {
+                            setKeyWordCareer(e.name)
+                            setCareer(e.name)
+                            setIdCareer(e.id)
+                            setModalCareerVisible(false)
+                          }
+                        }}
+                      >
+                        <View>
+                          <View style={styles.item} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                            {checkParent(e.id) ? (
+                              <View
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  borderRadius: 15,
+                                  backgroundColor: mainColor,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Text style={{ color: whiteColor }}>{findParent(e.id)?.length}</Text>
+                              </View>
+                            ) : (
+                              <></>
+                            )}
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                      {e.id == idCareer && checkParent(e.id) && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setKeyWordCareer(e.name)
+                            setCareer(e.name)
+                            setIdCareer(e.id)
+                            setModalCareerVisible(false)
+                          }}
+                        >
+                          <View style={styles.itemChild} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      {e.id == idCareer &&
+                        findParent(e.id)?.map((e) => (
+                          <TouchableOpacity
+                            onPress={() => {
+                              setKeyWordCareer(e.name)
+                              setCareer(e.name)
+                              setIdCareer(e.id)
+                              setModalCareerVisible(false)
+                            }}
+                          >
+                            <View style={styles.itemChild} key={key}>
+                              <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                    </View>
+                  ))}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
+  itemChild: {
+    paddingHorizontal: 40,
+    borderBottomWidth: 0.2,
+    backgroundColor: grayColor,
+    height: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  list: {},
+  item: {
+    paddingHorizontal: 15,
+    borderBottomWidth: 0.2,
+    height: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  top: {
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    borderBottomWidth: 0.2,
+    paddingBottom: 10,
+  },
+  modalView: {
+    paddingTop: 55,
+    width: Layout.window.width,
+    height: Layout.window.height,
+    backgroundColor: whiteColor,
+  },
   container: {
     // alignItems: 'center',
     // justifyContent: 'center',
@@ -276,17 +612,17 @@ const styles = StyleSheet.create({
   boxFieldTime: { flexDirection: 'row', justifyContent: 'space-between' },
   formSubmit: {
     flexDirection: 'row',
-    bottom: 50,
-    position: 'absolute',
+    // bottom: 50,
+    // position: 'absolute',
     width: 399,
-    marginHorizontal: 15,
+    // marginHorizontal: 15,
     justifyContent: 'space-around',
     height: 70,
     alignItems: 'center',
   },
   submit: {
     backgroundColor: redColor,
-    width: 150,
+    width: 120,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

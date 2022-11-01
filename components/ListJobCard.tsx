@@ -10,8 +10,7 @@ const width = Dimensions.get('window').width
 interface IJobProps {
   item: IJob
 }
-
-const Job: FC<IJobProps> = ({ item }) => {
+export const Job: FC<IJobProps> = ({ item }) => {
   const nav = useNavigation()
   return (
     <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: item.id })}>
