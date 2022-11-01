@@ -4,8 +4,7 @@ import { RootState } from '../app/store'
 import { IJob, IPagination, ISearchJob } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
 
-export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) =>
-{
+export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) => {
   const { data } = await apiInstance.get('/jobs', {
     params: {
       page: pagination.page || 1,
@@ -16,40 +15,35 @@ export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination:
   return data
 })
 
-export const GetJobByIdAction = createAsyncThunk('job/getById', async (id: number) =>
-{
+export const GetJobByIdAction = createAsyncThunk('job/getById', async (id: number) => {
   const { data } = await apiInstance.get(`/jobs/${id}`)
   return data
 })
 
-export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number, thunk) =>
-{
+export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number, thunk) => {
   const { data } = await apiInstance.post(`/apply`, { jobID: id })
   thunk.dispatch(GetSelfActionWithoutEffect())
   return data
 })
 
-export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', async (id: number) =>
-{
+export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', async (id: number, thunk) => {
   const { data } = await apiInstance.post(`favorite-job`, {
     jobId: id,
   })
+  thunk.dispatch(GetSelfActionWithoutEffect())
   return data
 })
 
-export const SearchJobAction = createAsyncThunk('job/search', async (search: ISearchJob) =>
-{
+export const SearchJobAction = createAsyncThunk('job/search', async (search: ISearchJob) => {
   const { data } = await apiInstance.get(`/jobs/search`, {
     params: {
       search,
     },
   })
-  console.log('🚀 ~ file: jobSlice.ts ~ line 48 ~ data', data)
   return data
 })
 
-interface IJobState
-{
+interface IJobState {
   loading: 'idle' | 'loading' | 'success' | 'error'
   jobs: IJob[]
   job?: IJob
@@ -65,76 +59,59 @@ const jobSlice = createSlice({
   name: 'job',
   initialState: InitialState,
   reducers: {},
-  extraReducers: (builder) =>
-  {
+  extraReducers: (builder) => {
     builder
-      .addCase(GetAllJobAction.pending, (state) =>
-      {
+      .addCase(GetAllJobAction.pending, (state) => {
         state.loading = 'loading'
       })
-      .addCase(GetAllJobAction.fulfilled, (state, action) =>
-      {
+      .addCase(GetAllJobAction.fulfilled, (state, action) => {
         state.loading = 'success'
         state.jobs = action.payload
       })
-      .addCase(GetAllJobAction.rejected, (state, action) =>
-      {
+      .addCase(GetAllJobAction.rejected, (state, action) => {
         state.loading = 'error'
       })
     builder
-      .addCase(GetJobByIdAction.pending, (state) =>
-      {
+      .addCase(GetJobByIdAction.pending, (state) => {
         state.loading = 'loading'
       })
-      .addCase(GetJobByIdAction.fulfilled, (state, action) =>
-      {
+      .addCase(GetJobByIdAction.fulfilled, (state, action) => {
         state.loading = 'success'
         state.job = action.payload
       })
-      .addCase(GetJobByIdAction.rejected, (state, action) =>
-      {
+      .addCase(GetJobByIdAction.rejected, (state, action) => {
         state.loading = 'error'
       })
 
-    builder
-      .addCase(ApplyJobAction.pending, (state) =>
-      {
-        state.loading = 'loading'
-      })
-      .addCase(ApplyJobAction.fulfilled, (state, action) =>
-      {
-        state.loading = 'success'
-        state.job = action.payload.job
-      })
-      .addCase(ApplyJobAction.rejected, (state, action) =>
-      {
-        state.loading = 'error'
-      })
-    builder
-      .addCase(ChangeFavoriteAction.pending, (state) =>
-      {
-        state.loading = 'loading'
-      })
-      .addCase(ChangeFavoriteAction.fulfilled, (state, action) =>
-      {
-        state.loading = 'success'
-        state.job = action.payload.job
-      })
-      .addCase(ChangeFavoriteAction.rejected, (state, action) =>
-      {
-        state.loading = 'error'
-      })
-    builder.addCase(SearchJobAction.pending, (state) =>
-    {
+    // builder
+    //   .addCase(ApplyJobAction.pending, (state) => {
+    //     state.loading = 'loading'
+    //   })
+    //   .addCase(ApplyJobAction.fulfilled, (state, action) => {
+    //     state.loading = 'success'
+    //     state.job = action.payload.job
+    //   })
+    //   .addCase(ApplyJobAction.rejected, (state, action) => {
+    //     state.loading = 'error'
+    //   })
+    // builder
+    //   .addCase(ChangeFavoriteAction.pending, (state) => {
+    //     state.loading = 'loading'
+    //   })
+    //   .addCase(ChangeFavoriteAction.fulfilled, (state, action) => {
+    //     state.job = action.payload.job
+    //   })
+    //   .addCase(ChangeFavoriteAction.rejected, (state, action) => {
+    //     state.loading = 'error'
+    //   })
+    builder.addCase(SearchJobAction.pending, (state) => {
       state.loading = 'loading'
     })
-    builder.addCase(SearchJobAction.fulfilled, (state, action) =>
-    {
+    builder.addCase(SearchJobAction.fulfilled, (state, action) => {
       state.loading = 'success'
       state.jobs = action.payload
     })
-    builder.addCase(SearchJobAction.rejected, (state, action) =>
-    {
+    builder.addCase(SearchJobAction.rejected, (state, action) => {
       state.loading = 'error'
     })
   },

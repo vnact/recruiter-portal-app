@@ -7,7 +7,6 @@ import { SceneMap, TabView } from 'react-native-tab-view'
 import PagerView from 'react-native-pager-view'
 import { JDInfoScreen } from './JDInfoScreen'
 import { JDCompanyScreen } from './JDCompanyScreen'
-import { IJob } from '../../constants/interface'
 import { RootStackScreenProps } from '../../types'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import {
@@ -17,7 +16,7 @@ import {
   selectJob,
   selectLoading,
 } from '../../reducers/jobSlice'
-import { GetSelfAction, selectUser } from '../../reducers/userSlice'
+import { selectUser } from '../../reducers/userSlice'
 import SplashScreen from '../SplashScreen'
 
 const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
@@ -36,17 +35,12 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
 
   const job = useAppSelector(selectJob)
   const dispatch = useAppDispatch()
-  const [isCancel, setIsCancel] = useState(false)
 
-  const [routes] = React.useState([
-    { key: 'first', title: 'First' },
-    { key: 'second', title: 'Second' },
-  ])
   const pageRef = useRef<PagerView>(null)
   const [pageS, setPageS] = useState(0)
   const nav = useNavigation()
-  const jobsFavorite = useMemo(() => user?.favoriteJobs.map((item) => item.jobId), [user])
-  const isLike = useMemo(() => job && jobsFavorite?.includes(job.id), [jobsFavorite, job])
+  const isLike = useMemo(() => job && !!user?.favoriteJobs.map((item) => item.job.id).includes(job.id), [user, job])
+  const isApplied = useMemo(() => job && !!user?.appliedJobs.map((item) => item.job.id).includes(job.id), [user, job])
 
   useEffect(() => {
     dispatch(GetJobByIdAction(id))
@@ -64,7 +58,6 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
 
   const applyJob = (id: number) => {
     if (user) {
-      setIsCancel(!isCancel)
       dispatch(ApplyJobAction(id))
     }
   }
@@ -142,7 +135,7 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
             </View>
             <TouchableOpacity onPress={() => applyJob(job.id)}>
               <View style={styles.submit}>
-                {isCancel ? (
+                {isApplied ? (
                   <Text style={{ fontSize: 18, color: whiteColor }}>Hủy</Text>
                 ) : (
                   <Text style={{ fontSize: 18, color: whiteColor }}>Ứng tuyển ngay</Text>

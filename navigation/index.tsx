@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import * as React from 'react'
+import { useEffect } from 'react'
 import { ColorSchemeName, Pressable } from 'react-native'
 
 import Colors, { blackColor, mainColor, whiteColor } from '../constants/Colors'
@@ -16,8 +16,6 @@ import useColorScheme from '../hooks/useColorScheme'
 import RootScreen from '../screens/LoginScreen/RootScreen'
 import ModalScreen from '../screens/ModalScreen'
 import NotFoundScreen from '../screens/NotFoundScreen'
-import TabOneScreen from '../screens/TabOneScreen'
-import TabTwoScreen from '../screens/TabTwoScreen'
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types'
 import LinkingConfiguration from './LinkingConfiguration'
 import SignInScreen from '../screens/LoginScreen/SignInScreen'
@@ -33,9 +31,10 @@ import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
 import CVScreen from '../screens/InfoScreen/CVScreen'
 import { JobDetailScreen } from '../screens/JobDetailScreen/JobDetailScreen'
 import { selectIsLoggedIn, selectLoading } from '../reducers/authSlice'
-import { useAppSelector } from '../app/hook'
+import { useAppDispatch, useAppSelector } from '../app/hook'
 import SplashScreen from '../screens/SplashScreen'
 import ListJobScreen from '../screens/ListJobScreen/ListJobScreen'
+import { GetSelfAction } from '../reducers/userSlice'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -54,6 +53,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 function RootNavigator() {
   const loading = useAppSelector(selectLoading)
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(GetSelfAction())
+  })
+
   if (loading == 'loading') {
     return (
       <Stack.Navigator>
