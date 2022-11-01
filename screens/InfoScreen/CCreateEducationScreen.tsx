@@ -53,7 +53,6 @@ export const CCreateEducationScreen: React.FC<RootStackScreenProps<'CCreateEduca
       setFiled(educationData.fieldOfStudy)
       setSchool(educationData.school)
       setStudying(!educationData.isCompleted)
-      console.log(studying)
     }
   }, [educationData])
 

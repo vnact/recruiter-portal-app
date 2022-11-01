@@ -7,15 +7,18 @@ import { useNavigation } from '@react-navigation/native'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetSelfAction, selectUser } from '../../reducers/userSlice'
 import moment from 'moment'
+import { EmploymentType } from '../../constants/interface'
 const width = Dimensions.get('window').width
 export default function InfoCandidateScreen() {
   const nav = useNavigation()
   const dispatch = useAppDispatch()
   const dataUser = useAppSelector(selectUser)
+  const typeEmployee = new Map()
+  Object.keys(EmploymentType).map((name) => {
+    typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
+  })
   useEffect(() => {
     dispatch(GetSelfAction())
-    // console.log('ádasd')
-    // console.log(dataUser?.skills[0])
   }, [])
   return (
     <View style={styles.container}>
@@ -41,7 +44,7 @@ export default function InfoCandidateScreen() {
             marginBottom: 5,
           }}
         >
-          Bea Suzy
+          {dataUser?.name}
         </Text>
         <Text
           style={{
@@ -50,16 +53,14 @@ export default function InfoCandidateScreen() {
             marginBottom: 5,
           }}
         >
-          Ca sĩ, Diễn viên
+          {dataUser?.email}
         </Text>
         <Text
           style={{
             fontSize: 15,
             fontWeight: '200',
           }}
-        >
-          KMA
-        </Text>
+        ></Text>
         <TouchableOpacity
           style={{
             position: 'absolute',
@@ -80,7 +81,7 @@ export default function InfoCandidateScreen() {
             justifyContent: 'center',
           }}
         >
-          <Text>Mô tả về bản thân</Text>
+          <Text>{dataUser?.description}</Text>
         </View>
       </View>
       <ScrollView style={{ backgroundColor: '#EEEEEE' }}>
@@ -169,25 +170,46 @@ export default function InfoCandidateScreen() {
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Kinh nghiệm</Text>
-              <TouchableOpacity onPress={() => nav.navigate('CCreateExp')}>
+              <TouchableOpacity onPress={() => nav.navigate('CCreateExp', {})}>
                 <AntDesign name="pluscircleo" size={20} color="#576CD6" />
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
-              <View style={styles.item}>
-                <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
-                <View style={styles.item__info}>
-                  <Text
-                    style={{
-                      ...styles.item__text1,
-                      fontWeight: '100',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    Hãy thêm thông tin về kinh nghiệm của bạn nhé !
-                  </Text>
+              {dataUser?.experiences && dataUser?.experiences.length != 0 ? (
+                dataUser.experiences.map((e) => (
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateExp', { id: e.id })}>
+                    <View style={styles.item}>
+                      <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                      <View style={styles.item__info}>
+                        <Text style={styles.item__text1}>{e.company.name}</Text>
+                        {/* <Text style={styles.item__text2}>{e.company.address}</Text> */}
+                        <Text style={styles.item__text2}>
+                          {e.career.name + ' - ' + typeEmployee.get(e.employmentType)}
+                        </Text>
+                        {/* <Text style={styles.item__text2}>{typeEmployee.get(e.employmentType)}</Text> */}
+                        <Text style={styles.item__text3}>
+                          {moment(e.startDate).format('DD/MM/YYYY') + ' - ' + moment(e.endDate).format('DD/MM/YYYY')}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.item}>
+                  <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Hãy thêm thông tin về kinh nghiệm của bạn nhé !
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           </View>
         </View>

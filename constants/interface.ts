@@ -12,7 +12,7 @@ export enum EmploymentType {
   PartTime = 'part_time',
   SelfEmployed = 'self_employed',
   Freelance = 'freelance',
-  Constract = 'constract',
+  Contract = 'contract',
   Internship = 'internship',
   Apprenticeship = 'apprenticeship',
   Seasonal = 'seasonal',
@@ -63,32 +63,32 @@ export interface IUser {
   educations: IEducation[]
   skills: IUserSkill[]
   appliedJobs: IApplyJob[]
+  experiences: IExperienceGetMe[]
+}
+export interface IExperienceGetMe {
+  id: number
+  title: string
+  startDate: string
+  endDate: string
+  description: string
+  employmentType: string
+  company: ICompany
+  career: ICareer
 }
 export interface ICompany {
+  id: number
   name: string
-
   phone: string
-
   email: string
-
   taxNumber: string
-
   website?: string
-
   size?: CompanySize
-
   description?: string
-
   address?: string
-
   gpsLat: number
-
   gpsLng: number
-
   provinceId: number
-
   industry?: IIndustry
-
   jobs: IJob[]
 }
 export interface IJob {
@@ -133,16 +133,25 @@ export interface ISkill {
   description?: string
 }
 export interface IExperience {
-  id: number
-  company?: ICompany
-  career?: ICareer
-  employmentType: EmploymentType
+  title: string
+  id?: number
+  company_id: number
+  career_id: number
+  employment_type: EmploymentType
   startDate: string
   endDate?: string
   description?: string
-  companyName?: string
 }
-
+export interface IExperienceCreate {
+  title: string
+  id?: number
+  company_id: number
+  career_id: number
+  employment_type: EmploymentType
+  start_date: string
+  end_date?: string
+  description?: string
+}
 export interface IFavoriteJob {
   id: number
   jobId: number
@@ -152,13 +161,11 @@ export interface IPagination {
   page: number
   size?: number
 }
-
 export enum IWorkplace {
   OnSite = 'on_site',
   Remote = 'remote',
   Hybird = 'hybird',
 }
-
 export interface IApplyJob {
   id: number
   jobID: number
