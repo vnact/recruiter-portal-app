@@ -1,64 +1,19 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
 import { Job } from '../../components/ListJobCard'
-import React from 'react'
-interface IJob {
-  name: string
-  name_company: string
-  salary: number
-  location: string
-  level: string
-  created_at: string
+import React, { FC } from 'react'
+import { IApplyJob, IJob } from '../../constants/interface'
+
+interface IProps {
+  applyJob: IJob[]
 }
 
-const data: IJob[] = [
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-  {
-    name: 'Google Developer',
-    name_company: 'Google',
-    salary: 10,
-    location: 'Ha noi',
-    level: 'Junior',
-    created_at: '3d',
-  },
-]
-export default function ListAppliedScreen() {
+export const ListAppliedScreenFC: FC<IProps> = ({ applyJob }) => {
   return (
     <View>
       <FlatList
-        data={data}
-        keyExtractor={(item, index) => item.name + index}
-        renderItem={({ item, index }) => <Job item={item} key={index} />}
+        data={applyJob}
+        keyExtractor={(item, index) => item.title + index}
+        renderItem={({ item, index }) => <Job job={item} key={index} />}
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
       />

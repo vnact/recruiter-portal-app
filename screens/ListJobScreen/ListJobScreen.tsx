@@ -1,12 +1,26 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { formColor, grayColor, mainColor, whiteColor } from '../../constants/Colors'
 import Layout from '../../constants/Layout'
 import PagerView from 'react-native-pager-view'
-import ListFavouritedScreen from './ListFavouritedScreen'
-import ListAppliedScreen from './ListAppiedScreen'
+import { ListFavouritedScreen } from './ListFavouritedScreen'
+import { ListAppliedScreenFC } from './ListAppiedScreen'
+import { useAppDispatch, useAppSelector } from '../../app/hook'
+import { GetSelfAction, selectUser } from '../../reducers/userSlice'
+import { IJob } from '../../constants/interface'
 export default function ListJobScreen() {
   const pageRef = useRef<PagerView>(null)
+
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(selectUser)
+
+  useEffect(() => {
+    dispatch(GetSelfAction())
+  }, [])
+
+  const jobsApply = useMemo(() => user?.appliedJobs.map((item) => item.job), [user])
+  const jobsFavorite = useMemo(() => user?.favoriteJobs.map((item) => item.job), [user])
+
   const [pageS, setPageS] = useState(0)
   return (
     <View style={styles.container}>
@@ -44,8 +58,8 @@ export default function ListJobScreen() {
           initialPage={pageS}
           onPageSelected={(e) => setPageS(e.nativeEvent.position)}
         >
-          <ListAppliedScreen />
-          <ListFavouritedScreen />
+          <ListAppliedScreenFC applyJob={jobsApply || []} />
+          <ListFavouritedScreen favouriteJobs={jobsFavorite || []} />
         </PagerView>
       </View>
     </View>

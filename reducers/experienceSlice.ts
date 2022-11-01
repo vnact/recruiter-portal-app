@@ -2,9 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
 import { IEducation, IExperience, IExperienceCreate, IExperienceGetMe } from '../constants/interface'
-import { GetSelfAction } from './userSlice'
+import { GetSelfActionWithoutEffect } from './userSlice'
 
-interface IExperienceState {
+interface IExperienceState
+{
   loading: 'idle' | 'loading' | 'success' | 'error'
   experience?: IExperienceGetMe
   message?: string
@@ -13,34 +14,39 @@ interface IExperienceState {
 const initialState: IExperienceState = {
   loading: 'idle',
 }
-interface IIdExperience {
+interface IIdExperience
+{
   id: number
 }
 export const CreateExperienceAction = createAsyncThunk(
   'experience/create',
-  async (payload: Omit<IExperienceCreate, 'id'>, thunk) => {
+  async (payload: Omit<IExperienceCreate, 'id'>, thunk) =>
+  {
     const { data } = await apiInstance.post('experience', payload)
-    thunk.dispatch(GetSelfAction())
+    thunk.dispatch(GetSelfActionWithoutEffect())
     return data
   },
 )
-export const DeleteExperienceAction = createAsyncThunk('experience/delete', async (payload: { id: number }, thunk) => {
+export const DeleteExperienceAction = createAsyncThunk('experience/delete', async (payload: { id: number }, thunk) =>
+{
   const { id } = payload
   await apiInstance.delete(`experience/${id}`)
-  thunk.dispatch(GetSelfAction())
+  thunk.dispatch(GetSelfActionWithoutEffect())
   return
 })
 export const UpdateExperienceAction = createAsyncThunk(
   'experience/update',
-  async (payload: IExperienceCreate, thunk) => {
+  async (payload: IExperienceCreate, thunk) =>
+  {
     const { id, ...dataUpdate } = payload
     console.log(JSON.stringify(payload, null, '\t'))
     await apiInstance.patch(`experience/${id}`, dataUpdate)
-    thunk.dispatch(GetSelfAction())
+    thunk.dispatch(GetSelfActionWithoutEffect())
     return
   },
 )
-export const GetOneExperienceAction = createAsyncThunk('experience/id', async (payload: IIdExperience) => {
+export const GetOneExperienceAction = createAsyncThunk('experience/id', async (payload: IIdExperience) =>
+{
   const { id } = payload
   const { data } = await apiInstance.get(`experience/${id}`)
   return data
@@ -49,37 +55,45 @@ export const experienceSlice = createSlice({
   name: 'experience',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    ;[CreateExperienceAction, UpdateExperienceAction, DeleteExperienceAction].forEach((act) => {
+  extraReducers: (builder) =>
+  {
+    ;[CreateExperienceAction, UpdateExperienceAction, DeleteExperienceAction].forEach((act) =>
+    {
       builder
-        .addCase(act.pending, (state) => {
+        .addCase(act.pending, (state) =>
+        {
           console.log('Loading edu')
           state.loading = 'loading'
           state.message = undefined
         })
-        .addCase(act.fulfilled, (state, payload) => {
+        .addCase(act.fulfilled, (state, payload) =>
+        {
           console.log('Success edu')
           state.loading = 'success'
           // state.message = payload.payload.message
         })
-        .addCase(act.rejected, (state, payload) => {
+        .addCase(act.rejected, (state, payload) =>
+        {
           state.loading = 'error'
           state.message = payload.error.message
           console.log('error is ' + payload.error.message)
         })
     }),
       builder
-        .addCase(GetOneExperienceAction.pending, (state) => {
+        .addCase(GetOneExperienceAction.pending, (state) =>
+        {
           console.log('Loading edu')
           state.loading = 'loading'
           state.message = undefined
         })
-        .addCase(GetOneExperienceAction.fulfilled, (state, payload) => {
+        .addCase(GetOneExperienceAction.fulfilled, (state, payload) =>
+        {
           console.log('Success edu')
           state.loading = 'success'
           state.experience = payload.payload
         })
-        .addCase(GetOneExperienceAction.rejected, (state, payload) => {
+        .addCase(GetOneExperienceAction.rejected, (state, payload) =>
+        {
           state.loading = 'error'
           state.message = payload.error.message
           console.log('error is ' + payload.error.message)

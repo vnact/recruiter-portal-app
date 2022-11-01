@@ -8,12 +8,12 @@ import { IJob } from '../constants/interface'
 const width = Dimensions.get('window').width
 
 interface IJobProps {
-  item: IJob
+  job: IJob
 }
-export const Job: FC<IJobProps> = ({ item }) => {
+export const Job: FC<IJobProps> = ({ job }) => {
   const nav = useNavigation()
   return (
-    <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: item.id })}>
+    <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: job.id })}>
       <View style={styles.job}>
         <View style={styles.companyHeader}>
           <View style={styles.logo}>
@@ -25,7 +25,7 @@ export const Job: FC<IJobProps> = ({ item }) => {
             />
           </View>
           <View style={styles.infoCompany}>
-            <Text style={styles.nameJob}>{item.title}</Text>
+            <Text style={styles.nameJob}>{job.title}</Text>
             <View
               style={{
                 display: 'flex',
@@ -34,8 +34,8 @@ export const Job: FC<IJobProps> = ({ item }) => {
                 flexDirection: 'row',
               }}
             >
-              <Text style={styles.address}>{item.company.name}</Text>
-              <Text style={styles.salary}>${item.minSalary}/Mo</Text>
+              <Text style={styles.address}>{job.company.name}</Text>
+              <Text style={styles.salary}>${job.minSalary}/Mo</Text>
             </View>
           </View>
         </View>
@@ -55,7 +55,7 @@ export const Job: FC<IJobProps> = ({ item }) => {
               }}
             >
               <Feather name="map-pin" size={18} style={{ marginRight: 5 }} color="#6E6D7A" />
-              <Text style={styles.address}>{item.location}</Text>
+              <Text style={styles.address}>{job.location}</Text>
             </View>
             <View
               style={{
@@ -66,7 +66,7 @@ export const Job: FC<IJobProps> = ({ item }) => {
               }}
             >
               <Feather name="briefcase" size={18} style={{ marginRight: 5 }} color="#6E6D7A" />
-              <Text style={styles.address}>{item.level}</Text>
+              <Text style={styles.address}>{job.level}</Text>
             </View>
           </View>
           <View
@@ -77,7 +77,7 @@ export const Job: FC<IJobProps> = ({ item }) => {
             }}
           >
             <MaterialIcons name="fiber-manual-record" />
-            <Text>{item.startDate}</Text>
+            <Text>{job.startDate}</Text>
           </View>
         </View>
       </View>
@@ -106,7 +106,7 @@ export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage 
         <FlatList
           data={data}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => <Job item={item} key={index} />}
+          renderItem={({ item, index }) => <Job job={item} key={index} />}
           scrollEnabled={true}
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.25}

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
 import { IJob, IPagination, ISearchJob } from '../constants/interface'
+import { GetSelfActionWithoutEffect } from './userSlice'
 
 export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) =>
 {
@@ -21,9 +22,10 @@ export const GetJobByIdAction = createAsyncThunk('job/getById', async (id: numbe
   return data
 })
 
-export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number) =>
+export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number, thunk) =>
 {
   const { data } = await apiInstance.post(`/apply`, { jobID: id })
+  thunk.dispatch(GetSelfActionWithoutEffect())
   return data
 })
 
@@ -35,7 +37,6 @@ export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', asyn
   return data
 })
 
-
 export const SearchJobAction = createAsyncThunk('job/search', async (search: ISearchJob) =>
 {
   const { data } = await apiInstance.get(`/jobs/search`, {
@@ -43,7 +44,7 @@ export const SearchJobAction = createAsyncThunk('job/search', async (search: ISe
       search,
     },
   })
-  console.log("🚀 ~ file: jobSlice.ts ~ line 48 ~ data", data)
+  console.log('🚀 ~ file: jobSlice.ts ~ line 48 ~ data', data)
   return data
 })
 
@@ -135,8 +136,7 @@ const jobSlice = createSlice({
     builder.addCase(SearchJobAction.rejected, (state, action) =>
     {
       state.loading = 'error'
-    }
-    )
+    })
   },
 })
 

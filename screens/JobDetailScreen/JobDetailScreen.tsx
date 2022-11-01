@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, useWindowDimensions, Dimensions } from 'react-native'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -31,17 +31,13 @@ const renderScene = SceneMap({
 
 export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> = ({ route }) => {
   const { id } = route.params
-  const [job, setJob] = useState<IJob>()
   const user = useAppSelector(selectUser)
   const loading = useAppSelector(selectLoading)
 
-  const data = useAppSelector(selectJob)
+  const job = useAppSelector(selectJob)
   const dispatch = useAppDispatch()
-  const [isLike, setLike] = useState(false)
   const [isCancel, setIsCancel] = useState(false)
 
-  const layout = useWindowDimensions()
-  const [index, setIndex] = React.useState(0)
   const [routes] = React.useState([
     { key: 'first', title: 'First' },
     { key: 'second', title: 'Second' },
@@ -49,30 +45,12 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
   const pageRef = useRef<PagerView>(null)
   const [pageS, setPageS] = useState(0)
   const nav = useNavigation()
+  const jobsFavorite = useMemo(() => user?.favoriteJobs.map((item) => item.jobId), [user])
+  const isLike = useMemo(() => job && jobsFavorite?.includes(job.id), [jobsFavorite, job])
 
   useEffect(() => {
     dispatch(GetJobByIdAction(id))
   }, [id])
-
-  useEffect(() => {
-    setJob(data)
-    if (data && data.favoriteJob && user) {
-      if (data.favoriteJob.map((item) => item.userId).includes(user.id)) {
-        setLike(true)
-      }
-    }
-    dispatch(GetSelfAction())
-  }, [data])
-
-  useEffect(() => {
-    if (user && data) {
-      if (user?.appliedJobs.map((item) => item.jobID).includes(data?.id)) {
-        setIsCancel(true)
-      } else {
-        setIsCancel(false)
-      }
-    }
-  }, [user])
 
   if (loading === 'loading') {
     return <SplashScreen />
@@ -80,7 +58,6 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
 
   const changeFavorite = (jobId: number) => {
     if (user) {
-      setLike(!isLike)
       dispatch(ChangeFavoriteAction(jobId))
     }
   }
