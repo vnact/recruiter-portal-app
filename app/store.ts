@@ -8,7 +8,11 @@ import userSkillReducer from '../reducers/userSkillSlice'
 import companyReducer from '../reducers/companySlice'
 import careerReducer from '../reducers/careerSlice'
 import jobReducer from '../reducers/jobSlice'
+<<<<<<< Updated upstream
 import experienceReducer from '../reducers/experienceSlice'
+=======
+import careerReducer from '../reducers/careerSlice'
+>>>>>>> Stashed changes
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -20,7 +24,11 @@ export const store = configureStore({
     company: companyReducer,
     career: careerReducer,
     job: jobReducer,
+<<<<<<< Updated upstream
     experience: experienceReducer,
+=======
+    career: careerReducer,
+>>>>>>> Stashed changes
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

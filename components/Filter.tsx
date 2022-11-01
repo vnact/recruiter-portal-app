@@ -12,11 +12,14 @@ import {
 } from 'react-native'
 
 import { Picker } from '@react-native-picker/picker'
-import { GoogleMap } from './GoogleMap'
+import { GoogleMap, GoogleMapState } from './GoogleMap'
 import { primaryColor } from '../constants/Colors'
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
+import { EmploymentType, ExpLevel, ICareer } from '../constants/interface'
+import { useAppDispatch } from '../app/hook'
+import { SearchJobAction } from '../reducers/jobSlice'
 
 export interface IJob {
   id: string
@@ -52,13 +55,30 @@ const listFilter: IJob[] = [
 ]
 
 const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVisible }) => {
-  const [category, setCategory] = useState()
-  const [jobType, setJobType] = useState()
-  const [salaryMin, setSalaryMin] = useState()
+  const dispatch = useAppDispatch()
   const [salaryMax, setSalaryMax] = useState()
-  const [modalLocation, setModalLocation] = useState(false)
+  const [salaryMin, setSalaryMin] = useState()
 
-  const [selectedValue, setSelectedValue] = useState(listFilter)
+  const [rangeMetter, setRangeMetter] = useState<number>(0)
+  const [modalLocation, setModalLocation] = useState(false)
+  const [selectedJobType, setSelectedJobType] = useState<EmploymentType>(EmploymentType.PartTime)
+  const [selectedLevel, setSelectedLevel] = useState<ExpLevel>(ExpLevel.NoExp)
+  const [location, setLocation] = useState<GoogleMapState>({
+    latitude: 20.980194953622984,
+    longitude: 105.79615346430842,
+  })
+  const showResult = () => {
+    dispatch(
+      SearchJobAction({
+        levels: [selectedLevel],
+        jobTypes: [selectedJobType],
+        lat: location.latitude,
+        lng: location.longitude,
+        rangeMeter: rangeMetter,
+        page: 1,
+      }),
+    )
+  }
 
   return (
     <Modal animationType="slide" visible={modalVisible} transparent={true}>
@@ -74,41 +94,32 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
               </View>
               <View style={styles.fieldFilter}>
                 <View>
-                  <Text style={{ ...styles.title, fontSize: 18 }}>Job Categories</Text>
-
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Job Types</Text>
                   <View style={styles.inputFilter}>
                     <Picker
-                      selectedValue={selectedValue}
-                      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                      selectedValue={selectedJobType}
+                      onValueChange={(itemValue, itemIndex) => setSelectedJobType(itemValue)}
                       style={{ flex: 1 }}
                     >
-                      <Picker.Item label="Java" value="java" />
-                      <Picker.Item label="JavaScript" value="js" />
+                      {Object.keys(EmploymentType).map((item, index) => (
+                        <Picker.Item label={item} value={Object.values(EmploymentType)[index]} key={index} />
+                      ))}
                     </Picker>
-                  </View>
-                  <View style={styles.inputFilter}>
-                    <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                      <FontAwesome5 name="briefcase" style={{ color: '#000000', fontWeight: '500' }} size={16} />
-                      <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
-                    </View>
-                    <View>
-                      <Feather name="chevron-down" style={{ color: '#000000' }} size={16} />
-                    </View>
                   </View>
                 </View>
               </View>
               <View style={styles.fieldFilter}>
                 <View>
-                  <Text style={{ ...styles.title, fontSize: 18 }}>Job Type</Text>
-
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Level</Text>
                   <View style={styles.inputFilter}>
                     <Picker
-                      selectedValue={selectedValue}
-                      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                      selectedValue={selectedLevel}
+                      onValueChange={(itemValue, itemIndex) => setSelectedLevel(itemValue)}
                       style={{ flex: 1 }}
                     >
-                      <Picker.Item label="Java" value="java" />
-                      <Picker.Item label="JavaScript" value="js" />
+                      {Object.keys(ExpLevel).map((item, index) => (
+                        <Picker.Item label={item} value={Object.values(EmploymentType)[index]} key={index} />
+                      ))}
                     </Picker>
                   </View>
                 </View>
@@ -120,7 +131,7 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                     <View style={{ ...styles.inputFilter, padding: 15 }}>
                       <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
                         <Feather name="map-pin" style={{ color: '#000000' }} size={16} />
-                        <Text style={{ ...styles.text, marginLeft: 10 }}>{listFilter[0].name}</Text>
+                        <Text style={{ ...styles.text, marginLeft: 10 }}>{'Select location'}</Text>
                       </View>
                       <View>
                         <MaterialIcons
@@ -134,6 +145,18 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                 </View>
               </View>
               <View style={styles.fieldFilter}>
+                <View>
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Range Meter (km)</Text>
+                  <View style={styles.inputFilter}>
+                    <TextInput
+                      onChangeText={() => setRangeMetter(1)}
+                      keyboardType="numeric"
+                      style={{ padding: 10, minWidth: '100%' }}
+                    ></TextInput>
+                  </View>
+                </View>
+              </View>
+              {/* <View style={styles.fieldFilter}>
                 <View
                   style={{
                     display: 'flex',
@@ -160,7 +183,8 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                     <TextInput style={{ width: '100%' }} keyboardType="numeric" placeholder="Max" />
                   </View>
                 </View>
-              </View>
+              </View> */}
+
               <View
                 style={{
                   ...styles.fieldFilter,
@@ -178,12 +202,18 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                     borderRadius: 30,
                     backgroundColor: '#000000',
                   }}
+                  onPress={() => showResult()}
                 />
               </View>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-        <GoogleMap modalLocation={modalLocation} setModalLocation={setModalLocation} />
+        <GoogleMap
+          modalLocation={modalLocation}
+          setModalLocation={setModalLocation}
+          location={location}
+          setLocation={setLocation}
+        />
       </View>
     </Modal>
   )
@@ -214,7 +244,11 @@ const Item: FC<ItemProps> = ({ item }) => {
   )
 }
 
-export const Filter = () => {
+interface IFilterProps {
+  careers: ICareer[]
+}
+
+export const Filter: FC<IFilterProps> = ({ careers }) => {
   const [modalVisible, setModalVisible] = useState(false)
   return (
     <View style={styles.container}>
@@ -316,7 +350,6 @@ const styles = StyleSheet.create({
 
   inputFilter: {
     backgroundColor: '#FFFFFF',
-    padding: 15,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

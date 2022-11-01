@@ -1,12 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Button, Modal, StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 import { ListJobCard } from '../../components/ListJobCard'
 
 export const SearchScreen = () => {
+  const [modalVisible, setModalVisible] = React.useState(true)
   return (
-    <View style={styles.container}>
-      <ListJobCard title="14 Jobs Available" />
-    </View>
+    <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      <View style={styles.container}>
+        <TextInput
+          style={{
+            height: 40,
+            width: 300,
+            borderWidth: 1,
+            paddingHorizontal: 8,
+            alignItems: 'center',
+            flexDirection: 'row',
+            borderRadius: 10,
+            backgroundColor: '#fff',
+          }}
+          placeholder="Tìm kiếm đi nào ?"
+        />
+        <Button onPress={() => setModalVisible(false)} title={'disible'} />
+      </View>
+    </Modal>
   )
 }
 
