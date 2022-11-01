@@ -9,6 +9,7 @@ import companyReducer from '../reducers/companySlice'
 import careerReducer from '../reducers/careerSlice'
 import jobReducer from '../reducers/jobSlice'
 import experienceReducer from '../reducers/experienceSlice'
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,

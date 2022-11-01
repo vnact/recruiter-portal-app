@@ -53,8 +53,8 @@ export const JDCompanyScreen: FC<IProps> = ({ company }) => {
         </View>
         <View style={styles.boxDesc}>
           <Text style={styles.boxTitle}>Thông tin chung</Text>
-          {desc.map((e) => (
-            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }}>
+          {desc.map((e, i) => (
+            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }} key={i}>
               {/* {'\u25CF' + '  '} */}
               {e}
             </Text>

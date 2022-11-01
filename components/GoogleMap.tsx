@@ -15,13 +15,11 @@ export interface GoogleMapState {
 export interface GoogleMapProps {
   modalLocation: boolean
   setModalLocation: Function
+  location: GoogleMapState
+  setLocation: (location: GoogleMapState) => void
 }
 
-export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLocation }) => {
-  const [location, setLocation] = useState<GoogleMapState>({
-    latitude: 20.980194953622984,
-    longitude: 105.79615346430842,
-  })
+export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLocation, location, setLocation }) => {
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync()

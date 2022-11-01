@@ -63,6 +63,7 @@ export interface IUser {
   educations: IEducation[]
   skills: IUserSkill[]
   appliedJobs: IApplyJob[]
+  favoriteJobs: IFavoriteJob[]
   experiences: IExperienceGetMe[]
 }
 export interface IExperienceGetMe {
@@ -76,7 +77,6 @@ export interface IExperienceGetMe {
   career: ICareer
 }
 export interface ICompany {
-  id: number
   name: string
   phone: string
   email: string
@@ -110,7 +110,6 @@ export interface IJob {
   level: ExpLevel
   career: ICareer
   recruits: number
-  favoriteJob: IFavoriteJob[]
 }
 
 export interface ICareer {
@@ -133,41 +132,44 @@ export interface ISkill {
   description?: string
 }
 export interface IExperience {
-  title: string
-  id?: number
-  company_id: number
-  career_id: number
-  employment_type: EmploymentType
+  id: number
+  company?: ICompany
+  career?: ICareer
+  employmentType: EmploymentType
   startDate: string
   endDate?: string
   description?: string
 }
-export interface IExperienceCreate {
-  title: string
-  id?: number
-  company_id: number
-  career_id: number
-  employment_type: EmploymentType
-  start_date: string
-  end_date?: string
-  description?: string
-}
+
 export interface IFavoriteJob {
   id: number
   jobId: number
   userId: number
+  job: IJob
 }
 export interface IPagination {
   page: number
   size?: number
+  sort?: string[]
 }
+
 export enum IWorkplace {
   OnSite = 'on_site',
   Remote = 'remote',
   Hybird = 'hybird',
 }
+
 export interface IApplyJob {
   id: number
   jobID: number
   userID: number
+  job: IJob
+}
+
+export interface ISearchJob extends IPagination {
+  lat: number
+  lng: number
+  rangeMeter: number
+  levels: ExpLevel[]
+  jobTypes: EmploymentType[]
 }

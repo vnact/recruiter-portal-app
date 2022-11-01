@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, useWindowDimensions, Dimensions } from 'react-native'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -7,7 +7,6 @@ import { SceneMap, TabView } from 'react-native-tab-view'
 import PagerView from 'react-native-pager-view'
 import { JDInfoScreen } from './JDInfoScreen'
 import { JDCompanyScreen } from './JDCompanyScreen'
-import { IJob } from '../../constants/interface'
 import { RootStackScreenProps } from '../../types'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import {
@@ -17,7 +16,7 @@ import {
   selectJob,
   selectLoading,
 } from '../../reducers/jobSlice'
-import { GetSelfAction, selectUser } from '../../reducers/userSlice'
+import { selectUser } from '../../reducers/userSlice'
 import SplashScreen from '../SplashScreen'
 
 const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
@@ -31,48 +30,21 @@ const renderScene = SceneMap({
 
 export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> = ({ route }) => {
   const { id } = route.params
-  const [job, setJob] = useState<IJob>()
   const user = useAppSelector(selectUser)
   const loading = useAppSelector(selectLoading)
 
-  const data = useAppSelector(selectJob)
+  const job = useAppSelector(selectJob)
   const dispatch = useAppDispatch()
-  const [isLike, setLike] = useState(false)
-  const [isCancel, setIsCancel] = useState(false)
 
-  const layout = useWindowDimensions()
-  const [index, setIndex] = React.useState(0)
-  const [routes] = React.useState([
-    { key: 'first', title: 'First' },
-    { key: 'second', title: 'Second' },
-  ])
   const pageRef = useRef<PagerView>(null)
   const [pageS, setPageS] = useState(0)
   const nav = useNavigation()
+  const isLike = useMemo(() => job && !!user?.favoriteJobs.map((item) => item.job.id).includes(job.id), [user, job])
+  const isApplied = useMemo(() => job && !!user?.appliedJobs.map((item) => item.job.id).includes(job.id), [user, job])
 
   useEffect(() => {
     dispatch(GetJobByIdAction(id))
   }, [id])
-
-  useEffect(() => {
-    setJob(data)
-    if (data && data.favoriteJob && user) {
-      if (data.favoriteJob.map((item) => item.userId).includes(user.id)) {
-        setLike(true)
-      }
-    }
-    dispatch(GetSelfAction())
-  }, [data])
-
-  useEffect(() => {
-    if (user && data) {
-      if (user?.appliedJobs.map((item) => item.jobID).includes(data?.id)) {
-        setIsCancel(true)
-      } else {
-        setIsCancel(false)
-      }
-    }
-  }, [user])
 
   if (loading === 'loading') {
     return <SplashScreen />
@@ -80,14 +52,12 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
 
   const changeFavorite = (jobId: number) => {
     if (user) {
-      setLike(!isLike)
       dispatch(ChangeFavoriteAction(jobId))
     }
   }
 
   const applyJob = (id: number) => {
     if (user) {
-      setIsCancel(!isCancel)
       dispatch(ApplyJobAction(id))
     }
   }
@@ -165,7 +135,7 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
             </View>
             <TouchableOpacity onPress={() => applyJob(job.id)}>
               <View style={styles.submit}>
-                {isCancel ? (
+                {isApplied ? (
                   <Text style={{ fontSize: 18, color: whiteColor }}>Hủy</Text>
                 ) : (
                   <Text style={{ fontSize: 18, color: whiteColor }}>Ứng tuyển ngay</Text>
