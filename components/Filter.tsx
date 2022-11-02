@@ -18,8 +18,10 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { EmploymentType, ExpLevel, ICareer } from '../constants/interface'
-import { useAppDispatch } from '../app/hook'
-import { SearchJobAction } from '../reducers/jobSlice'
+import { useAppDispatch, useAppSelector } from '../app/hook'
+import { GetAllJobAction, SearchJobAction, selectJobs, selectLoading } from '../reducers/jobSlice'
+import SplashScreen from '../screens/SplashScreen'
+import { useNavigation } from '@react-navigation/native'
 
 export interface IJob {
   id: string
@@ -55,7 +57,11 @@ const listFilter: IJob[] = [
 ]
 
 const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVisible }) => {
+  const nav = useNavigation()
   const dispatch = useAppDispatch()
+
+  const jobs = useAppSelector(selectJobs)
+
   const [salaryMax, setSalaryMax] = useState()
   const [salaryMin, setSalaryMin] = useState()
 
@@ -67,7 +73,16 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
     latitude: 20.980194953622984,
     longitude: 105.79615346430842,
   })
+
   const showResult = () => {
+    if (!location) {
+      alert('Please choose location')
+      return
+    }
+    if (!rangeMetter) {
+      alert('Please choose range metter')
+      return
+    }
     dispatch(
       SearchJobAction({
         levels: [selectedLevel],
@@ -78,6 +93,8 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
         page: 1,
       }),
     )
+    nav.navigate('SearchResult', { jobs })
+    setModalVisible(false)
   }
 
   return (
@@ -118,7 +135,7 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                       style={{ flex: 1 }}
                     >
                       {Object.keys(ExpLevel).map((item, index) => (
-                        <Picker.Item label={item} value={Object.values(EmploymentType)[index]} key={index} />
+                        <Picker.Item label={item} value={Object.values(ExpLevel)[index]} key={index} />
                       ))}
                     </Picker>
                   </View>
@@ -252,7 +269,7 @@ export const Filter: FC<IFilterProps> = ({ careers }) => {
   const [modalVisible, setModalVisible] = useState(false)
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
         <View style={styles.icon}>
           <Feather name="filter" size={25} />
         </View>

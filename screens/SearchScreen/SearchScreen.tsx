@@ -1,28 +1,21 @@
-import { Button, Modal, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
-import { ListJobCard } from '../../components/ListJobCard'
+import { Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { FC } from 'react'
+import { Job, ListJobCard } from '../../components/ListJobCard'
+import { IJob } from '../../constants/interface'
+import { RootStackScreenProps } from '../../types'
 
-export const SearchScreen = () => {
-  const [modalVisible, setModalVisible] = React.useState(true)
+export const SearchResultScreen: FC<RootStackScreenProps<'SearchResult'>> = ({ route }) => {
+  const jobs = route.params?.jobs
   return (
-    <Modal animationType="slide" transparent={true} visible={modalVisible}>
-      <View style={styles.container}>
-        <TextInput
-          style={{
-            height: 40,
-            width: 300,
-            borderWidth: 1,
-            paddingHorizontal: 8,
-            alignItems: 'center',
-            flexDirection: 'row',
-            borderRadius: 10,
-            backgroundColor: '#fff',
-          }}
-          placeholder="Tìm kiếm đi nào ?"
-        />
-        <Button onPress={() => setModalVisible(false)} title={'disible'} />
-      </View>
-    </Modal>
+    <View style={styles.container}>
+      <FlatList
+        data={jobs}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => <Job job={item} key={index} />}
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   )
 }
 

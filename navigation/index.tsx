@@ -27,7 +27,7 @@ import { CCreateEducationScreen } from '../screens/InfoScreen/CCreateEducationSc
 import CCreateInfoScreen from '../screens/InfoScreen/CCreateInfoScreen'
 import { CCreateExpScreen } from '../screens/InfoScreen/CCreateExpScreen'
 import { CCreateSkillScreen } from '../screens/InfoScreen/CCreateSkillScreen'
-import { SearchScreen } from '../screens/SearchScreen/SearchScreen'
+import { SearchResultScreen } from '../screens/SearchScreen/SearchScreen'
 import CVScreen from '../screens/InfoScreen/CVScreen'
 import { JobDetailScreen } from '../screens/JobDetailScreen/JobDetailScreen'
 import { selectIsLoggedIn, selectLoading } from '../reducers/authSlice'
@@ -83,7 +83,7 @@ function RootNavigator() {
           <Stack.Screen name="CCreateInfo" component={CCreateInfoScreen} options={{ headerShown: false }} />
           <Stack.Screen name="CCreateExp" component={CCreateExpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: true }} />
+          <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: true }} />
           <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
           <Stack.Screen
             name="JobDetailScreen"
@@ -153,14 +153,6 @@ function BottomTabNavigator() {
               style={{
                 marginLeft: 20,
               }}
-            />
-          ),
-          headerRight: () => (
-            <Feather
-              name="search"
-              size={25}
-              style={{ marginRight: 20 }}
-              onPress={() => navigation.navigate('Search')}
             />
           ),
         })}
