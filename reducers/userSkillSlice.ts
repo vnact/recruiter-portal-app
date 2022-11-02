@@ -4,8 +4,7 @@ import { RootState } from '../app/store'
 import { ISkill } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
 
-interface ISkillState
-{
+interface ISkillState {
   loading: 'idle' | 'loading' | 'success' | 'error'
   userSkill?: ISkill
   message?: string
@@ -13,44 +12,36 @@ interface ISkillState
 const initialState: ISkillState = {
   loading: 'idle',
 }
-interface IIdSkill
-{
+interface IIdSkill {
   id: number
 }
-interface IUserSkill extends ISkills
-{
+interface IUserSkill extends ISkills {
   userId: number
 }
-interface ISkills
-{
+interface ISkills {
   skills_id: number[]
   certificate?: string
 }
-interface ISkillDelete
-{
+interface ISkillDelete {
   skills_id: number[]
 }
-export const DeleteUserSkillAction = createAsyncThunk('user-skill/delete', async (payload: ISkillDelete, thunk) =>
-{
+export const DeleteUserSkillAction = createAsyncThunk('user-skill/delete', async (payload: ISkillDelete, thunk) => {
   await apiInstance.delete('user-skill', { data: payload })
   thunk.dispatch(GetSelfActionWithoutEffect())
   return
 })
-export const CreateUserSkillAction = createAsyncThunk('user-skill/create', async (payload: ISkills, thunk) =>
-{
+export const CreateUserSkillAction = createAsyncThunk('user-skill/create', async (payload: ISkills, thunk) => {
   const { data } = await apiInstance.post('user-skill', payload)
   thunk.dispatch(GetSelfActionWithoutEffect())
   return data
 })
-export const UpdateUserSkillAction = createAsyncThunk('user-skill/update', async (payload: IUserSkill, thunk) =>
-{
+export const UpdateUserSkillAction = createAsyncThunk('user-skill/update', async (payload: IUserSkill, thunk) => {
   const { userId, ...dataUpdate } = payload
   await apiInstance.patch(`user-skill/${userId}`, dataUpdate)
   thunk.dispatch(GetSelfActionWithoutEffect())
   return
 })
-export const GetOneUserSkillAction = createAsyncThunk('user-skill/id', async (payload: IIdSkill) =>
-{
+export const GetOneUserSkillAction = createAsyncThunk('user-skill/id', async (payload: IIdSkill) => {
   const { id } = payload
   const { data } = await apiInstance.get(`user-skill/${id}`)
   return data
@@ -59,45 +50,37 @@ export const UserSkillSlice = createSlice({
   name: 'userSkill',
   initialState,
   reducers: {},
-  extraReducers: (builder) =>
-  {
-    ;[CreateUserSkillAction, UpdateUserSkillAction, DeleteUserSkillAction].forEach((act) =>
-    {
+  extraReducers: (builder) => {
+    ;[CreateUserSkillAction, UpdateUserSkillAction, DeleteUserSkillAction].forEach((act) => {
       builder
-        .addCase(act.pending, (state) =>
-        {
+        .addCase(act.pending, (state) => {
           console.log('Loading user-skill')
           state.loading = 'loading'
           state.message = undefined
         })
-        .addCase(act.fulfilled, (state, payload) =>
-        {
+        .addCase(act.fulfilled, (state, payload) => {
           console.log('Success user-skill')
           state.loading = 'success'
           // state.message = payload.payload.message
         })
-        .addCase(act.rejected, (state, payload) =>
-        {
+        .addCase(act.rejected, (state, payload) => {
           state.loading = 'error'
           state.message = payload.error.message
           console.log('error is ' + payload.error)
         })
     }),
       builder
-        .addCase(GetOneUserSkillAction.pending, (state) =>
-        {
+        .addCase(GetOneUserSkillAction.pending, (state) => {
           console.log('Loading user-skill')
           state.loading = 'loading'
           state.message = undefined
         })
-        .addCase(GetOneUserSkillAction.fulfilled, (state, payload) =>
-        {
+        .addCase(GetOneUserSkillAction.fulfilled, (state, payload) => {
           console.log('Success user-skill')
           state.loading = 'success'
           state.userSkill = payload.payload
         })
-        .addCase(GetOneUserSkillAction.rejected, (state, payload) =>
-        {
+        .addCase(GetOneUserSkillAction.rejected, (state, payload) => {
           state.loading = 'error'
           state.message = payload.error.message
           console.log('error is ' + payload.error.message)

@@ -148,7 +148,7 @@ export interface IFavoriteJob {
   job: IJob
 }
 export interface IPagination {
-  page: number
+  page?: number
   size?: number
   sort?: string[]
 }

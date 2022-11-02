@@ -6,6 +6,7 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { IJob } from './constants/interface'
 
 declare global {
   namespace ReactNavigation {
@@ -25,7 +26,7 @@ export type RootStackParamList = {
   CCreateInfo: undefined
   CCreateExp: { id?: number }
   CCreateSkill: { id?: number }
-  Search: undefined
+  SearchResult: { jobs: IJob[] } | undefined
   CVSScreen: undefined
   JobDetailScreen: { id: number }
   Splash: undefined

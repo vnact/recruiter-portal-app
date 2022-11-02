@@ -34,12 +34,11 @@ export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', asyn
   return data
 })
 
-export const SearchJobAction = createAsyncThunk('job/search', async (search: ISearchJob) => {
-  const { data } = await apiInstance.get(`/jobs/search`, {
-    params: {
-      search,
-    },
+export const SearchJobAction = createAsyncThunk('jobs/search', async (search: ISearchJob) => {
+  const { data } = await apiInstance.get(`jobs/search`, {
+    params: search,
   })
+  console.log('🚀 ~ file: jobSlice.ts ~ line 43 ~ SearchJobAction ~ data', data)
   return data
 })
 
