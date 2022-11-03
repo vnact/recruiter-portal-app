@@ -35,7 +35,9 @@ export default function InfoCandidateScreen() {
         />
         <Image
           source={{
-            uri: 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
+            uri:
+              dataUser?.avatar ||
+              'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
           }}
           style={styles.image__avatar}
         />
@@ -70,7 +72,7 @@ export default function InfoCandidateScreen() {
             SĐT: {dataUser?.phoneNumber}
           </Text>
         )}
-        {dataUser?.employmentType && (
+        {dataUser?.employmentType?.length != 0 && (
           <Text
             style={{
               fontSize: 15,
@@ -92,14 +94,15 @@ export default function InfoCandidateScreen() {
             Kinh nghiệm: {typeLevel.get(dataUser?.level)}
           </Text>
         )}
-        {dataUser?.careersId && (
+        {dataUser?.careers?.length != 0 && (
           <Text
             style={{
               fontSize: 15,
-              fontWeight: '200',
+              fontWeight: '400',
+              marginBottom: 5,
             }}
           >
-            Ví trí ứng tuyển: {dataUser?.careersId}
+            Ví trí ứng tuyển: {dataUser?.careers?.map((e) => e.name + ',')}
           </Text>
         )}
         <TouchableOpacity

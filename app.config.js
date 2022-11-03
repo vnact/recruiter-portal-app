@@ -34,6 +34,12 @@ module.exports = {
     extra: {
       googleApiKey: process.env.GOOGLE_API_KEY,
       API_URL: process.env.API_URL,
+      cloudinary: {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+        uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
+      },
     },
   },
 }

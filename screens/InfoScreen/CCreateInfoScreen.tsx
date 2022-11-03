@@ -12,7 +12,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Pressable,
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
 import React, { useRef, useState, useEffect } from 'react'
 import { blackColor, formColor, grayColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
@@ -27,7 +29,8 @@ import { EmploymentType, ExpLevel, ICareer, IIndustry, IUser } from '../../const
 import { GetAllCareerAction, selectCareers } from '../../reducers/careerSlice'
 import BouncyCheckboxGroup, { ICheckboxButton } from 'react-native-bouncy-checkbox-group'
 import { Picker } from '@react-native-picker/picker'
-import { UpdateUserProfileAction } from '../../reducers/userSlice'
+import { selectUser, UpdateUserProfileAction } from '../../reducers/userSlice'
+import { uploadImage } from '../../app/cloudinary'
 
 const width = Dimensions.get('window').width
 export default function CCreateInfoScreen() {
@@ -36,6 +39,8 @@ export default function CCreateInfoScreen() {
   const nav = useNavigation()
   const scrollValue = useRef(new Animated.Value(0)).current
   const [keyword, setKeyWord] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [status, requestPermission] = ImagePicker.useCameraPermissions()
 
   const [name, setName] = useState<string | undefined>(undefined)
   const [gender, setGender] = useState<string | undefined>()
@@ -52,6 +57,7 @@ export default function CCreateInfoScreen() {
   const [character, setCharacter] = useState<string | undefined>()
   const [placeOfOrigin, setPlaceOfOrigin] = useState<string | undefined>()
   const [description, setDescription] = useState<string | undefined>()
+  const [avatar, setAvatar] = useState<string | undefined>()
   const [employmentSelect, setEmploymentSelect] = useState<EmploymentType>(EmploymentType.FullTime)
   const careerData = useAppSelector(selectCareers)
 
@@ -64,6 +70,26 @@ export default function CCreateInfoScreen() {
   const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
   const [employment_type, setEmployment_type] = useState<EmploymentType[]>([])
   const [level, setLevel] = useState<ExpLevel>(ExpLevel.NoExp)
+  const dataUser = useAppSelector(selectUser)
+
+  useEffect(() => {
+    setName(dataUser?.name)
+    dataUser?.birthDay && setBirthDay(dataUser.birthDay)
+    dataUser?.height && setHeight(dataUser.height.toString())
+    dataUser?.weight && setWeight(dataUser.weight.toString())
+    dataUser?.identityCardNumber && setIdentityCardNumber(dataUser.identityCardNumber)
+    dataUser?.familyRegisterNumber && setIdentityCardNumber(dataUser.familyRegisterNumber)
+    dataUser?.highSchool && setIdentityCardNumber(dataUser.highSchool)
+    dataUser?.placeOfOrigin && setIdentityCardNumber(dataUser.placeOfOrigin)
+    dataUser?.hobby && setIdentityCardNumber(dataUser.hobby)
+    dataUser?.character && setIdentityCardNumber(dataUser.character)
+    dataUser?.description && setIdentityCardNumber(dataUser.description)
+    dataUser?.level && setLevel(dataUser.level)
+    dataUser?.employmentType && setEmployment_type(dataUser.employmentType)
+    dataUser?.careers && setCareersPick(dataUser.careers)
+    dataUser?.careers && setcareersId(dataUser.careers.map((e) => e.id))
+    dataUser?.avatar && setAvatar(dataUser.avatar)
+  }, [])
 
   const typeEmployee = Object.keys(EmploymentType).map((name) => {
     return {
@@ -81,6 +107,47 @@ export default function CCreateInfoScreen() {
     { id: 0, value: 'male', text: 'Nam' },
     { id: 1, value: 'female', text: 'Nữ' },
   ]
+  const pickImageWithCamera = async () => {
+    // await requestPermission();
+    if (status?.granted === false) {
+      alert('No permission')
+      return
+    }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    })
+    setModalVisible(!modalVisible)
+
+    if (!result.cancelled) {
+      const { secure_url: newImageUrl } = await uploadImage(result)
+      setAvatar(newImageUrl)
+    }
+  }
+  const pickImageWithGallery = async () => {
+    setModalVisible(!modalVisible)
+    // await requestPermission();
+    if (status?.granted === false) {
+      alert('Bạn chưa cấp quyền')
+      return
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    })
+    console.log('ádasdfsad')
+    if (!result.cancelled) {
+      const { secure_url: newImageUrl } = await uploadImage(result)
+      console.log('ảnh', newImageUrl)
+      setAvatar(result.uri)
+    }
+  }
   // const fillterList = (key: string) => {
   //   setIndustriesList(dataIndustry?.filter((e) => e.name.includes(key)))
   // }
@@ -91,6 +158,12 @@ export default function CCreateInfoScreen() {
   // useEffect(() => {
   //   fillterList(keyword)
   // }, [keyword])
+  useEffect(() => {
+    const check = async () => {
+      if (status?.status !== 'granted') requestPermission()
+    }
+    check()
+  }, [])
   useEffect(() => {
     Promise.all([dispatch(GetAllCareerAction())]).then((e) => {
       setCareerList(careerData)
@@ -121,6 +194,7 @@ export default function CCreateInfoScreen() {
       description,
       employmentType: employment_type,
       careersId,
+      avatar,
     }
     await dispatch(UpdateUserProfileAction(payload))
     alert('Cập nhật thông tin thành công !')
@@ -162,7 +236,7 @@ export default function CCreateInfoScreen() {
           {/* <TouchableOpacity> */}
           <Animated.Image
             source={{
-              uri: 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
+              uri: avatar || 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
             }}
             style={{
               ...styles.image__avatar,
@@ -191,7 +265,7 @@ export default function CCreateInfoScreen() {
             }}
           />
           {/* </TouchableOpacity> */}
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Animated.View
               style={{
                 width: 34,
@@ -443,7 +517,7 @@ export default function CCreateInfoScreen() {
                 onValueChange={(itemValue) => {
                   if (employment_type.filter((e) => e == itemValue).length == 0)
                     setEmployment_type([...employment_type, itemValue])
-                  else if (employment_type) alert('Bạn đã chọn loại hình này rồi !')
+                  // else alert('Bạn đã chọn loại hình này rồi !')
                 }}
               >
                 {typeEmployee.map((e) => (
@@ -544,80 +618,103 @@ export default function CCreateInfoScreen() {
               </TouchableOpacity>
             </View>
           </View>
-
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalCareerVisible}
-            onRequestClose={() => {
-              setModalCareerVisible(!modalCareerVisible)
-            }}
-          >
-            <View style={styles.modalView}>
-              <View style={styles.top}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setModalCareerVisible(false)
-                  }}
-                >
-                  <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
-                </TouchableOpacity>
-                <TextInput
-                  // autoFocus={true}
-                  placeholder="Nhập vào từ khóa"
-                  placeholderTextColor={formColor}
-                  value={keywordCareer}
-                  onChangeText={setKeyWordCareer}
-                ></TextInput>
-              </View>
-              <View style={styles.list}>
-                <ScrollView>
-                  {careerList &&
-                    careerList.map((e, key) => (
-                      <View>
+        </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalCareerVisible}
+          onRequestClose={() => {
+            setModalCareerVisible(!modalCareerVisible)
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.top}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalCareerVisible(false)
+                }}
+              >
+                <MaterialIcons name="arrow-back-ios" size={30} color={mainColor} />
+              </TouchableOpacity>
+              <TextInput
+                // autoFocus={true}
+                placeholder="Nhập vào từ khóa"
+                placeholderTextColor={formColor}
+                value={keywordCareer}
+                onChangeText={setKeyWordCareer}
+              ></TextInput>
+            </View>
+            <View style={styles.list}>
+              <ScrollView>
+                {careerList &&
+                  careerList.map((e, key) => (
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (checkParent(e.id)) {
+                            setIdCareer(e.id)
+                          } else {
+                            setKeyWordCareer(e.name)
+                            if (careersId?.filter((el) => el == e.id).length == 0) {
+                              careersPick
+                                ? setCareersPick([...careersPick, { name: e.name, id: e.id }])
+                                : setCareersPick([{ name: e.name, id: e.id }])
+                              careersId ? setcareersId([...careersId, e.id]) : setcareersId([e.id])
+                              console.log(careersId)
+                              setModalCareerVisible(false)
+                            } else if (careersId) {
+                              console.log(careersId)
+                              alert('Bạn đã chọn vị trí này rồi!')
+                            }
+                          }
+                        }}
+                      >
+                        <View>
+                          <View style={styles.item} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
+                            {checkParent(e.id) ? (
+                              <View
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  borderRadius: 15,
+                                  backgroundColor: mainColor,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Text style={{ color: whiteColor }}>{findParent(e.id)?.length}</Text>
+                              </View>
+                            ) : (
+                              <></>
+                            )}
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                      {e.id == idCareer && checkParent(e.id) && (
                         <TouchableOpacity
                           onPress={() => {
-                            if (checkParent(e.id)) {
-                              setIdCareer(e.id)
-                            } else {
-                              setKeyWordCareer(e.name)
-                              if (careersId?.filter((el) => el == e.id).length == 0) {
-                                careersPick
-                                  ? setCareersPick([...careersPick, { name: e.name, id: e.id }])
-                                  : setCareersPick([{ name: e.name, id: e.id }])
-                                careersId ? setcareersId([...careersId, e.id]) : setcareersId([e.id])
-                                console.log(careersId)
-                                setModalCareerVisible(false)
-                              } else if (careersId) {
-                                console.log(careersId)
-                                alert('Bạn đã chọn vị trí này rồi!')
-                              }
+                            setKeyWordCareer(e.name)
+                            if (careersId?.filter((el) => el == e.id).length == 0) {
+                              careersPick
+                                ? setCareersPick([...careersPick, { name: e.name, id: e.id }])
+                                : setCareersPick([{ name: e.name, id: e.id }])
+                              careersId ? setcareersId([...careersId, e.id]) : setcareersId([e.id])
+                              // console.log(careersId)
+                              setModalCareerVisible(false)
+                            } else if (careersId) {
+                              // console.log(careersId)
+                              alert('Bạn đã chọn vị trí này rồi!')
                             }
                           }}
                         >
-                          <View>
-                            <View style={styles.item} key={key}>
-                              <Text style={{ fontSize: 18 }}>{e.name}</Text>
-                              {checkParent(e.id) ? (
-                                <View
-                                  style={{
-                                    height: 30,
-                                    width: 30,
-                                    borderRadius: 15,
-                                    backgroundColor: mainColor,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                  }}
-                                >
-                                  <Text style={{ color: whiteColor }}>{findParent(e.id)?.length}</Text>
-                                </View>
-                              ) : (
-                                <></>
-                              )}
-                            </View>
+                          <View style={styles.itemChild} key={key}>
+                            <Text style={{ fontSize: 18 }}>{e.name}</Text>
                           </View>
                         </TouchableOpacity>
-                        {e.id == idCareer && checkParent(e.id) && (
+                      )}
+                      {e.id == idCareer &&
+                        findParent(e.id)?.map((e) => (
                           <TouchableOpacity
                             onPress={() => {
                               setKeyWordCareer(e.name)
@@ -626,10 +723,10 @@ export default function CCreateInfoScreen() {
                                   ? setCareersPick([...careersPick, { name: e.name, id: e.id }])
                                   : setCareersPick([{ name: e.name, id: e.id }])
                                 careersId ? setcareersId([...careersId, e.id]) : setcareersId([e.id])
-                                // console.log(careersId)
+                                console.log(careersId)
                                 setModalCareerVisible(false)
                               } else if (careersId) {
-                                // console.log(careersId)
+                                console.log(careersId)
                                 alert('Bạn đã chọn vị trí này rồi!')
                               }
                             }}
@@ -638,43 +735,92 @@ export default function CCreateInfoScreen() {
                               <Text style={{ fontSize: 18 }}>{e.name}</Text>
                             </View>
                           </TouchableOpacity>
-                        )}
-                        {e.id == idCareer &&
-                          findParent(e.id)?.map((e) => (
-                            <TouchableOpacity
-                              onPress={() => {
-                                setKeyWordCareer(e.name)
-                                if (careersId?.filter((el) => el == e.id).length == 0) {
-                                  careersPick
-                                    ? setCareersPick([...careersPick, { name: e.name, id: e.id }])
-                                    : setCareersPick([{ name: e.name, id: e.id }])
-                                  careersId ? setcareersId([...careersId, e.id]) : setcareersId([e.id])
-                                  console.log(careersId)
-                                  setModalCareerVisible(false)
-                                } else if (careersId) {
-                                  console.log(careersId)
-                                  alert('Bạn đã chọn vị trí này rồi!')
-                                }
-                              }}
-                            >
-                              <View style={styles.itemChild} key={key}>
-                                <Text style={{ fontSize: 18 }}>{e.name}</Text>
-                              </View>
-                            </TouchableOpacity>
-                          ))}
-                      </View>
-                    ))}
-                </ScrollView>
-              </View>
+                        ))}
+                    </View>
+                  ))}
+              </ScrollView>
             </View>
-          </Modal>
-        </ScrollView>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.')
+            setModalVisible(!modalVisible)
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewGallrey}>
+              <View style={{ flexDirection: 'row', width: 300 }}>
+                <Text style={styles.modalText}>Get Picture from ?</Text>
+              </View>
+              <Pressable style={styles.modal_btn} onPress={pickImageWithCamera}>
+                <Text>Camera Roll</Text>
+              </Pressable>
+              <Pressable style={[styles.modal_btn, { borderBottomWidth: 0.2 }]} onPress={pickImageWithGallery}>
+                <Text>Gallery</Text>
+              </Pressable>
+              <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(76, 76, 215, 0.1)',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+    marginTop: 12,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  modalText: {
+    height: 40,
+    lineHeight: 40,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    color: whiteColor,
+
+    backgroundColor: mainColor,
+  },
+  modal_btn: {
+    height: 60,
+    borderTopWidth: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    // flex: 1,
+    width: '100%',
+  },
+
   itemChild: {
     paddingHorizontal: 40,
     borderBottomWidth: 0.2,
@@ -704,6 +850,24 @@ const styles = StyleSheet.create({
     width: Layout.window.width,
     height: Layout.window.height,
     backgroundColor: whiteColor,
+  },
+  modalViewGallrey: {
+    backgroundColor: 'white',
+    borderRadius: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+
+    // overflow: 'hidden',
+
+    width: 300,
+    height: 220,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   formSubmit: {
     flexDirection: 'row',

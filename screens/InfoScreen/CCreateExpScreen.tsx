@@ -35,6 +35,7 @@ import {
 } from '../../reducers/experienceSlice'
 import { Picker } from '@react-native-picker/picker'
 import { RootStackScreenProps } from '../../types'
+import { enumToObject } from '../../components/mapping'
 
 export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({ route }) => {
   interface ICompany {
@@ -63,12 +64,12 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
   const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
   const dataCareer = useAppSelector(selectCareers)
 
-  const typeEmployee = Object.keys(EmploymentType).map((name) => {
-    return {
-      name,
-      value: EmploymentType[name as keyof typeof EmploymentType],
-    }
-  })
+  // const typeEmployee = Object.keys(EmploymentType).map((name) => {
+  //   return {
+  //     name,
+  //     value: EmploymentType[name as keyof typeof EmploymentType],
+  //   }
+  // })
   const dispatch = useAppDispatch()
   let [careerList, setCareerList] = useState<ICareer[] | undefined>()
   let [companiesList, setCompaniesList] = useState<ICompany[] | undefined>()
@@ -223,7 +224,7 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
                 Loại hình <Text style={styles.star}>*</Text>
               </Text>
               <Picker selectedValue={employment_type} onValueChange={(itemValue) => setEmployment_type(itemValue)}>
-                {typeEmployee.map((e) => (
+                {enumToObject(EmploymentType).map((e) => (
                   <Picker.Item label={e.name} value={e.value} />
                 ))}
               </Picker>

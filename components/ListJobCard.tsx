@@ -19,7 +19,7 @@ export const Job: FC<IJobProps> = ({ job }) => {
           <View style={styles.logo}>
             <Image
               source={{
-                uri: 'https://cdn.topcv.vn/80/company_logos/295f6a316d2959a4c890dd2a55f606e8-604996d0c88d6.jpg',
+                uri: 'https://i.imgur.com/C31GNX6.png',
               }}
               style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 10 }}
             />

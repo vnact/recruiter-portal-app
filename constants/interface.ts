@@ -68,6 +68,8 @@ export interface IUser {
   employmentType?: EmploymentType[]
   careersId: number[]
   phoneNumber?: string
+  careers?: ICareer[]
+  avatar?: string
 }
 export interface IExperienceGetMe {
   id: number
