@@ -9,7 +9,7 @@ import companyReducer from '../reducers/companySlice'
 import careerReducer from '../reducers/careerSlice'
 import jobReducer from '../reducers/jobSlice'
 import experienceReducer from '../reducers/experienceSlice'
-
+import jobListReducer from '../reducers/jobListSlice'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -22,6 +22,7 @@ export const store = configureStore({
     career: careerReducer,
     job: jobReducer,
     experience: experienceReducer,
+    jobList: jobListReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
