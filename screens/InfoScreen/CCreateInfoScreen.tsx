@@ -145,7 +145,7 @@ export default function CCreateInfoScreen() {
     if (!result.cancelled) {
       const { secure_url: newImageUrl } = await uploadImage(result)
       console.log('ảnh', newImageUrl)
-      setAvatar(result.uri)
+      setAvatar(newImageUrl)
     }
   }
   // const fillterList = (key: string) => {

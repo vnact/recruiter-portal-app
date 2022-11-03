@@ -188,8 +188,21 @@ export default function InfoCandidateScreen() {
                       <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.skill.name}</Text>
-                        <Text style={styles.item__text2}>{e.certificate}</Text>
+                        <Text style={styles.item__text2}>{e.description}</Text>
                       </View>
+                      {e.certificate && (
+                        <View>
+                          <Image
+                            source={{ uri: e.certificate }}
+                            style={{
+                              height: 70,
+                              width: 50,
+                              borderRadius: 10,
+                              borderWidth: 0.5,
+                            }}
+                          />
+                        </View>
+                      )}
                     </View>
                   </TouchableOpacity>
                 ))

@@ -82,6 +82,7 @@ export interface IExperienceGetMe {
   career: ICareer
 }
 export interface ICompany {
+  id: number
   name: string
   phone: string
   email: string
@@ -95,6 +96,16 @@ export interface ICompany {
   provinceId: number
   industry?: IIndustry
   jobs: IJob[]
+}
+export interface IExperienceCreate {
+  title: string
+  id?: number
+  company_id: number
+  career_id: number
+  employment_type: EmploymentType
+  start_date: string
+  end_date?: string
+  description?: string
 }
 export interface IJob {
   id: number
@@ -128,8 +139,10 @@ export interface IIndustry {
   name: string
 }
 export interface IUserSkill {
+  userId?: number
   certificate?: string
   skill: ISkill
+  description?: string
 }
 export interface ISkill {
   id: number

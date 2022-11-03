@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
-import { ISkill } from '../constants/interface'
+import { ISkill, IUserSkill } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
 
 interface ISkillState {
   loading: 'idle' | 'loading' | 'success' | 'error'
-  userSkill?: ISkill
+  userSkill?: IUserSkill
   message?: string
 }
 const initialState: ISkillState = {
@@ -15,12 +15,14 @@ const initialState: ISkillState = {
 interface IIdSkill {
   id: number
 }
-interface IUserSkill extends ISkills {
-  userId: number
-}
+// interface IUserSkill extends ISkills {
+//   userId: number
+
+// }
 interface ISkills {
   skills_id: number[]
   certificate?: string
+  description?: string
 }
 interface ISkillDelete {
   skills_id: number[]
@@ -79,6 +81,7 @@ export const UserSkillSlice = createSlice({
           console.log('Success user-skill')
           state.loading = 'success'
           state.userSkill = payload.payload
+          console.log(payload.payload)
         })
         .addCase(GetOneUserSkillAction.rejected, (state, payload) => {
           state.loading = 'error'

@@ -53,7 +53,7 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
   const [keywordCareer, setKeyWordCareer] = useState('')
   const [company, setCompany] = useState<string | undefined>()
   const [career, setCareer] = useState<string | undefined>()
-  const [employment_type, setEmployment_type] = useState<EmploymentType | undefined>()
+  const [employment_type, setEmployment_type] = useState<EmploymentType>(EmploymentType.FullTime)
   const [dateStart, setDateStart] = useState<string | undefined>('Bắt đầu')
   const [dateEnd, setDateEnd] = useState<string | undefined>('Kết thúc')
   const [description, setDescription] = useState<string | undefined>()
@@ -90,10 +90,11 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
     if (expdata && id) {
       setDateEnd(expdata.endDate)
       setDateStart(expdata.startDate)
-      setCompany(expdata.company.name)
-      setCareer(expdata.career.name)
-      setIdCareer(expdata.career.id)
-      setIdCompany(expdata.company.id)
+      expdata.company && setCompany(expdata.company.name)
+      expdata.career && setCareer(expdata.career.name)
+      expdata.career && setIdCareer(expdata.career.id)
+      expdata.company && setIdCompany(expdata.company.id)
+      expdata.employmentType && setEmployment_type(expdata.employmentType)
       setDescription(expdata.description)
       console.log(
         Object.keys(EmploymentType)[

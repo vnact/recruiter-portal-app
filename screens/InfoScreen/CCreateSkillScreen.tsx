@@ -9,45 +9,116 @@ import {
   TouchableWithoutFeedback,
   View,
   Alert,
+  Pressable,
+  Image,
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+
 import React, { useState, useEffect } from 'react'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { formColor, mainColor, redColor, whiteColor } from '../../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
 import Layout from '../../constants/Layout'
-import { ISkill } from '../../constants/interface'
+import { ISkill, IUserSkill } from '../../constants/interface'
 import { GetAllSkillAction, selectSkills } from '../../reducers/skillSlice'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
-import { CreateUserSkillAction, DeleteUserSkillAction } from '../../reducers/userSkillSlice'
+import {
+  CreateUserSkillAction,
+  DeleteUserSkillAction,
+  GetOneUserSkillAction,
+  selectUserSkill,
+  UpdateUserSkillAction,
+} from '../../reducers/userSkillSlice'
 import { RootStackScreenProps } from '../../types'
+import { uploadImage } from '../../app/cloudinary'
 const width = Dimensions.get('window').width
 export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> = ({ route }) => {
   const { id } = route.params
   const nav = useNavigation()
+  const [status, requestPermission] = ImagePicker.useCameraPermissions()
   const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible1, setModalVisible1] = useState(false)
   const [skill, setSkill] = useState<string | undefined>()
   const [idSkill, setIdSkill] = useState<number | undefined>()
   const [keyword, setKeyWord] = useState('')
+  const [description, setDescription] = useState<string | undefined>()
   const [certificate, setCertificate] = useState<string | undefined>()
   const dataSkills = useAppSelector(selectSkills)
+  const dataUserSkill = useAppSelector(selectUserSkill)
+  const [haveImage, setHaveImage] = useState(false)
   const dispatch = useAppDispatch()
   let [skillsList, setSkillsList] = useState<ISkill[] | undefined>(dataSkills)
+
+  const pickImageWithCamera = async () => {
+    // await requestPermission();
+    if (status?.granted === false) {
+      alert('No permission')
+      return
+    }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    })
+    setModalVisible1(!modalVisible1)
+
+    if (!result.cancelled) {
+      const { secure_url: newImageUrl } = await uploadImage(result)
+      setCertificate(newImageUrl)
+      setHaveImage(true)
+    }
+  }
+  const pickImageWithGallery = async () => {
+    setModalVisible1(!modalVisible1)
+    // await requestPermission();
+    if (status?.granted === false) {
+      alert('Bạn chưa cấp quyền')
+      return
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    })
+    if (!result.cancelled) {
+      const { secure_url: newImageUrl } = await uploadImage(result)
+      setCertificate(newImageUrl)
+      setHaveImage(true)
+    }
+  }
+
+  useEffect(() => {
+    const check = async () => {
+      if (status?.status !== 'granted') requestPermission()
+    }
+    check()
+  }, [])
+
   const fillterList = (key: string) => {
     console.log(key)
     setSkillsList(dataSkills?.filter((e) => e.name.includes(key)))
     // console.log(skillsList)
   }
   useEffect(() => {
-    Promise.all([dispatch(GetAllSkillAction())]).then(() => {
-      setSkillsList(dataSkills)
-    })
+    if (id)
+      Promise.all([dispatch(GetAllSkillAction()), dispatch(GetOneUserSkillAction({ id }))]).then(() => {
+        setSkillsList(dataSkills)
+
+        console
+      })
   }, [])
   useEffect(() => {
     if (id && dataSkills) {
       setIdSkill(id)
       setSkill(dataSkills[id - 1].name)
+      setDescription(dataUserSkill?.description)
+      setCertificate(dataUserSkill?.certificate)
     }
-  }, [dataSkills])
+  }, [dataSkills, dataUserSkill])
   useEffect(() => {
     fillterList(keyword)
   }, [keyword])
@@ -56,11 +127,24 @@ export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> 
       const payload = {
         skills_id: [idSkill],
         certificate,
+        description,
       }
       await dispatch(CreateUserSkillAction(payload))
       Alert.alert('Bạn thêm kĩ năng thành công!')
       nav.goBack()
     }
+  }
+  const update = async () => {
+    // if (skill && idSkill) {
+    //   const payload: IUserSkill = {
+    //     skill: idSkill,
+    //     certificate,
+    //     description,
+    //   }
+    //   await dispatch(UpdateUserSkillAction(payload))
+    Alert.alert('Tính năng đang hoàn thiện!')
+    nav.goBack()
+    // }
   }
   const deleteSkill = async () => {
     if (skill && idSkill) {
@@ -120,26 +204,47 @@ export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> 
               value={skill}
             ></TextInput>
           </View>
-          {/* <View style={styles.field}>
-            <Text style={styles.label}>
-              Đánh giá <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              placeholderTextColor={formColor}
-              placeholder="VD: Toeic 450/990"
-              style={styles.input}
-            ></TextInput>
-          </View> */}
+
           <View style={styles.field}>
             <Text style={styles.label}>Mô tả chi tiết</Text>
             <TextInput
-              value={certificate}
-              onChangeText={setCertificate}
+              value={description}
+              onChangeText={setDescription}
               multiline
               placeholderTextColor={formColor}
               placeholder="Mô tả chi tiết kỹ nằng"
               style={{ ...styles.input, height: 150 }}
             ></TextInput>
+          </View>
+          <View style={{ marginVertical: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <TouchableOpacity onPress={() => setModalVisible1(true)}>
+              <View
+                style={{
+                  height: 40,
+                  width: 150,
+                  borderRadius: 20,
+                  borderWidth: 0.5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                }}
+              >
+                <Ionicons name="image-outline" size={24} color="black" />
+                <Text>{haveImage ? 'Đổi ảnh' : 'Thêm ảnh'}</Text>
+              </View>
+            </TouchableOpacity>
+            {certificate && (
+              <TouchableOpacity
+                onPress={() => {
+                  setCertificate(undefined)
+                  setHaveImage(false)
+                }}
+              >
+                <View style={{ marginRight: 30 }}>
+                  <Image source={{ uri: certificate }} style={{ height: 200, width: 150, borderRadius: 20 }} />
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.formSubmit}>
             <TouchableOpacity>
@@ -150,11 +255,18 @@ export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> 
               </TouchableOpacity>
             </TouchableOpacity>
             {id ? (
-              <TouchableOpacity onPress={() => deleteSkill()}>
-                <View style={{ ...styles.submit, backgroundColor: redColor }}>
-                  <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
-                </View>
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity onPress={() => deleteSkill()}>
+                  <View style={{ ...styles.submit, backgroundColor: redColor }}>
+                    <Text style={{ color: whiteColor, fontSize: 18 }}>Xóa</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => update()}>
+                  <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
+                    <Text style={{ color: whiteColor, fontSize: 18 }}>Cập Nhật</Text>
+                  </View>
+                </TouchableOpacity>
+              </>
             ) : (
               <TouchableOpacity onPress={() => submit()}>
                 <View style={{ ...styles.submit, backgroundColor: '#50D890' }}>
@@ -203,12 +315,99 @@ export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> 
             </View>
           </View>
         </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible1}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.')
+            setModalVisible1(!modalVisible1)
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewGallrey}>
+              <View style={{ flexDirection: 'row', width: 300 }}>
+                <Text style={styles.modalText}>Get Picture from ?</Text>
+              </View>
+              <Pressable style={styles.modal_btn} onPress={pickImageWithCamera}>
+                <Text>Camera Roll</Text>
+              </Pressable>
+              <Pressable style={[styles.modal_btn, { borderBottomWidth: 0.2 }]} onPress={pickImageWithGallery}>
+                <Text>Gallery</Text>
+              </Pressable>
+              <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible1(!modalVisible1)}>
+                <Text style={styles.textStyle}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
+  modalViewGallrey: {
+    backgroundColor: 'white',
+    borderRadius: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    width: 300,
+    height: 220,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(76, 76, 215, 0.1)',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+    marginTop: 12,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  modalText: {
+    height: 40,
+    lineHeight: 40,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    color: whiteColor,
+
+    backgroundColor: mainColor,
+  },
+  modal_btn: {
+    height: 60,
+    borderTopWidth: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    // flex: 1,
+    width: '100%',
+  },
   list: {},
   item: { paddingHorizontal: 15, borderBottomWidth: 0.2, height: 50, justifyContent: 'center' },
   top: {
@@ -322,7 +521,7 @@ const styles = StyleSheet.create({
   },
   submit: {
     backgroundColor: '#F7DC6F',
-    width: 150,
+    width: 120,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
