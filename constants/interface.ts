@@ -49,7 +49,7 @@ export interface IUser {
   name: string
   role: string
   gender?: string
-  birthday?: string
+  birthDay?: string
   height?: number
   weight?: number
   level?: ExpLevel
@@ -65,6 +65,9 @@ export interface IUser {
   appliedJobs: IApplyJob[]
   favoriteJobs: IFavoriteJob[]
   experiences: IExperienceGetMe[]
+  employmentType?: EmploymentType[]
+  careersId: number[]
+  phoneNumber?: string
 }
 export interface IExperienceGetMe {
   id: number

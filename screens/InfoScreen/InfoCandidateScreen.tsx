@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetSelfAction, selectUser } from '../../reducers/userSlice'
 import moment from 'moment'
-import { EmploymentType } from '../../constants/interface'
+import { EmploymentType, ExpLevel } from '../../constants/interface'
 const width = Dimensions.get('window').width
 export default function InfoCandidateScreen() {
   const nav = useNavigation()
@@ -16,6 +16,10 @@ export default function InfoCandidateScreen() {
   const typeEmployee = new Map()
   Object.keys(EmploymentType).map((name) => {
     typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
+  })
+  const typeLevel = new Map()
+  Object.keys(ExpLevel).map((name) => {
+    typeLevel.set(ExpLevel[name as keyof typeof ExpLevel], name)
   })
   useEffect(() => {
     dispatch(GetSelfAction())
@@ -53,14 +57,51 @@ export default function InfoCandidateScreen() {
             marginBottom: 5,
           }}
         >
-          {dataUser?.email}
+          Email: {dataUser?.email}
         </Text>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: '200',
-          }}
-        ></Text>
+        {dataUser?.phoneNumber && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            SĐT: {dataUser?.phoneNumber}
+          </Text>
+        )}
+        {dataUser?.employmentType && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            Loại hình: {dataUser?.employmentType?.map((e) => typeEmployee.get(e) + ',')}
+          </Text>
+        )}
+        {dataUser?.level && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            Kinh nghiệm: {typeLevel.get(dataUser?.level)}
+          </Text>
+        )}
+        {dataUser?.careersId && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '200',
+            }}
+          >
+            Ví trí ứng tuyển: {dataUser?.careersId}
+          </Text>
+        )}
         <TouchableOpacity
           style={{
             position: 'absolute',

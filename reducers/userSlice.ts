@@ -20,6 +20,11 @@ export const GetSelfActionWithoutEffect = createAsyncThunk('auth/me-without-load
   const { data } = await apiInstance.get('auth/me')
   return data
 })
+export const UpdateUserProfileAction = createAsyncThunk('user/profile', async (payload: Partial<IUser>, thunk) => {
+  const { data } = await apiInstance.patch('user/profile', payload)
+  thunk.dispatch(GetSelfActionWithoutEffect())
+  return data
+})
 const userSlice = createSlice({
   name: 'user',
   reducers: {},
@@ -40,6 +45,20 @@ const userSlice = createSlice({
       })
       .addCase(GetSelfActionWithoutEffect.fulfilled, (state, payload) => {
         state.user = payload.payload
+      })
+    builder
+      .addCase(UpdateUserProfileAction.pending, (state) => {
+        state.loading = 'loading'
+        state.message = undefined
+      })
+      .addCase(UpdateUserProfileAction.fulfilled, (state, payload) => {
+        state.loading = 'success'
+        // state.user = payload.payload
+      })
+      .addCase(UpdateUserProfileAction.rejected, (state, payload) => {
+        state.loading = 'error'
+        state.message = payload.error.message
+        console.log(payload.error.message)
       })
   },
 })
