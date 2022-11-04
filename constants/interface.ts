@@ -96,7 +96,6 @@ export interface ICompany {
   gpsLng: number
   provinceId: number
   industry?: IIndustry
-  jobs: IJob[]
 }
 export interface IExperienceCreate {
   title: string

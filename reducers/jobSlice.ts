@@ -3,7 +3,6 @@ import { apiInstance } from '../app/axiosClient'
 import { RootState } from '../app/store'
 import { IJob, IPagination, ISearchJob } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
-import { getAllApplyAction, getAllFavoriteAction } from './jobListSlice'
 
 export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) => {
   const { data } = await apiInstance.get('/jobs', {
@@ -24,7 +23,6 @@ export const GetJobByIdAction = createAsyncThunk('job/getById', async (id: numbe
 export const ApplyJobAction = createAsyncThunk('job/applyJob', async (id: number, thunk) => {
   const { data } = await apiInstance.post(`/apply`, { jobID: id })
   thunk.dispatch(GetSelfActionWithoutEffect())
-  thunk.dispatch(getAllApplyAction())
   return data
 })
 
@@ -33,13 +31,13 @@ export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', asyn
     jobId: id,
   })
   thunk.dispatch(GetSelfActionWithoutEffect())
-  thunk.dispatch(getAllFavoriteAction())
   return data
 })
 
 export const SearchJobAction = createAsyncThunk('jobs/search', async (search: ISearchJob) => {
-  const { data } = await apiInstance.postForm(`jobs/search`, search)
-  console.log('🚀 ~ file: jobSlice.ts ~ line 43 ~ SearchJobAction ~ data', data)
+  const { data } = await apiInstance.get(`jobs/search`, {
+    params: search,
+  })
   return data
 })
 
@@ -82,28 +80,6 @@ const jobSlice = createSlice({
       .addCase(GetJobByIdAction.rejected, (state, action) => {
         state.loading = 'error'
       })
-
-    // builder
-    //   .addCase(ApplyJobAction.pending, (state) => {
-    //     state.loading = 'loading'
-    //   })
-    //   .addCase(ApplyJobAction.fulfilled, (state, action) => {
-    //     state.loading = 'success'
-    //     state.job = action.payload.job
-    //   })
-    //   .addCase(ApplyJobAction.rejected, (state, action) => {
-    //     state.loading = 'error'
-    //   })
-    // builder
-    //   .addCase(ChangeFavoriteAction.pending, (state) => {
-    //     state.loading = 'loading'
-    //   })
-    //   .addCase(ChangeFavoriteAction.fulfilled, (state, action) => {
-    //     state.job = action.payload.job
-    //   })
-    //   .addCase(ChangeFavoriteAction.rejected, (state, action) => {
-    //     state.loading = 'error'
-    //   })
     builder.addCase(SearchJobAction.pending, (state) => {
       state.loading = 'loading'
     })

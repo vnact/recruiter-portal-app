@@ -3,12 +3,14 @@ import React, { FC } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { ICompany, IJob, IWorkplace } from '../constants/interface'
+import { useNavigation } from '@react-navigation/native'
 
 interface IComPanyProps {
-  item: IJob
+  item: ICompany
 }
 
 const Company: FC<IComPanyProps> = ({ item }) => {
+  const nav = useNavigation()
   const typeWork = new Map()
   Object.keys(IWorkplace).map((name) => {
     typeWork.set(IWorkplace[name as keyof typeof IWorkplace], name)
@@ -19,49 +21,28 @@ const Company: FC<IComPanyProps> = ({ item }) => {
         <View style={styles.logo}>
           <Image
             source={{
-              uri: item.company.avatar,
+              uri: item.avatar,
             }}
             style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 10 }}
           />
         </View>
         <View style={styles.infoCompany}>
-          <Text style={styles.nameCompany}>{item.company.name}</Text>
-          <Text style={styles.address}>{item.location}</Text>
+          <Text style={styles.nameCompany}>{item.name}</Text>
+          <Text style={styles.address}>{item.address?.split(',').slice(-1)}</Text>
         </View>
       </View>
-      <View style={styles.infoJob}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <MaterialIcons name="fiber-manual-record" />
-          <Text style={styles.text}>
-            Slary: ${item.minSalary}k-{item.maxSalary}k/Mo
-          </Text>
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <MaterialIcons name="fiber-manual-record" />
-          <Text style={styles.text}>{item.workplaces.map((e) => typeWork.get(e) + ' ')}</Text>
-        </View>
-      </View>
+
       <View style={styles.button}>
         <Button
           buttonStyle={{
             backgroundColor: '#000000',
             borderRadius: 10,
           }}
+          onPress={() => {
+            nav.navigate('CompanyList', { id: item.id })
+          }}
         >
-          Xem tất cả
+          Danh sách công việc
         </Button>
       </View>
     </View>
@@ -69,7 +50,7 @@ const Company: FC<IComPanyProps> = ({ item }) => {
 }
 
 interface IPropTopCompany {
-  companies: IJob[]
+  companies: ICompany[]
   page: number
   setPage: (page: number) => void
 }
@@ -86,7 +67,7 @@ export const TopCompany: FC<IPropTopCompany> = ({ companies, page, setPage }) =>
       <View style={styles.body}>
         <FlatList
           data={companies}
-          keyExtractor={(item, index) => item.title + index}
+          keyExtractor={(item, index) => item.name + index}
           renderItem={({ item, index }) => <Company item={item} key={index} />}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
