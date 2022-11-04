@@ -26,10 +26,10 @@ export default function InfoCandidateScreen() {
   }, [])
   return (
     <View style={styles.container}>
-      <View style={{ height: 150 }}>
+      <View style={{ height: 180 }}>
         <Image
           source={{
-            uri: 'https://img.freepik.com/free-vector/colorful-watercolor-rainbow-background_125540-151.jpg?w=2000',
+            uri: 'https://vcdn1-giaitri.vnecdn.net/2022/02/23/buc-starry-night-1645604173-7559-1645604348.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=GsqrC7WG5K97gnbHpxyqYw',
           }}
           style={styles.image__cover}
         />
@@ -128,8 +128,8 @@ export default function InfoCandidateScreen() {
           <Text>{dataUser?.description}</Text>
         </View>
       </View>
-      <ScrollView style={{ backgroundColor: '#EEEEEE' }}>
-        <View style={{ flex: 1, width: width, backgroundColor: '#EEEEEE' }}>
+      <ScrollView style={{ backgroundColor: whiteColor }}>
+        <View style={{ flex: 1, width: width, backgroundColor: whiteColor }}>
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Học vấn</Text>
@@ -236,7 +236,7 @@ export default function InfoCandidateScreen() {
                 dataUser.experiences.map((e) => (
                   <TouchableOpacity onPress={() => nav.navigate('CCreateExp', { id: e.id })}>
                     <View style={styles.item}>
-                      <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                      <Image source={{ uri: e.company.avatar }} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.company.name}</Text>
                         {/* <Text style={styles.item__text2}>{e.company.address}</Text> */}
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   image__cover: {
     width: width,
-    height: 150,
+    height: 180,
     resizeMode: 'stretch',
   },
   view__info__basic: {
@@ -314,18 +314,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 5,
     borderBottomWidth: 10,
-    borderColor: grayColor,
+    borderColor: whiteColor,
   },
 
   container__item: {
     marginBottom: 10,
     marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 40,
-    backgroundColor: '#CFE8A9',
+    backgroundColor: '#1C2833',
     paddingHorizontal: 10,
     justifyContent: 'space-between',
     borderTopLeftRadius: 10,
@@ -334,6 +342,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
+    color: whiteColor,
   },
   list: {
     // flex: 1,
@@ -348,6 +357,14 @@ const styles = StyleSheet.create({
     width: 80,
   },
   item: {
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
     height: 100,
     paddingHorizontal: 15,
     flexDirection: 'row',

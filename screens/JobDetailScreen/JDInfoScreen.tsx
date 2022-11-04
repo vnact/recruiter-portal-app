@@ -8,6 +8,7 @@ import {
   View,
   Pressable,
   Dimensions,
+  Alert,
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native'
@@ -17,7 +18,7 @@ import MapView, { Marker, Callout } from 'react-native-maps'
 import { AntDesign } from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import MapViewDirections from 'react-native-maps-directions'
-import { IJob } from '../../constants/interface'
+import { EmploymentType, IJob, IWorkplace } from '../../constants/interface'
 import Constants from 'expo-constants'
 
 interface IProps {
@@ -49,6 +50,14 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
       setDuration(arg.duration)
     }
   }
+  const typeWork = new Map()
+  Object.keys(IWorkplace).map((name) => {
+    typeWork.set(IWorkplace[name as keyof typeof IWorkplace], name)
+  })
+  const typeEmployee = new Map()
+  Object.keys(EmploymentType).map((name) => {
+    typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
+  })
   const desc: string[] = [job.description]
   const request: string[] = [
     'Có kinh nghiệm 1 năm trở lên trong vai trò Fullstack Engineer',
@@ -67,21 +76,36 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
     'Cơ hội phát triển sự nghiệp rõ ràng: đã có plan sản phẩm 5 năm, còn để mở các vị trí chủ chốt.',
     'Môi trường đồng nghiệp giỏi (năng lực, kinh nghiệm top 1% lĩnh vực) + văn hoá hỗ trợ nhau tiến bộ trong công ty.',
   ]
-  useEffect(() => {}, [])
-  const getLocation = async () => {
-    // const { status } = Location.requestForegroundPermissionsAsync()
+  const [isGetWay, setIsGetWay] = useState(false)
+  useEffect(() => {
+    const getLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        Alert.alert('Permission to access location was denied')
+        return
+      }
+      let location = await Location.getCurrentPositionAsync({})
+      setOrigin({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      })
+    }
+    getLocation()
+  }, [])
+  // const getLocation = async () => {
+  //   // const { status } = Location.requestForegroundPermissionsAsync()
 
-    // if (status !== 'granted') {
-    //   console.log(status)
-    //   return
-    // }
-    setLoading(true)
-    let location = await Location.getCurrentPositionAsync({})
-    setLoading(false)
-    console.log('loaction is ' + location.coords.latitude)
-    console.log('loaction is ' + location.coords.longitude)
-    setOrigin({ latitude: location.coords.latitude, longitude: location.coords.longitude })
-  }
+  //   // if (status !== 'granted') {
+  //   //   console.log(status)
+  //   //   return
+  //   // }
+  //   setLoading(true)
+  //   let location = await Location.getCurrentPositionAsync({})
+  //   setLoading(false)
+  //   console.log('loaction is ' + location.coords.latitude)
+  //   console.log('loaction is ' + location.coords.longitude)
+  //   setOrigin({ latitude: location.coords.latitude, longitude: location.coords.longitude })
+  // }
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -105,7 +129,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
                 <Text style={styles.itemTitle}>Hình thức làm việc :</Text>
                 {job.workplaces.map((item, index) => (
                   <Text key={index} style={styles.itemContent}>
-                    {item}
+                    {typeWork.get(item)}
                   </Text>
                 ))}
               </View>
@@ -145,7 +169,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
                 <Text style={styles.itemTitle}>Chức vụ :</Text>
                 {job.employmentType.map((item, index) => (
                   <Text key={index} style={styles.itemContent}>
-                    {item}{' '}
+                    {typeEmployee.get(item)}{' '}
                   </Text>
                 ))}
               </View>
@@ -227,7 +251,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
               )}
               {origin && (
                 <Marker
-                  coordinate={{ latitude: 20.98714, longitude: 105.783 }}
+                  coordinate={{ latitude: origin.latitude, longitude: origin.longitude }}
                   // icon={require('../../assets/images/icon/marker-icon.png')}
                 >
                   <Callout>
@@ -235,7 +259,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
                   </Callout>
                 </Marker>
               )}
-              {origin && destination && (
+              {origin && destination && isGetWay && (
                 <MapViewDirections
                   origin={origin}
                   destination={destination}
@@ -248,7 +272,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
             </MapView>
             {isLoading && <ActivityIndicator size="large" animating={true} style={styles.loading} color={mainColor} />}
             <View style={styles.actionModal}>
-              <TouchableOpacity style={styles.buttonLocation} onPress={() => getLocation()}>
+              <TouchableOpacity style={styles.buttonLocation} onPress={() => setIsGetWay(true)}>
                 {/* <View style={{ ...styles.buttonLocation, marginRight: 0 }}> */}
                 <Text
                   style={{

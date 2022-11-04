@@ -6,7 +6,8 @@ import InfoTagSceen from './InfoTagSceen'
 import { useNavigation } from '@react-navigation/native'
 import { useAppDispatch, useAppSelector } from '../../app/hook'
 import { GetSelfAction, selectUser } from '../../reducers/userSlice'
-import { EmploymentType } from '../../constants/interface'
+import { EmploymentType, ExpLevel } from '../../constants/interface'
+import moment from 'moment'
 const width = Dimensions.get('window').width
 export default function CVScreen() {
   const scrollValue = useRef(new Animated.Value(0)).current
@@ -16,22 +17,28 @@ export default function CVScreen() {
   useEffect(() => {
     dispatch(GetSelfAction())
   }, [])
+  const typeLevel = new Map()
+  Object.keys(ExpLevel).map((name) => {
+    typeLevel.set(ExpLevel[name as keyof typeof ExpLevel], name)
+  })
   const typeEmployee = new Map()
   Object.keys(EmploymentType).map((name) => {
     typeEmployee.set(EmploymentType[name as keyof typeof EmploymentType], name)
   })
   return (
     <View style={styles.container}>
-      <View style={{ height: 150 }}>
+      <View style={{ height: 180 }}>
         <Image
           source={{
-            uri: 'https://img.freepik.com/free-vector/colorful-watercolor-rainbow-background_125540-151.jpg?w=2000',
+            uri: 'https://vcdn1-giaitri.vnecdn.net/2022/02/23/buc-starry-night-1645604173-7559-1645604348.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=GsqrC7WG5K97gnbHpxyqYw',
           }}
           style={styles.image__cover}
         />
         <Animated.Image
           source={{
-            uri: 'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
+            uri:
+              dataUser?.avatar ||
+              'https://vn-test-11.slatic.net/p/75cfa1c8f23c46a47483127a5f7dfdf4.jpg_800x800Q100.jpg',
           }}
           style={{
             ...styles.image__avatar,
@@ -90,24 +97,69 @@ export default function CVScreen() {
             marginBottom: 5,
           }}
         >
-          {/* {dataUser.?} */}
+          Email: {dataUser?.email}
         </Text>
-        <Text
+        {dataUser?.phoneNumber && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            SĐT: {dataUser?.phoneNumber}
+          </Text>
+        )}
+        {dataUser?.employmentType?.length != 0 && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            Loại hình: {dataUser?.employmentType?.map((e) => typeEmployee.get(e) + ',')}
+          </Text>
+        )}
+        {dataUser?.level && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            Kinh nghiệm: {typeLevel.get(dataUser?.level)}
+          </Text>
+        )}
+        {dataUser?.careers?.length != 0 && (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              marginBottom: 5,
+            }}
+          >
+            Ví trí ứng tuyển: {dataUser?.careers?.map((e) => e.name + ',')}
+          </Text>
+        )}
+        <TouchableOpacity
           style={{
-            fontSize: 15,
-            fontWeight: '200',
+            position: 'absolute',
+            top: -65,
+            right: 20,
           }}
+          onPress={() => nav.navigate('CCreateInfo')}
         >
-          {dataUser?.email}
-        </Text>
-
+          <Feather name="edit-2" size={20} color="#576CD6" />
+        </TouchableOpacity>
         <View
           style={{
             borderTopWidth: 0.2,
             width: width,
             alignItems: 'center',
             marginTop: 5,
-            minHeight: 50,
+            height: 50,
             justifyContent: 'center',
           }}
         >
@@ -121,31 +173,28 @@ export default function CVScreen() {
         }}
         scrollEventThrottle={16}
       >
-        <View style={{ flex: 1, width: width, backgroundColor: '#EEEEEE' }}>
+        <View style={{ flex: 1, width: width, backgroundColor: whiteColor }}>
           <View style={styles.container__item}>
             <View style={styles.header}>
               <Text style={styles.title}>Học vấn</Text>
             </View>
             <View style={styles.list}>
-              {dataUser?.educations && dataUser.educations.length != 0 ? (
+              {dataUser?.educations && dataUser?.educations.length != 0 ? (
                 dataUser.educations.map((e) => (
-                  <View style={styles.item}>
-                    <View style={styles.itemT}>
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateEducation', { id: e.id })}>
+                    <View style={styles.item}>
                       <Image source={require('../../assets/images/icon/education.png')} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.school}</Text>
                         <Text style={styles.item__text2}>{e.fieldOfStudy}</Text>
                         <Text style={styles.item__text3}>
-                          {e.isCompleted ? e.startTime + ' - ' + e.endTime : e.startTime + ' - Hiện Tại'}
+                          {e.isCompleted
+                            ? moment(e.startTime).format('DD/MM/YYYY') + ' - ' + moment(e.endTime).format('DD/MM/YYYY')
+                            : moment(e.startTime).format('DD/MM/YYYY') + ' - Hiện tại'}
                         </Text>
                       </View>
                     </View>
-                    {e.description && (
-                      <View style={styles.itemB}>
-                        <Text style={styles.item__desc}>{e.description}</Text>
-                      </View>
-                    )}
-                  </View>
+                  </TouchableOpacity>
                 ))
               ) : (
                 <View style={styles.item}>
@@ -158,7 +207,7 @@ export default function CVScreen() {
                         fontStyle: 'italic',
                       }}
                     >
-                      Người ứng tuyển chưa thêm !
+                      Người ứng tuyển chưa thêm mục này!
                     </Text>
                   </View>
                 </View>
@@ -172,31 +221,42 @@ export default function CVScreen() {
             <View style={styles.list}>
               {dataUser?.skills && dataUser.skills.length != 0 ? (
                 dataUser.skills.map((e) => (
-                  <View style={styles.item}>
-                    <View style={styles.itemT}>
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateSkill', { id: e.skill.id })}>
+                    <View style={styles.item}>
                       <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.skill.name}</Text>
-                        <Text style={styles.item__text2}>{e.certificate}</Text>
+                        <Text style={styles.item__text2}>{e.description}</Text>
                       </View>
+                      {e.certificate && (
+                        <View>
+                          <Image
+                            source={{ uri: e.certificate }}
+                            style={{
+                              height: 70,
+                              width: 50,
+                              borderRadius: 10,
+                              borderWidth: 0.5,
+                            }}
+                          />
+                        </View>
+                      )}
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))
               ) : (
                 <View style={styles.item}>
-                  <View style={styles.itemT}>
-                    <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
-                    <View style={styles.item__info}>
-                      <Text
-                        style={{
-                          ...styles.item__text1,
-                          fontWeight: '100',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        Người ứng tuyển chưa thêm kĩ năng!
-                      </Text>
-                    </View>
+                  <Image source={require('../../assets/images/icon/certificate.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Người ứng tuyển chưa thêm mục này!
+                    </Text>
                   </View>
                 </View>
               )}
@@ -207,36 +267,38 @@ export default function CVScreen() {
               <Text style={styles.title}>Kinh nghiệm</Text>
             </View>
             <View style={styles.list}>
-              {dataUser?.experiences && dataUser.experiences.length != 0 ? (
+              {dataUser?.experiences && dataUser?.experiences.length != 0 ? (
                 dataUser.experiences.map((e) => (
-                  <View style={styles.item}>
-                    <View style={styles.itemT}>
-                      <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                  <TouchableOpacity onPress={() => nav.navigate('CCreateExp', { id: e.id })}>
+                    <View style={styles.item}>
+                      <Image source={{ uri: e.company.avatar }} style={styles.icon} />
                       <View style={styles.item__info}>
                         <Text style={styles.item__text1}>{e.company.name}</Text>
+                        {/* <Text style={styles.item__text2}>{e.company.address}</Text> */}
                         <Text style={styles.item__text2}>
                           {e.career.name + ' - ' + typeEmployee.get(e.employmentType)}
                         </Text>
-                        <Text style={styles.item__text3}>{e.startDate + ' - ' + e.endDate}</Text>
+                        {/* <Text style={styles.item__text2}>{typeEmployee.get(e.employmentType)}</Text> */}
+                        <Text style={styles.item__text3}>
+                          {moment(e.startDate).format('DD/MM/YYYY') + ' - ' + moment(e.endDate).format('DD/MM/YYYY')}
+                        </Text>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))
               ) : (
                 <View style={styles.item}>
-                  <View style={styles.itemT}>
-                    <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
-                    <View style={styles.item__info}>
-                      <Text
-                        style={{
-                          ...styles.item__text1,
-                          fontWeight: '100',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        Hãy thêm thông tin về kinh nghiệm của bạn nhé !
-                      </Text>
-                    </View>
+                  <Image source={require('../../assets/images/icon/experience.png')} style={styles.icon} />
+                  <View style={styles.item__info}>
+                    <Text
+                      style={{
+                        ...styles.item__text1,
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Người ứng tuyển chưa thêm mục này!
+                    </Text>
                   </View>
                 </View>
               )}
@@ -266,7 +328,7 @@ const styles = StyleSheet.create({
   },
   image__cover: {
     width: width,
-    height: 150,
+    height: 180,
     resizeMode: 'stretch',
   },
   view__info__basic: {
@@ -275,21 +337,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 5,
     borderBottomWidth: 10,
-    borderColor: grayColor,
+    borderColor: whiteColor,
   },
 
   container__item: {
-    backgroundColor: whiteColor,
-    overflow: 'scroll',
     marginBottom: 10,
     marginHorizontal: 10,
-    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 40,
-    backgroundColor: '#CFE8A9',
+    backgroundColor: '#1C2833',
     paddingHorizontal: 10,
     justifyContent: 'space-between',
     borderTopLeftRadius: 10,
@@ -298,6 +365,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
+    color: whiteColor,
   },
   list: {
     // flex: 1,
@@ -312,26 +380,22 @@ const styles = StyleSheet.create({
     width: 80,
   },
   item: {
-    paddingVertical: 10,
-    // height: 100,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
+    height: 100,
     paddingHorizontal: 15,
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'center',
-  },
-  itemT: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  itemB: {
-    paddingTop: 10,
-  },
-  item__desc: {
-    textAlign: 'justify',
-  },
+
   item__info: {
     paddingHorizontal: 10,
-
     flex: 1,
   },
   item__text1: {

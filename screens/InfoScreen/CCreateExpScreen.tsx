@@ -380,7 +380,7 @@ export const CCreateExpScreen: React.FC<RootStackScreenProps<'CCreateExp'>> = ({
                   <TouchableOpacity
                     onPress={() => {
                       setCompany(e.name)
-                      setIdCompany(key + 1)
+                      setIdCompany(e.id)
                       setModalVisible(false)
                     }}
                   >

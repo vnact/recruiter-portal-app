@@ -66,13 +66,14 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLoc
               height: 50,
               fontSize: 18,
               paddingRight: 40,
+              marginTop: 50,
             },
             listView: {
               marginHorizontal: 10,
             },
           }}
           placeholder="Search"
-          currentLocation={false}
+          // currentLocation={true}
           onPress={(data, details = null) => {
             if (details) {
               setLocation({
@@ -89,10 +90,13 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLoc
             <Feather
               name="arrow-right"
               size={24}
-              style={{ position: 'absolute', right: 10 }}
+              style={{ position: 'absolute', right: 10, top: 65 }}
               onPress={() => setModalLocation(false)}
             />
           )}
+          GooglePlacesSearchQuery={{
+            rankby: 'distance',
+          }}
         />
       </View>
 
@@ -114,10 +118,11 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLoc
           region={{
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.006,
           }}
           style={styles.map}
+          showsUserLocation={true}
         >
           {location && <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} />}
           <View style={{ position: 'absolute' }}></View>

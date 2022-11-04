@@ -83,6 +83,7 @@ export interface IExperienceGetMe {
 }
 export interface ICompany {
   id: number
+  avatar?: string
   name: string
   phone: string
   email: string
@@ -174,7 +175,7 @@ export interface IPagination {
 export enum IWorkplace {
   OnSite = 'on_site',
   Remote = 'remote',
-  Hybird = 'hybird',
+  Hybrid = 'hybrid',
 }
 
 export interface IApplyJob {
@@ -185,6 +186,7 @@ export interface IApplyJob {
 }
 
 export interface ISearchJob extends IPagination {
+  careers?: number[]
   lat: number
   lng: number
   rangeMeter: number

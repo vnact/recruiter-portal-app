@@ -2,20 +2,24 @@ import { StyleSheet, Text, View, Image, FlatList } from 'react-native'
 import React, { FC } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
-import { ICompany, IJob } from '../constants/interface'
+import { ICompany, IJob, IWorkplace } from '../constants/interface'
 
 interface IComPanyProps {
   item: IJob
 }
 
 const Company: FC<IComPanyProps> = ({ item }) => {
+  const typeWork = new Map()
+  Object.keys(IWorkplace).map((name) => {
+    typeWork.set(IWorkplace[name as keyof typeof IWorkplace], name)
+  })
   return (
     <View style={styles.company}>
       <View style={styles.companyHeader}>
         <View style={styles.logo}>
           <Image
             source={{
-              uri: 'https://cdn.topcv.vn/80/company_logos/295f6a316d2959a4c890dd2a55f606e8-604996d0c88d6.jpg',
+              uri: item.company.avatar,
             }}
             style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 10 }}
           />
@@ -47,7 +51,7 @@ const Company: FC<IComPanyProps> = ({ item }) => {
           }}
         >
           <MaterialIcons name="fiber-manual-record" />
-          <Text style={styles.text}>{item.workplaces[0]}</Text>
+          <Text style={styles.text}>{item.workplaces.map((e) => typeWork.get(e) + ' ')}</Text>
         </View>
       </View>
       <View style={styles.button}>
@@ -57,7 +61,7 @@ const Company: FC<IComPanyProps> = ({ item }) => {
             borderRadius: 10,
           }}
         >
-          Show All
+          Xem tất cả
         </Button>
       </View>
     </View>
@@ -76,7 +80,7 @@ export const TopCompany: FC<IPropTopCompany> = ({ companies, page, setPage }) =>
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Top Company</Text>
+        <Text style={styles.title}>Các công ty hàng đầu</Text>
         <MaterialIcons name="more-horiz" size={26} />
       </View>
       <View style={styles.body}>
@@ -114,6 +118,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   companyHeader: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
     display: 'flex',
     flexDirection: 'row',
   },
@@ -134,6 +146,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   infoJob: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
     marginTop: 10,
     display: 'flex',
     flexDirection: 'column',

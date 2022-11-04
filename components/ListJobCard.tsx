@@ -4,7 +4,7 @@ import { MaterialIcons, Feather } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { primaryColor } from '../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
-import { IJob } from '../constants/interface'
+import { ExpLevel, IJob } from '../constants/interface'
 const width = Dimensions.get('window').width
 
 interface IJobProps {
@@ -12,6 +12,10 @@ interface IJobProps {
 }
 export const Job: FC<IJobProps> = ({ job }) => {
   const nav = useNavigation()
+  const typeLevel = new Map()
+  Object.keys(ExpLevel).map((name) => {
+    typeLevel.set(ExpLevel[name as keyof typeof ExpLevel], name)
+  })
   return (
     <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: job.id })}>
       <View style={styles.job}>
@@ -19,7 +23,7 @@ export const Job: FC<IJobProps> = ({ job }) => {
           <View style={styles.logo}>
             <Image
               source={{
-                uri: 'https://i.imgur.com/C31GNX6.png',
+                uri: job.company.avatar,
               }}
               style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 10 }}
             />
@@ -66,7 +70,7 @@ export const Job: FC<IJobProps> = ({ job }) => {
               }}
             >
               <Feather name="briefcase" size={18} style={{ marginRight: 5 }} color="#6E6D7A" />
-              <Text style={styles.address}>{job.level}</Text>
+              <Text style={styles.address}>{typeLevel.get(job.level)}</Text>
             </View>
           </View>
           <View
@@ -140,6 +144,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingLeft: 15,
     paddingRight: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   body: {
     marginBottom: 50,

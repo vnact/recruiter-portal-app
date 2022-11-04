@@ -29,7 +29,7 @@ export const JDCompanyScreen: FC<IProps> = ({ company }) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.boxInfo}>
-          <Text style={styles.boxTitle}>Công ty cổ phần CLA Tech</Text>
+          <Text style={styles.boxTitle}>{company.name}</Text>
           <View style={styles.listShow}>
             <View style={styles.item}>
               <View style={styles.boxIcon}>
@@ -42,23 +42,37 @@ export const JDCompanyScreen: FC<IProps> = ({ company }) => {
             </View>
             <View style={styles.item}>
               <View style={styles.boxIcon}>
+                <Image source={require('../../assets/images/icon/gmail.png')} style={styles.icon} />
+              </View>
+              <View style={styles.itemRight}>
+                <Text style={styles.itemTitle}>Email liên lạc:</Text>
+                <Text style={styles.itemContent}>{company.email}</Text>
+              </View>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.boxIcon}>
+                <Image source={require('../../assets/images/icon/call.png')} style={styles.icon} />
+              </View>
+              <View style={styles.itemRight}>
+                <Text style={styles.itemTitle}>Số điện thoại liên lạc:</Text>
+                <Text style={styles.itemContent}>{company.phone}</Text>
+              </View>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.boxIcon}>
                 <Image source={require('../../assets/images/icon/www-icon.png')} style={styles.icon} />
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Website công ty:</Text>
-                <Text style={styles.itemContent}>https://github.com/vnact</Text>
+                <Text style={styles.itemContent}>{company.website ? company.website : 'LocalHost:3333'}</Text>
               </View>
             </View>
           </View>
         </View>
         <View style={styles.boxDesc}>
           <Text style={styles.boxTitle}>Thông tin chung</Text>
-          {desc.map((e, i) => (
-            <Text style={{ fontSize: 15, fontWeight: '300', textAlign: 'justify', paddingBottom: 8 }} key={i}>
-              {/* {'\u25CF' + '  '} */}
-              {e}
-            </Text>
-          ))}
+
+          <Text>{company.description}</Text>
         </View>
         <View></View>
       </View>
