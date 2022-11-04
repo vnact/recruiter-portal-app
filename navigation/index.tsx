@@ -8,7 +8,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { useEffect } from 'react'
 import { ColorSchemeName, Pressable } from 'react-native'
 
 import Colors, { blackColor, mainColor, whiteColor } from '../constants/Colors'
@@ -35,6 +34,8 @@ import { useAppDispatch, useAppSelector } from '../app/hook'
 import SplashScreen from '../screens/SplashScreen'
 import ListJobScreen from '../screens/ListJobScreen/ListJobScreen'
 import { GetSelfAction } from '../reducers/userSlice'
+import { ListJobCompanyScreen } from '../screens/CompanyScreen/ListJobCompanyScreen'
+import { useEffect } from 'react'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -57,7 +58,7 @@ function RootNavigator() {
 
   useEffect(() => {
     dispatch(GetSelfAction())
-  })
+  }, [])
 
   if (loading == 'loading') {
     return (
@@ -85,6 +86,11 @@ function RootNavigator() {
           <Stack.Screen name="CCreateSkill" component={CCreateSkillScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: true }} />
           <Stack.Screen name="CVSScreen" component={CVScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="CompanyList"
+            component={ListJobCompanyScreen}
+            options={{ headerShown: true, title: 'Công việc tại công ty' }}
+          />
           <Stack.Screen
             name="JobDetailScreen"
             component={JobDetailScreen}

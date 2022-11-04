@@ -31,6 +31,7 @@ export type RootStackParamList = {
   JobDetailScreen: { id: number }
   Splash: undefined
   JobList: undefined
+  CompanyList: { id: number }
 }
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

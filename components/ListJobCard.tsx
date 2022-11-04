@@ -109,7 +109,7 @@ export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage 
       <View style={styles.body}>
         <FlatList
           data={data}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => index.toString() + item.id}
           renderItem={({ item, index }) => <Job job={item} key={index} />}
           scrollEnabled={true}
           showsVerticalScrollIndicator={false}

@@ -10,11 +10,12 @@ export const GetAllCareerAction = createAsyncThunk('career/getAll', async () => 
 
 interface ICareerState {
   loading: 'idle' | 'loading' | 'success' | 'error'
-  careers?: ICareer[]
+  careers: ICareer[]
 }
 
 const InitialState: ICareerState = {
   loading: 'idle',
+  careers: [],
 }
 
 const careerSlice = createSlice({
