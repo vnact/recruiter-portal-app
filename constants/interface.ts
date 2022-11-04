@@ -188,7 +188,9 @@ export interface ISearchJob extends IPagination {
   careers?: number[]
   lat: number
   lng: number
-  rangeMeter: number
+  range: number
   levels: ExpLevel[]
   jobTypes: EmploymentType[]
+  startSalary?: number
+  endSalary?: number
 }

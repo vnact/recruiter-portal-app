@@ -131,7 +131,9 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
           <View style={styles.bottom}>
             <View>
               <Text style={{ fontSize: 18, color: formColor }}>Lương cơ bản</Text>
-              <Text style={{ fontSize: 25, color: mainColor }}>${`${job?.minSalary}`}</Text>
+              <Text style={{ fontSize: 25, color: mainColor }}>
+                ${job?.minSalary} - ${job?.maxSalary}
+              </Text>
             </View>
             <TouchableOpacity onPress={() => applyJob(job.id)}>
               <View style={styles.submit}>

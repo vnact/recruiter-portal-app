@@ -4,12 +4,23 @@ import { RootState } from '../app/store'
 import { IJob, IPagination, ISearchJob } from '../constants/interface'
 import { GetSelfActionWithoutEffect } from './userSlice'
 
-export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) => {
-  const { data } = await apiInstance.get('/jobs', {
+// export const GetAllJobAction = createAsyncThunk('job/getAll', async (pagination: IPagination) => {
+//   const { data } = await apiInstance.get('/jobs/suggest', {
+//     params: {
+//       page: pagination.page || 1,
+//       size: pagination.size || 20,
+//       sort: ['_score:desc'],
+//     },
+//   })
+//   return data
+// })
+
+export const GetSuggestionJobAction = createAsyncThunk('job/suggestion', async (pagination: IPagination) => {
+  const { data } = await apiInstance.get('/jobs/suggest', {
     params: {
       page: pagination.page || 1,
       size: pagination.size || 20,
-      sort: ['applies:desc'],
+      sort: ['_score:desc'],
     },
   })
   return data
@@ -35,15 +46,15 @@ export const ChangeFavoriteAction = createAsyncThunk('user/changeFavorite', asyn
 })
 
 export const SearchJobAction = createAsyncThunk('jobs/search', async (search: ISearchJob) => {
-  const { data } = await apiInstance.get(`jobs/search`, {
-    params: search,
-  })
+  const { data } = await apiInstance.post(`jobs/search`, search)
+  console.log(data)
   return data
 })
 
 interface IJobState {
   loading: 'idle' | 'loading' | 'success' | 'error'
   jobs: IJob[]
+  searchedJobs: IJob[]
   job?: IJob
   isApplyJob?: boolean
 }
@@ -51,6 +62,7 @@ interface IJobState {
 const InitialState: IJobState = {
   loading: 'idle',
   jobs: [],
+  searchedJobs: [],
 }
 
 const jobSlice = createSlice({
@@ -59,14 +71,18 @@ const jobSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(GetAllJobAction.pending, (state) => {
+      .addCase(GetSuggestionJobAction.pending, (state) => {
         state.loading = 'loading'
       })
-      .addCase(GetAllJobAction.fulfilled, (state, action) => {
+      .addCase(GetSuggestionJobAction.fulfilled, (state, action) => {
         state.loading = 'success'
-        state.jobs = action.payload
+        if (action.meta.arg.page == 1) {
+          state.jobs = action.payload
+        } else {
+          state.jobs = state.jobs.concat(action.payload)
+        }
       })
-      .addCase(GetAllJobAction.rejected, (state, action) => {
+      .addCase(GetSuggestionJobAction.rejected, (state, action) => {
         state.loading = 'error'
       })
     builder
@@ -82,10 +98,11 @@ const jobSlice = createSlice({
       })
     builder.addCase(SearchJobAction.pending, (state) => {
       state.loading = 'loading'
+      state.searchedJobs = []
     })
     builder.addCase(SearchJobAction.fulfilled, (state, action) => {
       state.loading = 'success'
-      state.jobs = action.payload
+      state.searchedJobs = action.payload
     })
     builder.addCase(SearchJobAction.rejected, (state, action) => {
       state.loading = 'error'
@@ -97,4 +114,5 @@ export default jobSlice.reducer
 
 export const selectLoading = (state: RootState) => state.job.loading
 export const selectJobs = (state: RootState) => state.job.jobs
+export const selectSearchedJobs = (state: RootState) => state.job.searchedJobs
 export const selectJob = (state: RootState) => state.job.job

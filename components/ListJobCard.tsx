@@ -1,10 +1,11 @@
-import { FlatList, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity } from 'react-native'
+import { FlatList, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, Pressable } from 'react-native'
 import React, { FC } from 'react'
 import { MaterialIcons, Feather } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { primaryColor } from '../constants/Colors'
 import { useNavigation } from '@react-navigation/native'
 import { ExpLevel, IJob } from '../constants/interface'
+import { levelMapping } from '../constants/enum-mapping'
 const width = Dimensions.get('window').width
 
 interface IJobProps {
@@ -12,10 +13,7 @@ interface IJobProps {
 }
 export const Job: FC<IJobProps> = ({ job }) => {
   const nav = useNavigation()
-  const typeLevel = new Map()
-  Object.keys(ExpLevel).map((name) => {
-    typeLevel.set(ExpLevel[name as keyof typeof ExpLevel], name)
-  })
+
   return (
     <TouchableOpacity onPress={() => nav.navigate('JobDetailScreen', { id: job.id })}>
       <View style={styles.job}>
@@ -39,7 +37,7 @@ export const Job: FC<IJobProps> = ({ job }) => {
               }}
             >
               <Text style={styles.address}>{job.company.name}</Text>
-              <Text style={styles.salary}>${job.minSalary}/Mo</Text>
+              <Text style={styles.salary}>${job.maxSalary}/Mo</Text>
             </View>
           </View>
         </View>
@@ -70,7 +68,7 @@ export const Job: FC<IJobProps> = ({ job }) => {
               }}
             >
               <Feather name="briefcase" size={18} style={{ marginRight: 5 }} color="#6E6D7A" />
-              <Text style={styles.address}>{typeLevel.get(job.level)}</Text>
+              <Text style={styles.address}>{levelMapping[job.level] || ''}</Text>
             </View>
           </View>
           <View
@@ -94,8 +92,9 @@ interface IListJobCardProps {
   data: IJob[]
   page: number
   setPage: (page: number) => void
+  reload?: () => void
 }
-export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage }) => {
+export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage, reload }) => {
   const nextPage = () => {
     setPage(page + 1)
   }
@@ -104,7 +103,9 @@ export const ListJobCard: FC<IListJobCardProps> = ({ title, data, page, setPage 
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{title ? title : 'Suggested Job'}</Text>
-        <MaterialIcons name="more-horiz" size={26} />
+        <Pressable onPress={() => reload?.()}>
+          <MaterialIcons name="more-horiz" size={26} />
+        </Pressable>
       </View>
       <View style={styles.body}>
         <FlatList
@@ -144,14 +145,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingLeft: 15,
     paddingRight: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
   },
   body: {
     marginBottom: 50,

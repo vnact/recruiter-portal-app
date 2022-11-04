@@ -15,16 +15,15 @@ import { Picker } from '@react-native-picker/picker'
 import { GoogleMap, GoogleMapState } from './GoogleMap'
 import { formColor, grayColor, mainColor, primaryColor, whiteColor } from '../constants/Colors'
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
+import { AntDesign, Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { Button } from '@rneui/themed'
 import { EmploymentType, ExpLevel, ICareer } from '../constants/interface'
 import { useAppDispatch, useAppSelector } from '../app/hook'
-import { GetAllJobAction, SearchJobAction, selectJobs, selectLoading } from '../reducers/jobSlice'
+import { SearchJobAction, selectJobs, selectLoading, selectSearchedJobs } from '../reducers/jobSlice'
 import SplashScreen from '../screens/SplashScreen'
 import { useNavigation } from '@react-navigation/native'
-import { selectCareers } from '../reducers/careerSlice'
+import { GetAllCareerAction, selectCareers } from '../reducers/careerSlice'
 import Layout from '../constants/Layout'
-
 export interface IJob {
   id: string
   name: string
@@ -62,10 +61,7 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
   const nav = useNavigation()
   const dispatch = useAppDispatch()
 
-  const jobs = useAppSelector(selectJobs)
-
-  const [salaryMax, setSalaryMax] = useState()
-  const [salaryMin, setSalaryMin] = useState()
+  const jobs = useAppSelector(selectSearchedJobs)
 
   const [modalCareerVisible, setModalCareerVisible] = useState(false)
   const [keywordCareer, setKeyWordCareer] = useState('')
@@ -76,6 +72,8 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
   const dataCareerChild = useAppSelector(selectCareers)?.filter((e) => e.parent != null)
   const [careersPick, setCareersPick] = useState<{ name: string; id: number }[]>([])
   const [careersId, setcareersId] = useState<number[]>([])
+  const [startSalary, setStartSalary] = useState<string>('0')
+  const [endSalary, setEndSalary] = useState<string>('2000')
 
   const [rangeMetter, setRangeMetter] = useState<string>('')
   const [modalLocation, setModalLocation] = useState(false)
@@ -93,11 +91,10 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
       alert('Please choose location')
       return
     }
-    if (!rangeMetter) {
-      alert('Please choose range metter')
-      return
-    }
-    console.log(rangeMetter)
+    // if (!rangeMetter) {
+    //   alert('Please choose range metter')
+    //   return
+    // }
     dispatch(
       SearchJobAction({
         careers: careersId,
@@ -105,11 +102,13 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
         jobTypes: employment_type,
         lat: location.latitude,
         lng: location.longitude,
-        rangeMeter: +rangeMetter,
+        range: +rangeMetter,
         page: 1,
+        startSalary: +startSalary,
+        endSalary: +endSalary,
       }),
     )
-    nav.navigate('SearchResult', { jobs })
+    nav.navigate('SearchResult')
     setModalVisible(false)
   }
 
@@ -120,6 +119,11 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
   useEffect(() => {
     fillterCareerList(keywordCareer)
   }, [keywordCareer])
+
+  useEffect(() => {
+    dispatch(GetAllCareerAction())
+  }, [])
+
   const checkParent = (id: number) => {
     return dataCareerChild?.filter((e) => e.parent?.id == id)[0] ? true : false
   }
@@ -302,6 +306,30 @@ const ModalPopupFilter: FC<IModalPopupFilterProps> = ({ modalVisible, setModalVi
                         <Picker.Item label={item} value={Object.values(ExpLevel)[index]} key={index} />
                       ))}
                     </Picker>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.fieldFilter}>
+                <View>
+                  <Text style={{ ...styles.title, fontSize: 18 }}>Lương mong muốn (1 tháng-đơn vị $)</Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
+                    <TextInput
+                      placeholder="Thấp nhất"
+                      value={startSalary}
+                      onChangeText={setStartSalary}
+                      keyboardType="numeric"
+                      placeholderTextColor={formColor}
+                      style={{ height: 40, width: 130, borderWidth: 0.3, borderRadius: 10, paddingHorizontal: 10 }}
+                    ></TextInput>
+                    <AntDesign name="arrowright" size={24} color="black" style={{ marginTop: 7 }} />
+                    <TextInput
+                      placeholder="Cao nhất"
+                      value={endSalary}
+                      onChangeText={setEndSalary}
+                      keyboardType="numeric"
+                      placeholderTextColor={formColor}
+                      style={{ height: 40, width: 130, borderWidth: 0.3, borderRadius: 10, paddingHorizontal: 10 }}
+                    ></TextInput>
                   </View>
                 </View>
               </View>
@@ -549,11 +577,9 @@ const Item: FC<ItemProps> = ({ item }) => {
   )
 }
 
-interface IFilterProps {
-  careers: ICareer[]
-}
+interface IFilterProps {}
 
-export const Filter: FC<IFilterProps> = ({ careers }) => {
+export const Filter: FC<IFilterProps> = () => {
   const [modalVisible, setModalVisible] = useState(false)
   return (
     <View style={styles.container}>
