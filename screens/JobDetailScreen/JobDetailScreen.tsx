@@ -88,7 +88,7 @@ export const JobDetailScreen: React.FC<RootStackScreenProps<'JobDetailScreen'>> 
           <View style={styles.contentHeader}>
             <Image
               source={{
-                uri: 'https://res.cloudinary.com/practicaldev/image/fetch/s--Z8WkK9ON--/c_imagga_scale,f_auto,fl_progressive,h_1080,q_auto,w_1080/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lgtxfuh1u1idlr09k0n7.png',
+                uri: job.company.avatar,
               }}
               style={styles.avatar}
             />

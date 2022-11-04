@@ -46,7 +46,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Filter careers={careers} />
       <TopCompany companies={jobs} page={page} setPage={setPage} />
-      <ListJobCard data={jobs} title={'Suggested Job'} page={page} setPage={setPage} />
+      <ListJobCard data={jobs} title={'Công việc đề xuất'} page={page} setPage={setPage} />
     </View>
   )
 }

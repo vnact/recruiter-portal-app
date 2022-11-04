@@ -105,11 +105,14 @@ export const CCreateSkillScreen: React.FC<RootStackScreenProps<'CCreateSkill'>> 
   }
   useEffect(() => {
     if (id)
-      Promise.all([dispatch(GetAllSkillAction()), dispatch(GetOneUserSkillAction({ id }))]).then(() => {
-        setSkillsList(dataSkills)
-
-        console
+      Promise.all([dispatch(GetOneUserSkillAction({ id }))]).then(() => {
+        // setSkillsList(dataSkills)
       })
+  }, [])
+  useEffect(() => {
+    Promise.all([dispatch(GetAllSkillAction())]).then(() => {
+      setSkillsList(dataSkills)
+    })
   }, [])
   useEffect(() => {
     if (id && dataSkills) {
