@@ -20,6 +20,7 @@ import * as Location from 'expo-location'
 import MapViewDirections from 'react-native-maps-directions'
 import { EmploymentType, IJob, IWorkplace } from '../../constants/interface'
 import Constants from 'expo-constants'
+import { levelMapping } from '../../constants/enum-mapping'
 
 interface IProps {
   job: IJob
@@ -118,7 +119,9 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Mức lương :</Text>
-                <Text style={styles.itemContent}>2.000 $</Text>
+                <Text style={styles.itemContent}>
+                  ${job?.minSalary} - ${job?.maxSalary}
+                </Text>
               </View>
             </View>
             <View style={styles.item}>
@@ -158,7 +161,7 @@ export const JDInfoScreen: FC<IProps> = ({ job }) => {
               </View>
               <View style={styles.itemRight}>
                 <Text style={styles.itemTitle}>Kinh nghiệm :</Text>
-                <Text style={styles.itemContent}>Không yêu cầu kinh nghiệm</Text>
+                <Text style={styles.itemContent}>{levelMapping[job?.level] || 'Không yêu cầu'}</Text>
               </View>
             </View>
             <View style={styles.item}>

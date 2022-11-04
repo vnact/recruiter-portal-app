@@ -54,6 +54,7 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLoc
         <GooglePlacesAutocomplete
           fetchDetails={true}
           isRowScrollable={false}
+          renderDescription={(row) => row.description}
           styles={{
             textInputContainer: {
               marginHorizontal: 10,
@@ -75,6 +76,7 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({ modalLocation, setModalLoc
           placeholder="Search"
           // currentLocation={true}
           onPress={(data, details = null) => {
+            console.log(data.description)
             if (details) {
               setLocation({
                 latitude: details.geometry.location.lat,
